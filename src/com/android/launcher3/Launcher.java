@@ -1241,6 +1241,9 @@ public class Launcher extends StatefulActivity<LauncherState>
         }
 
         DragView.removeAllViews(this);
+        if (mWorkspace != null) {
+            app.lawnchair.util.MelluneMotionHelper.playWorkspaceReturnMotion(mWorkspace);
+        }
         TraceHelper.INSTANCE.endSection();
     }
 
@@ -2155,6 +2158,9 @@ public class Launcher extends StatefulActivity<LauncherState>
         }
 
         RunnableList result = super.startActivitySafely(v, intent, item);
+        if (v != null) {
+            app.lawnchair.util.MelluneMotionHelper.playLaunchParallax(v);
+        }
         if (result != null && v instanceof BubbleTextView) {
             // This is set to the view that launched the activity that navigated the user away
             // from launcher. Since there is no callback for when the activity has finished
@@ -2162,7 +2168,10 @@ public class Launcher extends StatefulActivity<LauncherState>
             // state when we return to launcher.
             BubbleTextView btv = (BubbleTextView) v;
             btv.setStayPressed(true);
-            result.add(btv::clearPressedIconState);
+            result.add(() -> {
+                btv.clearPressedIconState();
+                app.lawnchair.util.MelluneMotionHelper.playReturnRebound(btv);
+            });
         }
         return result;
     }
