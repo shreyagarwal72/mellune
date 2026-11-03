@@ -20,3 +20,8 @@ __pycache__
 .vscode
 .fleet
 lawnWithQuickstep/release
+
+*.jks
+*.keystore
+keystore.properties
+
