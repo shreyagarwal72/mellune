@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Lawnchair picks its own light/dark colors from the launcherTheme preference,
+    <!-- Mellune picks its own light/dark colors from the launcherTheme preference,
          independent of system night mode. Every AppTheme below descends from the platform's
          Theme.Material.Light, so isLightTheme stays true and HWUI's force-dark pass inverts
          the luminance of whatever we draw once the system is in night mode. That is what
@@ -15,7 +15,7 @@
         <item name="android:colorBackground">@color/background_device_default_light</item>
         <item name="android:colorBackgroundFloating">@color/background_floating_device_default_light</item>
         <item name="android:dialogCornerRadius" tools:ignore="NewApi">@dimen/lawnchair_dialog_corner_radius</item>
-        <item name="android:textAppearance">@style/TextAppearance.Lawnchair</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mellune</item>
 
         <item name="colorAccentPrimary">@color/accent_primary_device_default</item>
         <item name="textColorOnAccent">@color/text_color_on_accent_device_default</item>
@@ -40,7 +40,7 @@
         <item name="android:colorBackground">@color/background_device_default_light</item>
         <item name="android:colorBackgroundFloating">@color/background_floating_device_default_light</item>
         <item name="android:dialogCornerRadius" tools:ignore="NewApi">@dimen/lawnchair_dialog_corner_radius</item>
-        <item name="android:textAppearance">@style/TextAppearance.Lawnchair</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mellune</item>
 
         <item name="colorAccentPrimary">@color/accent_primary_device_default</item>
         <item name="textColorOnAccent">@color/text_color_on_accent_device_default</item>
@@ -65,7 +65,7 @@
         <item name="android:colorBackground">@color/background_device_default_light</item>
         <item name="android:colorBackgroundFloating">@color/background_floating_device_default_light</item>
         <item name="android:dialogCornerRadius" tools:ignore="NewApi">@dimen/lawnchair_dialog_corner_radius</item>
-        <item name="android:textAppearance">@style/TextAppearance.Lawnchair</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mellune</item>
 
         <item name="colorAccentPrimary">@color/accent_primary_device_default</item>
         <item name="textColorOnAccent">@color/text_color_on_accent_device_default</item>
@@ -92,7 +92,7 @@
         <item name="android:colorBackground">@color/background_device_default_dark</item>
         <item name="android:colorBackgroundFloating">@color/background_floating_device_default_dark</item>
         <item name="android:dialogCornerRadius" tools:ignore="NewApi">@dimen/lawnchair_dialog_corner_radius</item>
-        <item name="android:textAppearance">@style/TextAppearance.Lawnchair</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mellune</item>
 
         <item name="colorAccentPrimary">@color/accent_primary_device_default</item>
         <item name="textColorOnAccent">@color/text_color_on_accent_device_default</item>
@@ -118,7 +118,7 @@
         <item name="android:colorBackground">@color/background_device_default_dark</item>
         <item name="android:colorBackgroundFloating">@color/background_floating_device_default_dark</item>
         <item name="android:dialogCornerRadius" tools:ignore="NewApi">@dimen/lawnchair_dialog_corner_radius</item>
-        <item name="android:textAppearance">@style/TextAppearance.Lawnchair</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mellune</item>
 
         <item name="colorAccentPrimary">@color/accent_primary_device_default</item>
         <item name="textColorOnAccent">@color/text_color_on_accent_device_default</item>
@@ -144,7 +144,7 @@
         <item name="android:colorBackground">@color/background_device_default_dark</item>
         <item name="android:colorBackgroundFloating">@color/background_floating_device_default_dark</item>
         <item name="android:dialogCornerRadius" tools:ignore="NewApi">@dimen/lawnchair_dialog_corner_radius</item>
-        <item name="android:textAppearance">@style/TextAppearance.Lawnchair</item>
+        <item name="android:textAppearance">@style/TextAppearance.Mellune</item>
 
         <item name="colorAccentPrimary">@color/accent_primary_device_default</item>
         <item name="textColorOnAccent">@color/text_color_on_accent_device_default</item>
@@ -182,7 +182,7 @@
         <item name="customFontType">@id/font_button</item>
     </style>
 
-    <style name="TextAppearance.Lawnchair" parent="@android:style/TextAppearance.Material">
+    <style name="TextAppearance.Mellune" parent="@android:style/TextAppearance.Material">
         <item name="customFontType">@id/font_body</item>
     </style>
 
