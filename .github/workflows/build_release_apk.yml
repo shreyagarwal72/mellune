@@ -51,11 +51,8 @@ jobs:
       - name: Collect Universal Release APK
         run: |
           mkdir -p release-output
-          # Recursively find any generated release APK
-          find . -type f -name "*.apk" -not -path "*/build-cache/*" | while read -r apk; do
-            echo "Found APK: $apk"
-            cp "$apk" release-output/Mellune-Release.apk
-          done
+          # Accurately copy only the real Mellune launcher APK from build outputs
+          find build/outputs/apk/lawnWithQuickstepGithub/release -name "*.apk" -exec cp {} release-output/Mellune-Release.apk \;
           ls -lh release-output/
 
       - name: Upload Release Artifact
