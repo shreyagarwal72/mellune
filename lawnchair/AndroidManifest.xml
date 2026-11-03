@@ -67,7 +67,7 @@
             android:exported="true"
             android:label="@string/settings_button_text"
             android:icon="@mipmap/ic_settings"
-            android:theme="@style/Theme.Lawnchair"
+            android:theme="@style/Theme.Mellune"
             android:windowSoftInputMode="adjustResize"
             android:enableOnBackInvokedCallback="true">
             <intent-filter android:priority="1">
@@ -88,7 +88,7 @@
             android:icon="@mipmap/ic_launcher_home"
             android:name="app.lawnchair.gestures.ui.LawnchairShortcutActivity"
             android:exported="true"
-            android:theme="@style/Theme.Lawnchair">
+            android:theme="@style/Theme.Mellune">
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -98,7 +98,7 @@
         <activity
             android:name="app.lawnchair.gestures.ui.RunHandlerActivity"
             android:exported="true"
-            android:theme="@style/Theme.Lawnchair">
+            android:theme="@style/Theme.Mellune">
             <intent-filter>
                 <action android:name="app.lawnchair.START_ACTION" />
                 <category android:name="android.intent.category.DEFAULT" />
