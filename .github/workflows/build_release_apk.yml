@@ -28,13 +28,9 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 21
-          cache: 'gradle'
 
-      - name: Setup Gradle with Advanced Caching
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-read-only: false
-          gradle-home-cache-cleanup: true
 
       - name: Configure Keystore
         run: |
@@ -55,7 +51,11 @@ jobs:
       - name: Collect Universal Release APK
         run: |
           mkdir -p release-output
-          find build/outputs/apk/lawnWithQuickstep/github/release -name "*.apk" -exec cp {} release-output/Mellune-Release.apk \;
+          # Recursively find any generated release APK
+          find . -type f -name "*.apk" -not -path "*/build-cache/*" | while read -r apk; do
+            echo "Found APK: $apk"
+            cp "$apk" release-output/Mellune-Release.apk
+          done
           ls -lh release-output/
 
       - name: Upload Release Artifact
