@@ -20,19 +20,47 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
-import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Matrix
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.graphics.shapes.RoundedPolygon
+import androidx.graphics.shapes.toPath
 
 private val TrackHeight = 44.dp
 private val ThumbSize = 30.dp
 private val ThumbInset = 7.dp
+
+/**
+ * Shape representing a normalized [RoundedPolygon] scaled to outline dimensions.
+ */
+private class PolygonShape(polygon: RoundedPolygon) : Shape {
+    private val basePath = polygon.toPath().asComposePath()
+
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+        val matrix = Matrix()
+        matrix.scale(size.width, size.height)
+        val path = Path()
+        path.addPath(basePath)
+        path.transform(matrix)
+        return Outline.Generic(path)
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private val CookieThumbShape: Shape = PolygonShape(MaterialShapes.Cookie12Sided)
 
 /**
  * Petal v4.5 rolling-thumb chunky expressive slider:
@@ -114,7 +142,7 @@ fun MelluneSlider(
                         .offset(x = thumbStart)
                         .size(ThumbSize)
                         .graphicsLayer { rotationZ = rollDegrees }
-                        .clip(MaterialShapes.Cookie12Sided.toShape())
+                        .clip(CookieThumbShape)
                         .background(
                             if (enabled) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.surfaceContainer

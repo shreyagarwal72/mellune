@@ -99,8 +99,10 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus && mWorkspace != null && stateManager.state == com.android.launcher3.LauncherState.NORMAL) {
-            app.lawnchair.util.MelluneSpringEngine.playUnlockBloom(mWorkspace, mHotseat)
+        val ws = workspace
+        val hs = hotseat
+        if (hasFocus && ws != null && stateManager.state == com.android.launcher3.LauncherState.NORMAL) {
+            app.lawnchair.util.MelluneSpringEngine.playUnlockBloom(ws, hs)
         }
     }
     private val defaultOverlay by unsafeLazy { OverlayCallbackImpl(this) }
@@ -435,8 +437,9 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun onResume() {
         super.onResume()
-        if (mWorkspace != null) {
-            app.lawnchair.util.MelluneSpringEngine.playWorkspaceReturnSpring(mWorkspace)
+        val ws = workspace
+        if (ws != null) {
+            app.lawnchair.util.MelluneSpringEngine.playWorkspaceReturnSpring(ws)
         }
     }
 
