@@ -128,6 +128,7 @@ sealed class QsbSearchProvider(
             Wikipedia,
             GitHub,
             DuckDuckGo,
+            SearXNG,
             Ecosia,
             Presearch,
             Bing,
