@@ -32,3 +32,8 @@
 # This shouldn't concern us much
 -dontwarn androidx.window.extensions.**
 -dontwarn androidx.window.sidecar.**
+
+# Mellune Motion
+-keep class app.lawnchair.util.MelluneMotionHelper { *; }
+-keepclassmembers class app.lawnchair.util.MelluneMotionHelper { *; }
+

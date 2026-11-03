@@ -96,6 +96,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class LawnchairLauncher : QuickstepLauncher() {
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && mWorkspace != null && stateManager.state == com.android.launcher3.LauncherState.NORMAL) {
+            app.lawnchair.util.MelluneMotionHelper.playUnlockBloom(mWorkspace, mHotseat)
+        }
+    }
     private val defaultOverlay by unsafeLazy { OverlayCallbackImpl(this) }
     private val prefs by unsafeLazy { PreferenceManager.getInstance(this) }
     private val preferenceManager2 by unsafeLazy { PreferenceManager2.getInstance(this) }
@@ -426,12 +433,28 @@ class LawnchairLauncher : QuickstepLauncher() {
         return ActivityOptionsWrapper(options, callbacks)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (mWorkspace != null) {
+            app.lawnchair.util.MelluneMotionHelper.playWorkspaceReturnMotion(mWorkspace)
+        }
+    }
+
     override fun getActivityLaunchOptions(v: View?, item: ItemInfo?): ActivityOptionsWrapper {
-        return runCatching {
+        if (v != null) {
+            app.lawnchair.util.MelluneMotionHelper.playLaunchParallax(v)
+        }
+        val wrapper = runCatching {
             super.getActivityLaunchOptions(v, item)
         }.getOrElse {
             getActivityLaunchOptionsDefault(v)
         }
+        if (v is com.android.launcher3.BubbleTextView) {
+            wrapper.onEndCallback.add(Runnable {
+                app.lawnchair.util.MelluneMotionHelper.playReturnRebound(v)
+            })
+        }
+        return wrapper
     }
 
     private fun getActivityLaunchOptionsDefault(v: View?): ActivityOptionsWrapper {
