@@ -16,11 +16,14 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -67,7 +70,7 @@ private val CookieThumbShape: Shape = PolygonShape(MaterialShapes.Cookie12Sided)
  * A pill track with a filled progress section and a scalloped cookie thumb (MaterialShapes.Cookie12Sided)
  * that physically rolls as it travels along the track.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MelluneSlider(
     value: Float,
@@ -82,32 +85,45 @@ fun MelluneSlider(
     val isDragged by interactionSource.collectIsDraggedAsState()
     val isPressed by interactionSource.collectIsPressedAsState()
 
+    val sliderState = remember(valueRange, steps) {
+        SliderState(
+            value = value,
+            steps = steps,
+            onValueChangeFinished = onValueChangeFinished,
+            valueRange = valueRange,
+        )
+    }
+
+    LaunchedEffect(value) {
+        if (sliderState.value != value) {
+            sliderState.value = value
+        }
+    }
+
+    sliderState.onValueChange = onValueChange
+
+    val rangeDiff = sliderState.valueRange.endInclusive - sliderState.valueRange.start
+    val target = if (rangeDiff <= 0f) 0f else {
+        ((sliderState.value - sliderState.valueRange.start) / rangeDiff).coerceIn(0f, 1f)
+    }
+
+    val animatedFraction by animateFloatAsState(
+        targetValue = target,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = 1200f
+        ),
+        label = "melluneSliderFraction"
+    )
+    val fraction = if (isDragged || isPressed) target else animatedFraction
+
     Slider(
-        value = value,
-        onValueChange = onValueChange,
-        valueRange = valueRange,
-        steps = steps,
-        enabled = enabled,
-        onValueChangeFinished = onValueChangeFinished,
-        interactionSource = interactionSource,
+        state = sliderState,
         modifier = modifier.height(TrackHeight),
+        enabled = enabled,
+        interactionSource = interactionSource,
         thumb = {},
-        track = { state ->
-            val rangeDiff = state.valueRange.endInclusive - state.valueRange.start
-            val target = if (rangeDiff <= 0f) 0f else {
-                ((state.value - state.valueRange.start) / rangeDiff).coerceIn(0f, 1f)
-            }
-
-            val animatedFraction by animateFloatAsState(
-                targetValue = target,
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = 1200f
-                ),
-                label = "melluneSliderFraction"
-            )
-            val fraction = if (isDragged || isPressed) target else animatedFraction
-
+        track = {
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()

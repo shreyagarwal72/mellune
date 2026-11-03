@@ -435,14 +435,6 @@ class LawnchairLauncher : QuickstepLauncher() {
         return ActivityOptionsWrapper(options, callbacks)
     }
 
-    override fun onResume() {
-        super.onResume()
-        val ws = workspace
-        if (ws != null) {
-            app.lawnchair.util.MelluneSpringEngine.playWorkspaceReturnSpring(ws)
-        }
-    }
-
     override fun getActivityLaunchOptions(v: View?, item: ItemInfo?): ActivityOptionsWrapper {
         if (v != null) {
             app.lawnchair.util.MelluneSpringEngine.playLaunchSink(v)
@@ -495,6 +487,10 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun onResume() {
         super.onResume()
+        val ws = workspace
+        if (ws != null) {
+            app.lawnchair.util.MelluneSpringEngine.playWorkspaceReturnSpring(ws)
+        }
         restartIfPending()
         refreshPredictionContainersFromModel()
 
