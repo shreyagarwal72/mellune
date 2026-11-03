@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -43,6 +42,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import app.lawnchair.preferences.PreferenceAdapter
 import app.lawnchair.preferences.rememberTransformAdapter
+import app.lawnchair.ui.components.expressive.MelluneSlider
 import app.lawnchair.ui.preferences.components.layout.PreferenceTemplate
 import app.lawnchair.ui.theme.LawnchairTheme
 import app.lawnchair.ui.util.preview.PreferenceGroupPreviewContainer
@@ -175,7 +175,7 @@ private fun SliderPreference(
         },
         modifier = modifier,
         description = {
-            Slider(
+            MelluneSlider(
                 value = sliderValue,
                 onValueChange = { newValue ->
                     sliderValue = newValue
@@ -214,8 +214,7 @@ private fun SliderPreference(
                 valueRange = valueRange,
                 steps = getSteps(valueRange, step),
                 modifier = Modifier
-                    .padding(top = 2.dp, bottom = 8.dp)
-                    .height(24.dp),
+                    .padding(top = 4.dp, bottom = 4.dp),
                 enabled = enabled,
             )
         },
