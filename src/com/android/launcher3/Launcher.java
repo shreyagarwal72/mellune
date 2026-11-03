@@ -1577,7 +1577,19 @@ public class Launcher extends StatefulActivity<LauncherState>
         }
     }
 
-    private final ScreenOnListener mScreenOnListener = this::onScreenOnChanged;
+    private final ScreenOnListener mScreenOnListener = new ScreenOnListener() {
+        @Override
+        public void onScreenOnChanged(boolean isOn) {
+            Launcher.this.onScreenOnChanged(isOn);
+        }
+
+        @Override
+        public void onUserPresent() {
+            if (mWorkspace != null && getStateManager().getState() == LauncherState.NORMAL) {
+                app.lawnchair.util.MelluneMotionHelper.playUnlockBloom(mWorkspace, mHotseat);
+            }
+        }
+    };
 
     @Override
     public void onAttachedToWindow() {
