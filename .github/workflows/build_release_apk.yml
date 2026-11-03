@@ -49,19 +49,18 @@ jobs:
             echo "No KEYSTORE secret found, falling back to default/debug signing."
           fi
 
-      - name: Build Release APK and Play Bundle
-        run: ./gradlew assembleLawnWithQuickstepGithubRelease bundleLawnWithQuickstepPlayRelease --build-cache --parallel --no-daemon
+      - name: Build Universal Release APK
+        run: ./gradlew assembleLawnWithQuickstepGithubRelease --build-cache --parallel --no-daemon
 
-      - name: Collect Universal Release Artifacts
+      - name: Collect Universal Release APK
         run: |
           mkdir -p release-output
-          find build/outputs/apk/lawnWithQuickstep/github/release -name "*.apk" -exec cp {} release-output/ \; 2>/dev/null || true
-          find build/outputs/bundle/lawnWithQuickstepPlayRelease -name "*.aab" -exec cp {} release-output/ \; 2>/dev/null || true
+          find build/outputs/apk/lawnWithQuickstep/github/release -name "*.apk" -exec cp {} release-output/Mellune-Release.apk \;
           ls -lh release-output/
 
-      - name: Upload Release Artifacts
+      - name: Upload Release Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Mellune-Universal-Release
-          path: release-output/*
+          name: Mellune-Universal-Release-APK
+          path: release-output/Mellune-Release.apk
           if-no-files-found: error
