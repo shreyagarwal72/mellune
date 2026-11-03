@@ -37,3 +37,8 @@
 -keep class app.lawnchair.util.MelluneMotionHelper { *; }
 -keepclassmembers class app.lawnchair.util.MelluneMotionHelper { *; }
 
+
+# Mellune Spring Engine
+-keep class app.lawnchair.util.MelluneSpringEngine { *; }
+-keepclassmembers class app.lawnchair.util.MelluneSpringEngine { *; }
+

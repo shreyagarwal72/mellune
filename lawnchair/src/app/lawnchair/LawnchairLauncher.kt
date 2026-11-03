@@ -100,7 +100,7 @@ class LawnchairLauncher : QuickstepLauncher() {
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus && mWorkspace != null && stateManager.state == com.android.launcher3.LauncherState.NORMAL) {
-            app.lawnchair.util.MelluneMotionHelper.playUnlockBloom(mWorkspace, mHotseat)
+            app.lawnchair.util.MelluneSpringEngine.playUnlockBloom(mWorkspace, mHotseat)
         }
     }
     private val defaultOverlay by unsafeLazy { OverlayCallbackImpl(this) }
@@ -436,13 +436,13 @@ class LawnchairLauncher : QuickstepLauncher() {
     override fun onResume() {
         super.onResume()
         if (mWorkspace != null) {
-            app.lawnchair.util.MelluneMotionHelper.playWorkspaceReturnMotion(mWorkspace)
+            app.lawnchair.util.MelluneSpringEngine.playWorkspaceReturnSpring(mWorkspace)
         }
     }
 
     override fun getActivityLaunchOptions(v: View?, item: ItemInfo?): ActivityOptionsWrapper {
         if (v != null) {
-            app.lawnchair.util.MelluneMotionHelper.playLaunchParallax(v)
+            app.lawnchair.util.MelluneSpringEngine.playLaunchSink(v)
         }
         val wrapper = runCatching {
             super.getActivityLaunchOptions(v, item)
@@ -451,7 +451,7 @@ class LawnchairLauncher : QuickstepLauncher() {
         }
         if (v is com.android.launcher3.BubbleTextView) {
             wrapper.onEndCallback.add(Runnable {
-                app.lawnchair.util.MelluneMotionHelper.playReturnRebound(v)
+                app.lawnchair.util.MelluneSpringEngine.playReturnRebound(v)
             })
         }
         return wrapper
