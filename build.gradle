@@ -372,7 +372,9 @@ composeCompiler {
     stabilityConfigurationFiles.addAll(
         layout.projectDirectory.file("compose_compiler_config.conf"),
     )
-    reportsDestination = layout.buildDirectory.dir("compose_build_reports")
+    if (providers.gradleProperty("enableComposeReports").isPresent) {
+        reportsDestination = layout.buildDirectory.dir("compose_build_reports")
+    }
 }
 
 addFrameworkJar('framework-16.jar')
