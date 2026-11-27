@@ -18,18 +18,24 @@ package app.lawnchair
 
 import android.animation.AnimatorSet
 import android.app.ActivityOptions
+import android.app.KeyguardManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Pair
 import android.view.Display
 import android.view.View
 import android.view.ViewTreeObserver
 import android.window.SplashScreen
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
 import app.lawnchair.compat.LawnchairQuickstepCompat
@@ -48,6 +54,7 @@ import app.lawnchair.root.RootNotAvailableException
 import app.lawnchair.theme.ThemeProvider
 import app.lawnchair.ui.popup.LauncherOptionsPopup
 import app.lawnchair.ui.popup.LawnchairShortcut
+import app.lawnchair.util.MelluneSpringEngine
 import app.lawnchair.util.getThemedIconPacksInstalled
 import app.lawnchair.util.unsafeLazy
 import app.lawnchair.views.LawnchairFloatingSurfaceView
@@ -89,6 +96,7 @@ import com.android.systemui.shared.system.QuickStepContract
 import com.kieronquinn.app.smartspacer.sdk.client.SmartspacerClient
 import com.patrykmichalik.opto.core.onEach
 import dev.kdrag0n.monet.theme.ColorScheme
+import java.lang.ref.WeakReference
 import java.util.stream.Stream
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -97,13 +105,69 @@ import kotlinx.coroutines.launch
 
 class LawnchairLauncher : QuickstepLauncher() {
 
+    private var pendingUnlockParallax = false
+    private var pendingAppReturnParallax = false
+    private var unlockSignalUptimeMs = 0L
+    private var lastLaunchedView: WeakReference<View>? = null
+
+    private val keyguardManager by unsafeLazy { getSystemService(KeyguardManager::class.java) }
+
+    private val screenLockReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Intent.ACTION_SCREEN_OFF -> {
+                    if (!pendingAppReturnParallax) {
+                        pendingUnlockParallax = true
+                        unlockSignalUptimeMs = 0L
+                    }
+                    MelluneSpringEngine.resetRestState(
+                        workspace = workspace,
+                        hotseat = hotseat,
+                        windowToken = dragLayer?.windowToken,
+                        context = this@LawnchairLauncher,
+                    )
+                }
+
+                Intent.ACTION_USER_PRESENT -> {
+                    if (!pendingAppReturnParallax) {
+                        unlockSignalUptimeMs = SystemClock.uptimeMillis()
+                        pendingUnlockParallax = true
+                        if (hasWindowFocus() &&
+                            lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
+                            stateManager.state == LauncherState.NORMAL
+                        ) {
+                            consumePendingUnlockParallax()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        val ws = workspace
-        val hs = hotseat
-        if (hasFocus && ws != null && stateManager.state == com.android.launcher3.LauncherState.NORMAL) {
-            app.lawnchair.util.MelluneSpringEngine.playUnlockBloom(ws, hs)
-        }
+        if (!hasFocus || stateManager.state != LauncherState.NORMAL) return
+        consumePendingUnlockParallax()
+    }
+
+    private fun consumePendingUnlockParallax(): Boolean {
+        if (!pendingUnlockParallax) return false
+        if (keyguardManager?.isKeyguardLocked == true) return false
+        val withinUnlockWindow = unlockSignalUptimeMs == 0L ||
+            (SystemClock.uptimeMillis() - unlockSignalUptimeMs) <= UNLOCK_PARALLAX_WINDOW_MS
+        pendingUnlockParallax = false
+        unlockSignalUptimeMs = 0L
+        if (!withinUnlockWindow) return false
+
+        pendingAppReturnParallax = false
+        lastLaunchedView = null
+        MelluneSpringEngine.playUnlockParallax(
+            workspace = workspace,
+            hotseat = hotseat,
+            windowToken = dragLayer?.windowToken,
+            context = this,
+        )
+        return true
     }
     private val defaultOverlay by unsafeLazy { OverlayCallbackImpl(this) }
     private val prefs by unsafeLazy { PreferenceManager.getInstance(this) }
@@ -257,6 +321,16 @@ class LawnchairLauncher : QuickstepLauncher() {
         showQuickstepWarningIfNecessary()
 
         reloadIconsIfNeeded()
+
+        ContextCompat.registerReceiver(
+            this,
+            screenLockReceiver,
+            IntentFilter().apply {
+                addAction(Intent.ACTION_SCREEN_OFF)
+                addAction(Intent.ACTION_USER_PRESENT)
+            },
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
 
         AppDatabase.INSTANCE.get(this).checkpointSync()
     }
@@ -436,18 +510,39 @@ class LawnchairLauncher : QuickstepLauncher() {
     }
 
     override fun getActivityLaunchOptions(v: View?, item: ItemInfo?): ActivityOptionsWrapper {
-        if (v != null) {
-            app.lawnchair.util.MelluneSpringEngine.playLaunchSink(v)
+        val inNormalState = stateManager.state == LauncherState.NORMAL
+        pendingUnlockParallax = false
+        pendingAppReturnParallax = true
+        lastLaunchedView = if (inNormalState && v != null) WeakReference(v) else null
+
+        if (inNormalState) {
+            MelluneSpringEngine.playAppOpenParallax(
+                workspace = workspace,
+                hotseat = hotseat,
+                launchedView = v,
+                windowToken = dragLayer?.windowToken,
+                context = this,
+            )
+        } else if (v != null) {
+            MelluneSpringEngine.playLaunchSink(v)
         }
+
         val wrapper = runCatching {
             super.getActivityLaunchOptions(v, item)
         }.getOrElse {
             getActivityLaunchOptionsDefault(v)
         }
-        if (v is com.android.launcher3.BubbleTextView) {
-            wrapper.onEndCallback.add(Runnable {
-                app.lawnchair.util.MelluneSpringEngine.playReturnRebound(v)
-            })
+        if (v is BubbleTextView) {
+            wrapper.onEndCallback.add(
+                Runnable {
+                    if (hasWindowFocus() &&
+                        lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+                    ) {
+                        pendingAppReturnParallax = false
+                        MelluneSpringEngine.playReturnRebound(v)
+                    }
+                },
+            )
         }
         return wrapper
     }
@@ -487,9 +582,29 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun onResume() {
         super.onResume()
-        val ws = workspace
-        if (ws != null) {
-            app.lawnchair.util.MelluneSpringEngine.playWorkspaceReturnSpring(ws)
+        val isNormalState = stateManager.state == LauncherState.NORMAL
+        if (isNormalState && consumePendingUnlockParallax()) {
+            // Unlock parallax handles wallpaper zoom, staggered icons, and hotseat bloom.
+        } else if (isNormalState && pendingAppReturnParallax) {
+            pendingAppReturnParallax = false
+            val launched = lastLaunchedView?.get()
+            lastLaunchedView = null
+            MelluneSpringEngine.playAppCloseParallax(
+                workspace = workspace,
+                hotseat = hotseat,
+                lastLaunchedView = launched,
+                windowToken = dragLayer?.windowToken,
+                context = this,
+            )
+        } else {
+            pendingAppReturnParallax = false
+            lastLaunchedView = null
+            MelluneSpringEngine.resetRestState(
+                workspace = workspace,
+                hotseat = hotseat,
+                windowToken = dragLayer?.windowToken,
+                context = this,
+            )
         }
         restartIfPending()
         refreshPredictionContainersFromModel()
@@ -520,6 +635,7 @@ class LawnchairLauncher : QuickstepLauncher() {
     }
 
     override fun onDestroy() {
+        runCatching { unregisterReceiver(screenLockReceiver) }
         super.onDestroy()
         // Only actually closes if required, safe to call if not enabled
         SmartspacerClient.close()
@@ -577,6 +693,7 @@ class LawnchairLauncher : QuickstepLauncher() {
     companion object {
         private const val FLAG_RECREATE = 1 shl 0
         private const val FLAG_RESTART = 1 shl 1
+        private const val UNLOCK_PARALLAX_WINDOW_MS = 1500L
 
         var sRestartFlags = 0
 
