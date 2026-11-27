@@ -95,8 +95,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import app.lawnchair.DeviceProfileOverrides.DBGridInfo;
-import app.lawnchair.DeviceProfileOverrides;
+import app.mellune.DeviceProfileOverrides.DBGridInfo;
+import app.mellune.DeviceProfileOverrides;
 
 @LauncherAppSingleton
 public class InvariantDeviceProfile {
@@ -443,7 +443,7 @@ public class InvariantDeviceProfile {
             DeviceProfileOverrides.PreviewOverrides previewOverrides) {
         this.closestProfile = displayOption.grid;
         
-        // LC-Note: Not only in English. Lawnchair shows the toggle in every language, and labels
+        // LC-Note: Not only in English. Mellune shows the toggle in every language, and labels
         // break at spaces or between words, which also works for other scripts.
         enableTwoLinesInAllApps = Flags.enableTwolineToggle()
                 && mPrefs.get(ENABLE_TWOLINE_ALLAPPS_TOGGLE);
@@ -536,7 +536,7 @@ public class InvariantDeviceProfile {
         // Supported overrides: numRows, numColumns, iconSize
         applyPartnerDeviceProfileOverrides(context, metrics);
 
-        // Lawnchair ignores partner overrides and allows the user to customize the grid themselves
+        // Mellune ignores partner overrides and allows the user to customize the grid themselves
         overrideOptions.applyUi(this);
 
         float maxIconSize = iconSize[0];

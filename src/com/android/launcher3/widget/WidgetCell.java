@@ -68,10 +68,10 @@ import com.android.launcher3.widget.util.WidgetSizes;
 import java.util.function.Consumer;
 
 import android.content.res.ColorStateList;
-import app.lawnchair.LawnchairAppWidgetHostView;
-import app.lawnchair.font.FontManager;
-import app.lawnchair.theme.color.tokens.ColorTokens;
-import app.lawnchair.theme.drawable.DrawableTokens;
+import app.mellune.MelluneAppWidgetHostView;
+import app.mellune.font.FontManager;
+import app.mellune.theme.color.tokens.ColorTokens;
+import app.mellune.theme.drawable.DrawableTokens;
 
 /**
  * Represents the individual cell of the widget inside the widget tray. The preview is drawn

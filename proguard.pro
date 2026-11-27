@@ -1,4 +1,4 @@
-# The rules from AOSP are located in proguard.flags file, we can just maintain Lawnchair related rules here.
+# The rules from AOSP are located in proguard.flags file, we can just maintain Mellune related rules here.
 
 # Optimization options.
 -allowaccessmodification
@@ -17,11 +17,11 @@
   public static final ** CREATOR;
 }
 
-# Lawnchair specific rules.
--keep,allowshrinking,allowoptimization class app.lawnchair.LawnchairProto$* { *; }
--keep,allowshrinking,allowoptimization class app.lawnchair.LawnchairApp { *; }
--keep,allowshrinking,allowoptimization class app.lawnchair.LawnchairLauncher { *; }
--keep,allowshrinking,allowoptimization class app.lawnchair.compatlib.** { *; }
+# Mellune specific rules.
+-keep,allowshrinking,allowoptimization class app.mellune.MelluneProto$* { *; }
+-keep,allowshrinking,allowoptimization class app.mellune.MelluneApp { *; }
+-keep,allowshrinking,allowoptimization class app.mellune.MelluneLauncher { *; }
+-keep,allowshrinking,allowoptimization class app.mellune.compatlib.** { *; }
 
 -keep,allowshrinking,allowoptimization class com.google.protobuf.Timestamp { *; }
 -keep class * extends com.google.protobuf.GeneratedMessageLite { *; }
@@ -34,11 +34,11 @@
 -dontwarn androidx.window.sidecar.**
 
 # Mellune Motion
--keep class app.lawnchair.util.MelluneMotionHelper { *; }
--keepclassmembers class app.lawnchair.util.MelluneMotionHelper { *; }
+-keep class app.mellune.util.MelluneMotionHelper { *; }
+-keepclassmembers class app.mellune.util.MelluneMotionHelper { *; }
 
 
 # Mellune Spring Engine
--keep class app.lawnchair.util.MelluneSpringEngine { *; }
--keepclassmembers class app.lawnchair.util.MelluneSpringEngine { *; }
+-keep class app.mellune.util.MelluneSpringEngine { *; }
+-keepclassmembers class app.mellune.util.MelluneSpringEngine { *; }
 

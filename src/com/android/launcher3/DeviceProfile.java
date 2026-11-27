@@ -53,7 +53,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import androidx.core.content.res.ResourcesCompat;
-import app.lawnchair.DeviceProfileOverrides.TextFactors;
+import app.mellune.DeviceProfileOverrides.TextFactors;
 import com.android.launcher3.CellLayout.ContainerType;
 import com.android.launcher3.DevicePaddings.DevicePadding;
 import com.android.launcher3.InvariantDeviceProfile.DisplayOptionSpec;
@@ -88,14 +88,14 @@ import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
-import app.lawnchair.DeviceProfileOverrides;
-import app.lawnchair.LawnchairApp;
-import app.lawnchair.LawnchairAppKt;
-import app.lawnchair.hotseat.HotseatMode;
-import app.lawnchair.preferences.PreferenceManager;
-import app.lawnchair.preferences2.PreferenceManager2;
-import app.lawnchair.theme.color.ColorOption;
+import app.mellune.preferences2.PreferenceCacheExtensionsKt;
+import app.mellune.DeviceProfileOverrides;
+import app.mellune.MelluneApp;
+import app.mellune.MelluneAppKt;
+import app.mellune.hotseat.HotseatMode;
+import app.mellune.preferences.PreferenceManager;
+import app.mellune.preferences2.PreferenceManager2;
+import app.mellune.theme.color.ColorOption;
 
 @SuppressLint("NewApi")
 public class DeviceProfile {
@@ -365,7 +365,7 @@ public class DeviceProfile {
         preferenceManager2 = PreferenceManager2.INSTANCE.get(context);
         allAppsCellHeightMultiplier = PreferenceCacheExtensionsKt
                 .firstCached(preferenceManager2.getDrawerCellHeightFactor());
-        // Lawnchair: clamp the user padding factors to their slider ranges so a restored or
+        // Mellune: clamp the user padding factors to their slider ranges so a restored or
         // manually edited preference can't feed out-of-range values into the layout math.
         workspacePaddingHorizontalFactor = Utilities.boundToRange(PreferenceCacheExtensionsKt
                 .firstCached(preferenceManager2.getWorkspacePaddingHorizontalFactor()), 0f, 2f);
@@ -667,7 +667,7 @@ public class DeviceProfile {
         }
 
         desiredWorkspaceHorizontalMarginPx = getHorizontalMarginPx(inv, res);
-        // Lawnchair: scale the horizontal workspace margin at the source so the cell layout
+        // Mellune: scale the horizontal workspace margin at the source so the cell layout
         // width calculation uses the scaled value too. Otherwise cells keep their original
         // width and get centered, leaving a visible side gap even at factor 0.
         desiredWorkspaceHorizontalMarginPx =
@@ -720,7 +720,7 @@ public class DeviceProfile {
             allAppsShiftRange =
                     res.getDimensionPixelSize(R.dimen.all_apps_starting_vertical_translate);
         }
-        // Lawnchair: extra user-configurable app drawer top padding. The factor is additive
+        // Mellune: extra user-configurable app drawer top padding. The factor is additive
         // and slider-ranged 100%-200% (default 100%), so subtract 1f to keep 100% as no change.
         allAppsPadding.top += Math.round(iconSizePx * (drawerPaddingTopFactor - 1f));
         allAppsOpenDuration = res.getInteger(R.integer.config_allAppsOpenDuration);
@@ -806,7 +806,7 @@ public class DeviceProfile {
         return renderer;
     }
 
-    // Lawnchair
+    // Mellune
     private static DotRenderer createDotRenderer(
         @NonNull ThemeManager themeManager, int size, @NonNull SparseArray<DotRenderer> cache, boolean showNotificationCount, Typeface typeface, int dotColor, int countColor) {
         DotRenderer renderer = cache.get(size);
@@ -901,7 +901,7 @@ public class DeviceProfile {
         HotseatMode hotseatMode = PreferenceCacheExtensionsKt.firstCached(preferenceManager2.getHotseatMode());
         boolean isQsbEnable = hotseatMode.getLayoutResourceId() != R.layout.empty_view;
         // LC-Note: Hidden dock labels need no text space; keep the minimum touch target.
-        hotseatCellHeightPx = app.lawnchair.util.DockCellSize.calculate(
+        hotseatCellHeightPx = app.mellune.util.DockCellSize.calculate(
                 hotseatIconSizePx, iconTextHeight, isLabelInDock, pxFromDp(48, mMetrics));
         hotseatQsbSpace = mHotseatQsbSpaceBase;
         hotseatQsbSpace += isQsbEnable && isLabelInDock ? (iconTextHeight / 2) : 0;
@@ -1241,7 +1241,7 @@ public class DeviceProfile {
         final boolean isVerticalLayout = isVerticalBarLayout();
         cellLayoutBorderSpacePx = getCellLayoutBorderSpace(inv, scale);
 
-        // Lawnchair: Get initial text size before calculating layout
+        // Mellune: Get initial text size before calculating layout
         // This scales offset with text sizing, all the way down to zero
         iconTextSizePx *= mTextFactors.getIconTextSizeFactor();
 
@@ -1414,7 +1414,7 @@ public class DeviceProfile {
         } else {
             widgetPadding.setEmpty();
         }
-        // Lawnchair: scale widget padding by user factor (0 = remove, 1 = default).
+        // Mellune: scale widget padding by user factor (0 = remove, 1 = default).
         widgetPadding.left = Math.round(widgetPadding.left * widgetPaddingFactor);
         widgetPadding.right = Math.round(widgetPadding.right * widgetPaddingFactor);
         widgetPadding.top = Math.round(widgetPadding.top * widgetPaddingFactor);
@@ -1788,7 +1788,7 @@ public class DeviceProfile {
                 paddingRight = isSeascape() ? 0 : desiredWorkspaceHorizontalMarginPx;
             }
 
-            // Lawnchair: scale vertical workspace padding by user factor.
+            // Mellune: scale vertical workspace padding by user factor.
             // (Horizontal is applied at the source margin so the cells fill the freed space.)
             // The dock (hotseatBarSizePx) reservation in the bottom padding must be preserved,
             // otherwise reducing the factor pulls the last row into the dock and clips it.

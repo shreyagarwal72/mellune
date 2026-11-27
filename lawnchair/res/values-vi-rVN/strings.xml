@@ -430,7 +430,7 @@
     <string name="torch_status_on">Đèn pin đang bật</string>
     <string name="torch_action_off">Chạm để tắt</string>
     <!-- Onboarding strings -->
-    <string name="onboarding_open_settings_title">Cài lawnchair</string>
+    <string name="onboarding_open_settings_title">Cài Mellune</string>
     <string name="onboarding_open_settings_subtitle">Nhấn giữ trên màn hình chính để mở cài đặt</string>
     <string name="onboarding_major_upgrade_title">Giới thiệu Mellune mới</string>
     <string name="onboarding_major_upgrade_subtitle">Xem có gì mới</string>

@@ -56,7 +56,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 
-import app.lawnchair.util.LawnchairWindowManagerProxy;
+import app.mellune.util.MelluneWindowManagerProxy;
 import com.android.launcher3.InvariantDeviceProfile.DeviceType;
 import com.android.launcher3.LauncherPrefChangeListener;
 import com.android.launcher3.LauncherPrefs;
@@ -598,8 +598,8 @@ public class DisplayController implements DesktopVisibilityListener {
             navigationMode = wmProxy.getNavigationMode(displayInfoContext);
             mIsNightModeActive = isNightModeActiveCompat(config);
 
-            // LC-Note: the single "does this device fold" check (LawnchairWindowManagerProxy).
-            mIsFoldable = LawnchairWindowManagerProxy.isFoldable(displayInfoContext);
+            // LC-Note: the single "does this device fold" check (MelluneWindowManagerProxy).
+            mIsFoldable = MelluneWindowManagerProxy.isFoldable(displayInfoContext);
             
             mPerDisplayBounds.putAll(perDisplayBoundsCache);
             List<WindowBounds> cachedValue = getCurrentBounds();

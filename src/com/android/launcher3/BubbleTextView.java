@@ -111,13 +111,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
-import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
-import app.lawnchair.font.FontManager;
-import app.lawnchair.gestures.IconGestureListener;
-import app.lawnchair.preferences.PreferenceManager;
-import app.lawnchair.preferences2.PreferenceManager2;
-import app.lawnchair.util.LawnchairUtilsKt;
-import app.lawnchair.animation.PhysicsAnimator;
+import app.mellune.preferences2.PreferenceCacheExtensionsKt;
+import app.mellune.font.FontManager;
+import app.mellune.gestures.IconGestureListener;
+import app.mellune.preferences.PreferenceManager;
+import app.mellune.preferences2.PreferenceManager2;
+import app.mellune.util.MelluneUtilsKt;
+import app.mellune.animation.PhysicsAnimator;
 
 /**
  * TextView that draws a bubble behind the text. We cannot use a LineBackgroundSpan
@@ -255,7 +255,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     private final PreferenceManager2 pref2;
     private IconGestureListener mGestureListener;
-    private boolean mShouldHandleIconSwipeTouch; // Lawnchair: Icon swipe gesture feature
+    private boolean mShouldHandleIconSwipeTouch; // Mellune: Icon swipe gesture feature
 
     public BubbleTextView(Context context) {
         this(context, null, 0);
@@ -295,7 +295,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
             setCompoundDrawablePadding(
                     mDeviceProfile.getAllAppsProfile().getIconDrawablePaddingPx());
             defaultIconSize = mDeviceProfile.getAllAppsProfile().getIconSizePx();
-            LawnchairUtilsKt.overrideAllAppsTextColor(this);
+            MelluneUtilsKt.overrideAllAppsTextColor(this);
         } else if (mDisplay == DISPLAY_FOLDER) {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, mDeviceProfile.folderChildTextSizePx);
             setCompoundDrawablePadding(mDeviceProfile.folderChildDrawablePaddingPx);
@@ -382,7 +382,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         setMaxLines(1);
         setVisibility(VISIBLE);
 
-        // Lawnchair: Icon swipe gesture feature
+        // Mellune: Icon swipe gesture feature
         mGestureListener = null;
         mShouldHandleIconSwipeTouch = false;
     }
@@ -504,7 +504,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     protected void setItemInfo(ItemInfoWithIcon itemInfo) {
         setTag(itemInfo);
-        // Lawnchair: Icon swipe gesture feature
+        // Mellune: Icon swipe gesture feature
         mGestureListener = shouldSupportIconSwipeGestures()
                 ? new IconGestureListener(this, pref2, itemInfo.getComponentKey())
                 : null;
@@ -701,7 +701,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
                 && shouldIgnoreTouchDown(event.getX(), event.getY())) {
             return false;
         }
-        // Lawnchair: Icon swipe gesture feature
+        // Mellune: Icon swipe gesture feature
         if (handleIconSwipeTouchEvent(event)) {
             return true;
         }
@@ -729,7 +729,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
                 || x > getWidth() - getPaddingRight();
     }
 
-    /** Lawnchair: Handle icon swipe gesture feature, self-explanatory. 
+    /** Mellune: Handle icon swipe gesture feature, self-explanatory. 
      * Only do horizontal gesture at the moment
      * @param event The type of MotionEvent to handle */
     private boolean handleIconSwipeTouchEvent(MotionEvent event) {
@@ -769,20 +769,20 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         return false;
     }
 
-    /** Lawnchair: Check eligibility for icon swipe gesture to be greenlit */
+    /** Mellune: Check eligibility for icon swipe gesture to be greenlit */
     private boolean isIconSwipeGestureEnabledForCurrentState() {
         return !(mActivity instanceof Launcher launcher 
             && launcher.isInState(LauncherState.EDIT_MODE));
     }
 
-    /** Lawnchair: Check if icon swipe feature is enabled, and has a gesture configured for it */
+    /** Mellune: Check if icon swipe feature is enabled, and has a gesture configured for it */
     public boolean hasConfiguredIconSwipeGesture() {
         return mGestureListener != null
                 && isIconSwipeGestureEnabledForCurrentState()
                 && mGestureListener.hasAnyGestureConfigured();
     }
 
-    /** Lawnchair: Check if icon swipe feature is enabled, 
+    /** Mellune: Check if icon swipe feature is enabled, 
      * and has a horizontal gesture configured for it */
     public boolean hasConfiguredHorizontalIconSwipeGesture() {
         return mGestureListener != null
@@ -790,7 +790,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
                 && mGestureListener.hasHorizontalGestureConfigured();
     }
 
-    /** Lawnchair: Check if icon swipe feature is enabled, 
+    /** Mellune: Check if icon swipe feature is enabled, 
      * and has a vertical gesture configured for it */
     public boolean hasConfiguredVerticalIconSwipeGesture() {
         return mGestureListener != null
@@ -798,7 +798,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
             && mGestureListener.hasVerticalGestureConfigured();
     }
 
-    /** Lawnchair: Get supported swipe target which are within workspace or within folder */
+    /** Mellune: Get supported swipe target which are within workspace or within folder */
     private boolean shouldSupportIconSwipeGestures() {
         return mDisplay == DISPLAY_WORKSPACE || mDisplay == DISPLAY_FOLDER;
     }

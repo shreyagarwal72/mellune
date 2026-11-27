@@ -62,7 +62,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name="app.lawnchair.ui.preferences.PreferenceActivity"
+            android:name="app.mellune.ui.preferences.PreferenceActivity"
             android:autoRemoveFromRecents="true"
             android:exported="true"
             android:label="@string/settings_button_text"
@@ -79,14 +79,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="lawnchair" android:host="settings" android:pathPrefix="/" />
+                <data android:scheme="mellune" android:host="settings" android:pathPrefix="/" />
             </intent-filter>
         </activity>
 
         <activity
             android:label="@string/lawnchair_actions"
             android:icon="@mipmap/ic_launcher_home"
-            android:name="app.lawnchair.gestures.ui.LawnchairShortcutActivity"
+            android:name="app.mellune.gestures.ui.MelluneShortcutActivity"
             android:exported="true"
             android:theme="@style/Theme.Mellune">
             <intent-filter>
@@ -96,11 +96,11 @@
         </activity>
 
         <activity
-            android:name="app.lawnchair.gestures.ui.RunHandlerActivity"
+            android:name="app.mellune.gestures.ui.RunHandlerActivity"
             android:exported="true"
             android:theme="@style/Theme.Mellune">
             <intent-filter>
-                <action android:name="app.lawnchair.START_ACTION" />
+                <action android:name="app.mellune.START_ACTION" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -111,25 +111,26 @@
             tools:node="remove" />
 
         <activity
-            android:name="app.lawnchair.ui.ApplyIconPackActivity"
+            android:name="app.mellune.ui.ApplyIconPackActivity"
             android:exported="true"
             android:theme="@style/Theme.Transparent">
             <intent-filter>
+                <action android:name="app.mellune.APPLY_ICONS" />
                 <action android:name="app.lawnchair.APPLY_ICONS" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <activity
-            android:name="app.lawnchair.BlankActivity"
+            android:name="app.mellune.BlankActivity"
             android:theme="@style/Theme.Transparent" />
 
         <activity
-            android:name="app.lawnchair.smartspace.SmartspacePreferencesShortcut"
+            android:name="app.mellune.smartspace.SmartspacePreferencesShortcut"
             android:theme="@style/Theme.Transparent" />
 
         <receiver
-            android:name="app.lawnchair.gestures.handlers.SleepMethodDeviceAdmin$SleepDeviceAdmin"
+            android:name="app.mellune.gestures.handlers.SleepMethodDeviceAdmin$SleepDeviceAdmin"
             android:description="@string/dt2s_admin_hint"
             android:exported="true"
             android:label="@string/derived_app_name"
@@ -143,7 +144,7 @@
         </receiver>
 
         <service
-            android:name="app.lawnchair.LawnchairAccessibilityService"
+            android:name="app.mellune.MelluneAccessibilityService"
             android:exported="false"
             android:label="@string/derived_app_name"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
@@ -156,7 +157,7 @@
         </service>
 
         <provider
-            android:name="app.lawnchair.bugreport.FileProvider"
+            android:name="app.mellune.bugreport.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -166,13 +167,13 @@
         </provider>
 
         <provider
-            android:name="app.lawnchair.search.LawnchairRecentSuggestionProvider"
-            android:authorities="${applicationId}.search.LawnchairRecentSuggestionProvider"
+            android:name="app.mellune.search.MelluneRecentSuggestionProvider"
+            android:authorities="${applicationId}.search.MelluneRecentSuggestionProvider"
             android:syncable="true"
             android:exported="false" />
 
         <receiver
-            android:name="app.lawnchair.bugreport.BugReportReceiver"
+            android:name="app.mellune.bugreport.BugReportReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="${applicationId}.bugreport.COPY" />
@@ -182,14 +183,14 @@
         </receiver>
 
         <service
-            android:name="app.lawnchair.bugreport.UploaderService"
+            android:name="app.mellune.bugreport.UploaderService"
             android:enabled="true"
             android:exported="false"
             android:process=":bugReport"
             android:foregroundServiceType="dataSync" />
 
         <receiver
-            android:name="app.lawnchair.smartspace.SmartspaceAppWidgetProvider"
+            android:name="app.mellune.smartspace.SmartspaceAppWidgetProvider"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

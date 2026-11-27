@@ -255,7 +255,7 @@ import com.android.launcher3.util.WallpaperThemeManager;
 import com.android.launcher3.views.FloatingIconView;
 import com.android.launcher3.views.FloatingSurfaceView;
 import com.android.launcher3.views.OptionsPopupView;
-import app.lawnchair.views.EditModePageStrip;
+import app.mellune.views.EditModePageStrip;
 import com.android.launcher3.views.ScrimView;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
 import com.android.launcher3.widget.LauncherAppWidgetProviderInfo;
@@ -291,7 +291,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import app.lawnchair.LawnchairApp;
+import app.mellune.MelluneApp;
 
 /**
  * Default launcher application.
@@ -1242,7 +1242,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         DragView.removeAllViews(this);
         if (mWorkspace != null) {
-            app.lawnchair.util.MelluneMotionHelper.playWorkspaceReturnMotion(mWorkspace);
+            app.mellune.util.MelluneMotionHelper.playWorkspaceReturnMotion(mWorkspace);
         }
         TraceHelper.INSTANCE.endSection();
     }
@@ -1586,7 +1586,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         @Override
         public void onUserPresent() {
             if (mWorkspace != null && getStateManager().getState() == LauncherState.NORMAL) {
-                app.lawnchair.util.MelluneMotionHelper.playUnlockBloom(mWorkspace, mHotseat);
+                app.mellune.util.MelluneMotionHelper.playUnlockBloom(mWorkspace, mHotseat);
             }
         }
     };
@@ -1646,7 +1646,7 @@ public class Launcher extends StatefulActivity<LauncherState>
                     // Only change state, if not already the same. This prevents cancelling any
                     // animations running as part of resume
                     boolean animate = mStateManager.shouldAnimateStateChange();
-                    if (!LawnchairApp.isRecentsEnabled()) {
+                    if (!MelluneApp.isRecentsEnabled()) {
                         animate &= alreadyOnHome;
                     }
                     mStateManager.goToState(NORMAL, animate);
@@ -2171,7 +2171,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         RunnableList result = super.startActivitySafely(v, intent, item);
         if (v != null) {
-            app.lawnchair.util.MelluneMotionHelper.playLaunchParallax(v);
+            app.mellune.util.MelluneMotionHelper.playLaunchParallax(v);
         }
         if (result != null && v instanceof BubbleTextView) {
             // This is set to the view that launched the activity that navigated the user away
@@ -2182,7 +2182,7 @@ public class Launcher extends StatefulActivity<LauncherState>
             btv.setStayPressed(true);
             result.add(() -> {
                 btv.clearPressedIconState();
-                app.lawnchair.util.MelluneMotionHelper.playReturnRebound(btv);
+                app.mellune.util.MelluneMotionHelper.playReturnRebound(btv);
             });
         }
         return result;

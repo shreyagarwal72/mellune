@@ -43,7 +43,7 @@ import com.android.launcher3.icons.BitmapRenderer;
 import com.android.launcher3.util.Preconditions;
 import com.android.launcher3.views.ActivityContext;
 
-import app.lawnchair.icons.CustomAdaptiveIconDrawable;
+import app.mellune.icons.CustomAdaptiveIconDrawable;
 
 /**
  * {@link AdaptiveIconDrawable} representation of a {@link FolderIcon}
@@ -127,7 +127,7 @@ public class FolderAdaptiveIcon extends AdaptiveIconDrawable {
         // Only convert foreground to a bitmap as it can contain multiple draw commands. Other
         // layers either draw a nothing or a single draw call.
         // Bitmap.createBitmap(Picture) requires API 28, so rasterize into a software bitmap
-        // on the older versions Lawnchair still supports.
+        // on the older versions Mellune still supports.
         Bitmap fgBitmap = ATLEAST_P
                 ? Bitmap.createBitmap(foreground)
                 : BitmapRenderer.createSoftwareBitmap(foreground.getWidth(), foreground.getHeight(),

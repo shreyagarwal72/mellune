@@ -146,19 +146,19 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import app.lawnchair.hotseat.HotseatPagedView;
-import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
-import static app.lawnchair.util.LawnchairUtilsKt.toBitmap;
-import app.lawnchair.LawnchairApp;
-import app.lawnchair.LawnchairAppKt;
-import app.lawnchair.preferences.PreferenceManager;
-import app.lawnchair.preferences2.PreferenceManager2;
-import app.lawnchair.smartspace.DoubleShadowTextView;
-import app.lawnchair.smartspace.SmartspaceAppWidgetProvider;
-import app.lawnchair.smartspace.model.LawnchairSmartspace;
-import app.lawnchair.smartspace.model.SmartspaceMode;
-import app.lawnchair.theme.drawable.DrawableTokens;
-import app.lawnchair.util.LawnchairUtilsKt;
+import app.mellune.hotseat.HotseatPagedView;
+import app.mellune.preferences2.PreferenceCacheExtensionsKt;
+import static app.mellune.util.MelluneUtilsKt.toBitmap;
+import app.mellune.MelluneApp;
+import app.mellune.MelluneAppKt;
+import app.mellune.preferences.PreferenceManager;
+import app.mellune.preferences2.PreferenceManager2;
+import app.mellune.smartspace.DoubleShadowTextView;
+import app.mellune.smartspace.SmartspaceAppWidgetProvider;
+import app.mellune.smartspace.model.MelluneSmartspace;
+import app.mellune.smartspace.model.SmartspaceMode;
+import app.mellune.theme.drawable.DrawableTokens;
+import app.mellune.util.MelluneUtilsKt;
 
 /**
  * The workspace is a wide area with a wallpaper and a finite number of pages.
@@ -615,9 +615,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
     public void updateStatusbarClock() {
         if (mCurrentPage == 0 && PreferenceCacheExtensionsKt.firstCached(mPreferenceManager2.getStatusBarClock())) {
-            LawnchairAppKt.getLawnchairApp(mLauncher).hideClockInStatusBar();
+            MelluneAppKt.getMelluneApp(mLauncher).hideClockInStatusBar();
         } else {
-            LawnchairAppKt.getLawnchairApp(mLauncher).restoreClockInStatusBar();
+            MelluneAppKt.getMelluneApp(mLauncher).restoreClockInStatusBar();
         }
     }
 
@@ -674,7 +674,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             if (!smartspaceMode.isAvailable(this.mLauncher)) {
                 // The current smartspace mode is not available,
                 // setting the smartspace mode to one that is always available
-                smartspaceMode = LawnchairSmartspace.INSTANCE;
+                smartspaceMode = MelluneSmartspace.INSTANCE;
                 com.patrykmichalik.opto.core.PreferenceExtensionsKt.setBlocking(mPreferenceManager2.getSmartspaceMode(), smartspaceMode);
             }
             // In transposed layout, we add the first page pinned widget in the Grid.
@@ -1195,14 +1195,14 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (shouldSkipPagedViewInterceptionForIconSwipe(ev)) {
             return false;
-        } // Lawnchair: Icon swipe gesture feature
+        } // Mellune: Icon swipe gesture feature
         if (isTrackpadMultiFingerSwipe(ev)) {
             return false;
         }
         return super.onInterceptTouchEvent(ev);
     }
 
-    // Lawnchair: Icon swipe gesture feature
+    // Mellune: Icon swipe gesture feature
     private boolean shouldSkipPagedViewInterceptionForIconSwipe(MotionEvent ev) {
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -1231,7 +1231,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         }
     }
 
-    // Lawnchair: Icon swipe gesture feature
+    // Mellune: Icon swipe gesture feature
     public boolean isTouchOnIconWithSwipeGesture(float x, float y, boolean vertical) {
         boolean hasConfiguredIconSwipeGesture = false;
         BubbleTextView touchedIcon = findIconAtPosition(x, y);
@@ -1245,7 +1245,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         return hasConfiguredIconSwipeGesture;
     }
 
-    // Lawnchair: Icon swipe gesture feature
+    // Mellune: Icon swipe gesture feature
     private BubbleTextView findIconAtPosition(float x, float y) {
         for (int i = getChildCount() - 1; i >= 0; i--) {
             View child = getChildAt(i);
@@ -1265,7 +1265,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         return null;
     }
 
-    // Lawnchair: Icon swipe gesture feature
+    // Mellune: Icon swipe gesture feature
     private BubbleTextView findIconInCellLayout(CellLayout cellLayout, float x, float y) {
         ShortcutAndWidgetContainer container = cellLayout.getShortcutsAndWidgets();
         float containerX = x - container.getLeft();

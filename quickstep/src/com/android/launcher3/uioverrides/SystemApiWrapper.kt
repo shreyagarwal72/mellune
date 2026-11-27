@@ -39,8 +39,8 @@ import android.view.SurfaceControlViewHost
 import android.widget.Toast
 import android.window.RemoteTransition
 import android.window.ScreenCapture
-import com.android.launcher3.BaseActivity
 import androidx.annotation.RequiresApi
+import com.android.launcher3.BaseActivity
 import com.android.launcher3.Flags.enablePrivateSpace
 import com.android.launcher3.Flags.privateSpaceSysAppsSeparation
 import com.android.launcher3.R
@@ -57,7 +57,7 @@ import com.android.quickstep.util.FadeOutRemoteTransition
 import java.util.function.Supplier
 import javax.inject.Inject
 
-import app.lawnchair.LawnchairApp
+import app.mellune.MelluneApp
 
 /** A wrapper for the hidden API calls */
 @LauncherAppSingleton
@@ -86,7 +86,7 @@ open class SystemApiWrapper @Inject constructor(@ApplicationContext context: Con
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     override fun queryAllUsers(): Map<UserHandle, UserIconInfo> {
-        if (!enablePrivateSpace() || !LawnchairApp.isRecentsEnabled) {
+        if (!enablePrivateSpace() || !MelluneApp.isRecentsEnabled) {
             return super.queryAllUsers()
         }
         return try {

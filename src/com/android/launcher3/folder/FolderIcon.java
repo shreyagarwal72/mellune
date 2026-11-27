@@ -383,7 +383,7 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
             center[0] = Math.round(scaleRelativeToDragLayer * center[0]);
             center[1] = Math.round(scaleRelativeToDragLayer * center[1]);
 
-            // Lawnchair-TODO: if to is null we skip immediately to place the item. destination can be null (or nowhere)
+            // Mellune-TODO: if to is null we skip immediately to place the item. destination can be null (or nowhere)
             if (to != null) {
                 to.offset(center[0] - animateView.getMeasuredWidth() / 2,
                         center[1] - animateView.getMeasuredHeight() / 2);

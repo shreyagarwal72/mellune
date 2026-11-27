@@ -44,9 +44,9 @@ import com.android.quickstep.util.BaseDepthControllerImpl;
 import java.io.PrintWriter;
 import java.util.function.Consumer;
 
-import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
-import app.lawnchair.compat.LawnchairQuickstepCompat;
-import app.lawnchair.preferences2.PreferenceManager2;
+import app.mellune.preferences2.PreferenceCacheExtensionsKt;
+import app.mellune.compat.MelluneQuickstepCompat;
+import app.mellune.preferences2.PreferenceManager2;
 
 /**
  * Controls blur and wallpaper zoom, for the Launcher surface only.
@@ -230,7 +230,7 @@ public class DepthController extends BaseDepthControllerImpl implements StateHan
     @Override
     protected void applyDepthAndBlur() {
         try {
-            if (LawnchairQuickstepCompat.ATLEAST_R && mEnableDepth) {
+            if (MelluneQuickstepCompat.ATLEAST_R && mEnableDepth) {
                 ensureDependencies();
                 super.applyDepthAndBlur();
             } else if (mLauncher.getStateManager().getState() == LauncherState.NORMAL

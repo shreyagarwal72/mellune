@@ -1,0 +1,730 @@
+package app.mellune.util
+
+import android.animation.ValueAnimator
+import android.app.WallpaperManager
+import android.content.Context
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
+import android.os.IBinder
+import android.os.Looper
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.PathInterpolator
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
+import com.android.launcher3.BubbleTextView
+import com.android.launcher3.CellLayout
+import com.android.launcher3.Hotseat
+import com.android.launcher3.Workspace
+import java.lang.ref.WeakReference
+import java.util.WeakHashMap
+import kotlin.math.hypot
+import kotlin.math.max
+import kotlin.math.min
+
+/**
+ * Three-layer flagship spring parallax engine for Mellune Launcher.
+ *
+ * Coordinates foreground (launched icon / hotseat), midground (workspace container and active
+ * page icons/widgets), and background (wallpaper zoom-out and API 31+ RenderEffect blur) across
+ * app open, app close/return, and screen unlock transitions.
+ */
+object MelluneSpringEngine {
+
+    private const val STIFFNESS_TACTILE = 1200f
+    private const val STIFFNESS_MID = 520f
+    private const val STIFFNESS_BLOOM = 420f
+    private const val STIFFNESS_RETURN_ICON = 560f
+    private const val STIFFNESS_UNLOCK = 380f
+    private const val STIFFNESS_UNLOCK_HOTSEAT = 430f
+
+    private const val DAMPING_TACTILE = 0.78f
+    private const val DAMPING_BOUNCY = 0.72f
+    private const val DAMPING_SMOOTH = 0.86f
+    private const val DAMPING_BLOOM = 0.84f
+    private const val DAMPING_UNLOCK = 0.80f
+
+    private const val WALLPAPER_ZOOM_OPEN = 0.42f
+    private const val WALLPAPER_ZOOM_UNLOCK_START = 0.36f
+    private const val LAUNCH_BLUR_RADIUS = 8f
+
+    private val zoomInterpolator = PathInterpolator(0.22f, 1.0f, 0.36f, 1.0f)
+
+    private val activeSprings =
+        WeakHashMap<View, MutableMap<DynamicAnimation.ViewProperty, SpringAnimation>>()
+    private val trackedChildren = mutableListOf<WeakReference<View>>()
+
+    private var wallpaperZoomAnimator: ValueAnimator? = null
+    private var workspaceBlurAnimator: ValueAnimator? = null
+    private var currentWallpaperZoom = 0f
+    private var currentWorkspaceBlur = 0f
+    private var appliedWorkspaceBlur = false
+    private var transitionGeneration = 0
+
+    /**
+     * Triggers 3-layer app-open parallax when launching an item from the workspace or hotseat.
+     */
+    fun playAppOpenParallax(
+        workspace: Workspace<*>?,
+        hotseat: Hotseat?,
+        launchedView: View?,
+        windowToken: IBinder?,
+        context: Context,
+    ) {
+        val gen = ++transitionGeneration
+        val density = context.resources.displayMetrics.density
+
+        if (launchedView != null) {
+            playLaunchSink(launchedView)
+        }
+
+        if (workspace != null) {
+            animateSpring(workspace, DynamicAnimation.SCALE_X, 0.95f, STIFFNESS_MID, DAMPING_SMOOTH)
+            animateSpring(workspace, DynamicAnimation.SCALE_Y, 0.95f, STIFFNESS_MID, DAMPING_SMOOTH)
+            animateSpring(workspace, DynamicAnimation.ALPHA, 0.94f, STIFFNESS_MID, DAMPING_SMOOTH)
+            animateWorkspaceBlur(workspace, targetRadius = LAUNCH_BLUR_RADIUS, durationMs = 180L)
+
+            spreadSurroundingItems(
+                container = currentPageContainer(workspace),
+                launchedView = launchedView,
+                density = density,
+            )
+        }
+
+        if (hotseat != null && launchedView !== hotseat) {
+            val sinkY = 10f * density
+            animateSpring(hotseat, DynamicAnimation.SCALE_X, 0.93f, STIFFNESS_MID, DAMPING_SMOOTH)
+            animateSpring(hotseat, DynamicAnimation.SCALE_Y, 0.93f, STIFFNESS_MID, DAMPING_SMOOTH)
+            animateSpring(hotseat, DynamicAnimation.TRANSLATION_Y, sinkY, STIFFNESS_MID, DAMPING_SMOOTH)
+            animateSpring(hotseat, DynamicAnimation.ALPHA, 0.88f, STIFFNESS_MID, DAMPING_SMOOTH)
+        }
+
+        animateWallpaperZoom(
+            context = context,
+            windowToken = windowToken,
+            fromZoom = null,
+            targetZoom = WALLPAPER_ZOOM_OPEN,
+            durationMs = 220L,
+            generation = gen,
+        )
+    }
+
+    /**
+     * Triggers 3-layer return parallax when resuming home after closing or leaving an app.
+     */
+    fun playAppCloseParallax(
+        workspace: Workspace<*>?,
+        hotseat: Hotseat?,
+        lastLaunchedView: View?,
+        windowToken: IBinder?,
+        context: Context,
+    ) {
+        val gen = ++transitionGeneration
+        val density = context.resources.displayMetrics.density
+
+        animateWallpaperZoom(
+            context = context,
+            windowToken = windowToken,
+            fromZoom = max(currentWallpaperZoom, 0.34f),
+            targetZoom = 0f,
+            durationMs = 380L,
+            generation = gen,
+        )
+
+        if (workspace != null) {
+            val startScale = if (workspace.scaleX < 0.96f) workspace.scaleX else 0.92f
+            val startAlpha = if (workspace.alpha < 0.96f) workspace.alpha else 0.82f
+            animateWorkspaceBlur(workspace, targetRadius = 0f, durationMs = 220L)
+            animateSpring(
+                workspace,
+                DynamicAnimation.SCALE_X,
+                1.0f,
+                STIFFNESS_BLOOM,
+                DAMPING_BLOOM,
+                startValue = startScale,
+            )
+            animateSpring(
+                workspace,
+                DynamicAnimation.SCALE_Y,
+                1.0f,
+                STIFFNESS_BLOOM,
+                DAMPING_BLOOM,
+                startValue = startScale,
+            )
+            animateSpring(
+                workspace,
+                DynamicAnimation.ALPHA,
+                1.0f,
+                STIFFNESS_BLOOM,
+                DAMPING_BLOOM,
+                startValue = startAlpha,
+            )
+        }
+
+        restoreTrackedChildren(lastLaunchedView)
+        settleActivePageChildren(currentPageContainer(workspace), lastLaunchedView)
+
+        if (hotseat != null) {
+            val startScale = if (hotseat.scaleX < 0.97f) hotseat.scaleX else 0.95f
+            val startY = if (hotseat.translationY > 2f) hotseat.translationY else 12f * density
+            val startAlpha = if (hotseat.alpha < 0.97f) hotseat.alpha else 0.88f
+            animateSpring(
+                hotseat,
+                DynamicAnimation.SCALE_X,
+                1.0f,
+                STIFFNESS_BLOOM,
+                DAMPING_BOUNCY,
+                startValue = startScale,
+            )
+            animateSpring(
+                hotseat,
+                DynamicAnimation.SCALE_Y,
+                1.0f,
+                STIFFNESS_BLOOM,
+                DAMPING_BOUNCY,
+                startValue = startScale,
+            )
+            animateSpring(
+                hotseat,
+                DynamicAnimation.TRANSLATION_Y,
+                0f,
+                STIFFNESS_BLOOM,
+                DAMPING_BOUNCY,
+                startValue = startY,
+            )
+            animateSpring(
+                hotseat,
+                DynamicAnimation.ALPHA,
+                1.0f,
+                STIFFNESS_BLOOM,
+                DAMPING_SMOOTH,
+                startValue = startAlpha,
+            )
+        }
+
+        if (lastLaunchedView != null &&
+            lastLaunchedView.isAttachedToWindow &&
+            lastLaunchedView.isShown
+        ) {
+            playReturnRebound(lastLaunchedView)
+        }
+    }
+
+    /**
+     * Triggers staggered 3-layer bloom parallax when unlocking onto the home screen.
+     */
+    fun playUnlockParallax(
+        workspace: Workspace<*>?,
+        hotseat: Hotseat?,
+        windowToken: IBinder?,
+        context: Context,
+    ) {
+        val gen = ++transitionGeneration
+        val density = context.resources.displayMetrics.density
+
+        animateWallpaperZoom(
+            context = context,
+            windowToken = windowToken,
+            fromZoom = WALLPAPER_ZOOM_UNLOCK_START,
+            targetZoom = 0f,
+            durationMs = 460L,
+            generation = gen,
+        )
+
+        if (workspace != null) {
+            clearWorkspaceBlurImmediately(workspace)
+            animateSpring(
+                workspace,
+                DynamicAnimation.SCALE_X,
+                1.0f,
+                STIFFNESS_UNLOCK,
+                DAMPING_UNLOCK,
+                startValue = 0.96f,
+            )
+            animateSpring(
+                workspace,
+                DynamicAnimation.SCALE_Y,
+                1.0f,
+                STIFFNESS_UNLOCK,
+                DAMPING_UNLOCK,
+                startValue = 0.96f,
+            )
+            animateSpring(
+                workspace,
+                DynamicAnimation.ALPHA,
+                1.0f,
+                STIFFNESS_UNLOCK,
+                DAMPING_SMOOTH,
+                startValue = 0.85f,
+            )
+            staggerUnlockPageChildren(
+                container = currentPageContainer(workspace),
+                density = density,
+                generation = gen,
+            )
+        }
+
+        if (hotseat != null) {
+            animateSpring(
+                hotseat,
+                DynamicAnimation.SCALE_X,
+                1.0f,
+                STIFFNESS_UNLOCK_HOTSEAT,
+                DAMPING_UNLOCK,
+                startValue = 0.94f,
+            )
+            animateSpring(
+                hotseat,
+                DynamicAnimation.SCALE_Y,
+                1.0f,
+                STIFFNESS_UNLOCK_HOTSEAT,
+                DAMPING_UNLOCK,
+                startValue = 0.94f,
+            )
+            animateSpring(
+                hotseat,
+                DynamicAnimation.TRANSLATION_Y,
+                0f,
+                STIFFNESS_UNLOCK_HOTSEAT,
+                DAMPING_UNLOCK,
+                startValue = 20f * density,
+            )
+            animateSpring(
+                hotseat,
+                DynamicAnimation.ALPHA,
+                1.0f,
+                STIFFNESS_UNLOCK_HOTSEAT,
+                DAMPING_SMOOTH,
+                startValue = 0.4f,
+            )
+        }
+    }
+
+    /**
+     * Plays immediate tactile sink on the tapped icon at launch start.
+     */
+    fun playLaunchSink(view: View) {
+        trackChild(view)
+        animateSpring(view, DynamicAnimation.SCALE_X, 0.86f, STIFFNESS_TACTILE, DAMPING_TACTILE)
+        animateSpring(view, DynamicAnimation.SCALE_Y, 0.86f, STIFFNESS_TACTILE, DAMPING_TACTILE)
+        animateSpring(view, DynamicAnimation.ALPHA, 0.92f, STIFFNESS_TACTILE, DAMPING_SMOOTH)
+    }
+
+    /**
+     * Rebounds a launched icon back to resting scale and full opacity.
+     */
+    fun playReturnRebound(view: View) {
+        trackChild(view)
+        val startScale = if (view.scaleX < 0.94f) view.scaleX else 0.84f
+        animateSpring(
+            view,
+            DynamicAnimation.SCALE_X,
+            1.0f,
+            STIFFNESS_RETURN_ICON,
+            DAMPING_BOUNCY,
+            startValue = startScale,
+        )
+        animateSpring(
+            view,
+            DynamicAnimation.SCALE_Y,
+            1.0f,
+            STIFFNESS_RETURN_ICON,
+            DAMPING_BOUNCY,
+            startValue = startScale,
+        )
+        animateSpring(view, DynamicAnimation.TRANSLATION_X, 0f, STIFFNESS_RETURN_ICON, DAMPING_BOUNCY)
+        animateSpring(view, DynamicAnimation.TRANSLATION_Y, 0f, STIFFNESS_RETURN_ICON, DAMPING_BOUNCY)
+        animateSpring(view, DynamicAnimation.ALPHA, 1.0f, STIFFNESS_RETURN_ICON, DAMPING_SMOOTH)
+    }
+
+    /**
+     * Immediately resets any parallax transforms, blur, and wallpaper zoom to resting values.
+     */
+    fun resetRestState(
+        workspace: Workspace<*>?,
+        hotseat: Hotseat?,
+        windowToken: IBinder?,
+        context: Context,
+    ) {
+        ++transitionGeneration
+        wallpaperZoomAnimator?.cancel()
+        wallpaperZoomAnimator = null
+        currentWallpaperZoom = 0f
+        setWallpaperZoomSafe(context, windowToken, 0f)
+
+        workspaceBlurAnimator?.cancel()
+        workspaceBlurAnimator = null
+        currentWorkspaceBlur = 0f
+        if (workspace != null) {
+            clearWorkspaceBlurImmediately(workspace)
+            resetViewImmediately(workspace)
+            resetContainerChildrenImmediately(currentPageContainer(workspace))
+        }
+        if (hotseat != null) {
+            resetViewImmediately(hotseat)
+        }
+        for (ref in trackedChildren) {
+            val child = ref.get() ?: continue
+            resetViewImmediately(child)
+        }
+        trackedChildren.clear()
+    }
+
+    private fun currentPageContainer(workspace: Workspace<*>?): ViewGroup? {
+        if (workspace == null || workspace.pageCount <= 0) return null
+        val page = workspace.getPageAt(workspace.currentPage) as? CellLayout ?: return null
+        return page.shortcutsAndWidgets
+    }
+
+    private fun spreadSurroundingItems(
+        container: ViewGroup?,
+        launchedView: View?,
+        density: Float,
+    ) {
+        if (container == null || container.childCount == 0) return
+
+        val origin = IntArray(2)
+        val hasOrigin = launchedView != null && launchedView.isAttachedToWindow
+        if (hasOrigin) {
+            launchedView!!.getLocationInWindow(origin)
+            origin[0] += launchedView.width / 2
+            origin[1] += launchedView.height / 2
+        } else {
+            container.getLocationInWindow(origin)
+            origin[0] += container.width / 2
+            origin[1] += container.height / 2
+        }
+
+        val maxRadius = max(hypot(container.width.toFloat(), container.height.toFloat()), 1f)
+        val childLoc = IntArray(2)
+
+        for (i in 0 until container.childCount) {
+            val child = container.getChildAt(i) ?: continue
+            if (child === launchedView || child.visibility != View.VISIBLE) continue
+
+            trackChild(child)
+            child.getLocationInWindow(childLoc)
+            val cx = childLoc[0] + child.width / 2f
+            val cy = childLoc[1] + child.height / 2f
+            val dx = cx - origin[0]
+            val dy = cy - origin[1]
+            val dist = max(hypot(dx, dy), 1f)
+            val proximity = 1f - min(dist / maxRadius, 1f)
+            val maxShift = (if (child is BubbleTextView) 14f else 6f) * density
+            val shift = maxShift * (0.35f + 0.65f * proximity)
+
+            animateSpring(
+                child,
+                DynamicAnimation.TRANSLATION_X,
+                (dx / dist) * shift,
+                STIFFNESS_MID,
+                DAMPING_SMOOTH,
+            )
+            animateSpring(
+                child,
+                DynamicAnimation.TRANSLATION_Y,
+                (dy / dist) * shift,
+                STIFFNESS_MID,
+                DAMPING_SMOOTH,
+            )
+            animateSpring(child, DynamicAnimation.SCALE_X, 0.94f, STIFFNESS_MID, DAMPING_SMOOTH)
+            animateSpring(child, DynamicAnimation.SCALE_Y, 0.94f, STIFFNESS_MID, DAMPING_SMOOTH)
+            animateSpring(child, DynamicAnimation.ALPHA, 0.88f, STIFFNESS_MID, DAMPING_SMOOTH)
+        }
+    }
+
+    private fun restoreTrackedChildren(excludeView: View?) {
+        val iterator = trackedChildren.iterator()
+        while (iterator.hasNext()) {
+            val child = iterator.next().get()
+            if (child == null) {
+                iterator.remove()
+                continue
+            }
+            if (child === excludeView) continue
+            animateSpring(child, DynamicAnimation.TRANSLATION_X, 0f, STIFFNESS_BLOOM, DAMPING_BLOOM)
+            animateSpring(child, DynamicAnimation.TRANSLATION_Y, 0f, STIFFNESS_BLOOM, DAMPING_BLOOM)
+            animateSpring(child, DynamicAnimation.SCALE_X, 1.0f, STIFFNESS_BLOOM, DAMPING_BLOOM)
+            animateSpring(child, DynamicAnimation.SCALE_Y, 1.0f, STIFFNESS_BLOOM, DAMPING_BLOOM)
+            animateSpring(child, DynamicAnimation.ALPHA, 1.0f, STIFFNESS_BLOOM, DAMPING_SMOOTH)
+        }
+    }
+
+    private fun settleActivePageChildren(container: ViewGroup?, excludeView: View?) {
+        if (container == null) return
+        for (i in 0 until container.childCount) {
+            val child = container.getChildAt(i) ?: continue
+            if (child === excludeView || child.visibility != View.VISIBLE) continue
+            trackChild(child)
+            val startScale = if (child.scaleX < 0.97f) child.scaleX else 0.96f
+            animateSpring(
+                child,
+                DynamicAnimation.SCALE_X,
+                1.0f,
+                STIFFNESS_BLOOM,
+                DAMPING_BLOOM,
+                startValue = startScale,
+            )
+            animateSpring(
+                child,
+                DynamicAnimation.SCALE_Y,
+                1.0f,
+                STIFFNESS_BLOOM,
+                DAMPING_BLOOM,
+                startValue = startScale,
+            )
+            animateSpring(child, DynamicAnimation.TRANSLATION_X, 0f, STIFFNESS_BLOOM, DAMPING_BLOOM)
+            animateSpring(child, DynamicAnimation.TRANSLATION_Y, 0f, STIFFNESS_BLOOM, DAMPING_BLOOM)
+            animateSpring(child, DynamicAnimation.ALPHA, 1.0f, STIFFNESS_BLOOM, DAMPING_SMOOTH)
+        }
+    }
+
+    private fun staggerUnlockPageChildren(
+        container: ViewGroup?,
+        density: Float,
+        generation: Int,
+    ) {
+        if (container == null || container.childCount == 0) return
+
+        val centerX = container.width / 2f
+        val centerY = container.height / 2f
+        val maxDist = max(hypot(centerX, centerY), 1f)
+
+        for (i in 0 until container.childCount) {
+            val child = container.getChildAt(i) ?: continue
+            if (child.visibility != View.VISIBLE) continue
+            trackChild(child)
+
+            val cx = child.x + child.width / 2f
+            val cy = child.y + child.height / 2f
+            val distRatio = min(hypot(cx - centerX, cy - centerY) / maxDist, 1f)
+            val startScale = 0.85f
+            val startY = (24f + distRatio * 20f) * density
+            val delayMs = min((distRatio * 110f).toLong(), 140L)
+
+            cancelSprings(child)
+            child.scaleX = startScale
+            child.scaleY = startScale
+            child.translationX = 0f
+            child.translationY = startY
+            child.alpha = 0.14f
+
+            child.postDelayed(
+                {
+                    if (generation != transitionGeneration || !child.isAttachedToWindow) return@postDelayed
+                    animateSpring(
+                        child,
+                        DynamicAnimation.SCALE_X,
+                        1.0f,
+                        STIFFNESS_UNLOCK,
+                        DAMPING_UNLOCK,
+                        startValue = child.scaleX,
+                    )
+                    animateSpring(
+                        child,
+                        DynamicAnimation.SCALE_Y,
+                        1.0f,
+                        STIFFNESS_UNLOCK,
+                        DAMPING_UNLOCK,
+                        startValue = child.scaleY,
+                    )
+                    animateSpring(
+                        child,
+                        DynamicAnimation.TRANSLATION_Y,
+                        0f,
+                        STIFFNESS_UNLOCK,
+                        DAMPING_UNLOCK,
+                        startValue = child.translationY,
+                    )
+                    animateSpring(
+                        child,
+                        DynamicAnimation.ALPHA,
+                        1.0f,
+                        STIFFNESS_UNLOCK,
+                        DAMPING_SMOOTH,
+                        startValue = child.alpha,
+                    )
+                },
+                delayMs,
+            )
+        }
+    }
+
+    private fun animateWallpaperZoom(
+        context: Context,
+        windowToken: IBinder?,
+        fromZoom: Float?,
+        targetZoom: Float,
+        durationMs: Long,
+        generation: Int,
+    ) {
+        wallpaperZoomAnimator?.cancel()
+        wallpaperZoomAnimator = null
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || windowToken == null) {
+            currentWallpaperZoom = targetZoom
+            return
+        }
+
+        val start = fromZoom ?: currentWallpaperZoom
+        currentWallpaperZoom = start
+        setWallpaperZoomSafe(context, windowToken, start)
+
+        wallpaperZoomAnimator = ValueAnimator.ofFloat(start, targetZoom).apply {
+            duration = durationMs
+            interpolator = zoomInterpolator
+            addUpdateListener { anim ->
+                if (generation != transitionGeneration) {
+                    anim.cancel()
+                    return@addUpdateListener
+                }
+                val value = anim.animatedValue as Float
+                currentWallpaperZoom = value
+                setWallpaperZoomSafe(context, windowToken, value)
+            }
+            start()
+        }
+    }
+
+    private fun setWallpaperZoomSafe(
+        context: Context,
+        windowToken: IBinder?,
+        zoom: Float,
+    ) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || windowToken == null) return
+        runCatching {
+            WallpaperManager.getInstance(context).setWallpaperZoomOut(
+                windowToken,
+                zoom.coerceIn(0f, 1f),
+            )
+        }
+    }
+
+    private fun animateWorkspaceBlur(
+        workspace: Workspace<*>,
+        targetRadius: Float,
+        durationMs: Long,
+    ) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        if (!appliedWorkspaceBlur && targetRadius <= 0f) return
+
+        workspaceBlurAnimator?.cancel()
+        val start = currentWorkspaceBlur
+        if (start <= 0.01f && targetRadius <= 0.01f) {
+            clearWorkspaceBlurImmediately(workspace)
+            return
+        }
+
+        appliedWorkspaceBlur = true
+        workspaceBlurAnimator = ValueAnimator.ofFloat(start, targetRadius).apply {
+            duration = durationMs
+            interpolator = zoomInterpolator
+            addUpdateListener { anim ->
+                val radius = anim.animatedValue as Float
+                currentWorkspaceBlur = radius
+                if (radius <= 0.35f) {
+                    workspace.setRenderEffect(null)
+                    if (targetRadius == 0f) {
+                        appliedWorkspaceBlur = false
+                    }
+                } else {
+                    workspace.setRenderEffect(
+                        RenderEffect.createBlurEffect(radius, radius, Shader.TileMode.CLAMP),
+                    )
+                }
+            }
+            start()
+        }
+    }
+
+    private fun clearWorkspaceBlurImmediately(workspace: Workspace<*>) {
+        workspaceBlurAnimator?.cancel()
+        workspaceBlurAnimator = null
+        currentWorkspaceBlur = 0f
+        if (appliedWorkspaceBlur && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            workspace.setRenderEffect(null)
+        }
+        appliedWorkspaceBlur = false
+    }
+
+    private fun animateSpring(
+        view: View,
+        property: DynamicAnimation.ViewProperty,
+        finalPosition: Float,
+        stiffness: Float,
+        dampingRatio: Float,
+        startValue: Float? = null,
+    ) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            view.post {
+                animateSpring(view, property, finalPosition, stiffness, dampingRatio, startValue)
+            }
+            return
+        }
+
+        val viewMap = activeSprings.getOrPut(view) { mutableMapOf() }
+        viewMap.remove(property)?.cancel()
+
+        if (startValue != null) {
+            applyPropertyValue(view, property, startValue)
+        }
+
+        val spring = SpringAnimation(view, property, finalPosition).apply {
+            spring = SpringForce(finalPosition).apply {
+                this.stiffness = stiffness
+                this.dampingRatio = dampingRatio
+            }
+            if (startValue != null) {
+                setStartValue(startValue)
+            }
+            addEndListener { _, _, _, _ ->
+                activeSprings[view]?.remove(property)
+            }
+        }
+        viewMap[property] = spring
+        spring.start()
+    }
+
+    private fun cancelSprings(view: View) {
+        if (Looper.myLooper() != Looper.getMainLooper()) return
+        activeSprings.remove(view)?.values?.forEach { it.cancel() }
+    }
+
+    private fun resetViewImmediately(view: View) {
+        cancelSprings(view)
+        view.scaleX = 1.0f
+        view.scaleY = 1.0f
+        view.translationX = 0f
+        view.translationY = 0f
+        view.alpha = 1.0f
+    }
+
+    private fun resetContainerChildrenImmediately(container: ViewGroup?) {
+        if (container == null) return
+        for (i in 0 until container.childCount) {
+            val child = container.getChildAt(i) ?: continue
+            resetViewImmediately(child)
+        }
+    }
+
+    private fun applyPropertyValue(
+        view: View,
+        property: DynamicAnimation.ViewProperty,
+        value: Float,
+    ) {
+        when (property) {
+            DynamicAnimation.SCALE_X -> view.scaleX = value
+            DynamicAnimation.SCALE_Y -> view.scaleY = value
+            DynamicAnimation.TRANSLATION_X -> view.translationX = value
+            DynamicAnimation.TRANSLATION_Y -> view.translationY = value
+            DynamicAnimation.ALPHA -> view.alpha = value
+        }
+    }
+
+    private fun trackChild(view: View) {
+        if (trackedChildren.any { it.get() === view }) return
+        trackedChildren.add(WeakReference(view))
+    }
+}

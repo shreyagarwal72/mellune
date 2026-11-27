@@ -57,26 +57,26 @@ import com.android.launcher3.widget.util.WidgetSizeHandler;
 
 import javax.inject.Named;
 
-import app.lawnchair.DeviceProfileOverrides;
-import app.lawnchair.HeadlessWidgetsManager;
-import app.lawnchair.LawnchairActivityCachingLogic;
-import app.lawnchair.NotificationManager;
-import app.lawnchair.data.folder.service.FolderService;
-import app.lawnchair.data.iconoverride.IconOverrideRepository;
-import app.lawnchair.data.wallpaper.service.WallpaperService;
-import app.lawnchair.font.FontCache;
-import app.lawnchair.font.FontManager;
-import app.lawnchair.font.googlefonts.GoogleFontsListing;
-import app.lawnchair.icons.iconpack.IconPackProvider;
-import app.lawnchair.icons.shape.IconShapeManager;
-import app.lawnchair.preferences.PreferenceManager;
-import app.lawnchair.predictions.LawnchairPredictionManager;
-import app.lawnchair.preferences2.PreferenceManager2;
-import app.lawnchair.smartspace.provider.SmartspaceProvider;
-import app.lawnchair.theme.ThemeProvider;
-import app.lawnchair.ui.preferences.components.colorpreference.ColorPreferenceModelList;
-import app.lawnchair.ui.preferences.data.liveinfo.LiveInformationManager;
-import app.lawnchair.util.LawnchairWindowManagerProxy;
+import app.mellune.DeviceProfileOverrides;
+import app.mellune.HeadlessWidgetsManager;
+import app.mellune.MelluneActivityCachingLogic;
+import app.mellune.NotificationManager;
+import app.mellune.data.folder.service.FolderService;
+import app.mellune.data.iconoverride.IconOverrideRepository;
+import app.mellune.data.wallpaper.service.WallpaperService;
+import app.mellune.font.FontCache;
+import app.mellune.font.FontManager;
+import app.mellune.font.googlefonts.GoogleFontsListing;
+import app.mellune.icons.iconpack.IconPackProvider;
+import app.mellune.icons.shape.IconShapeManager;
+import app.mellune.preferences.PreferenceManager;
+import app.mellune.predictions.MellunePredictionManager;
+import app.mellune.preferences2.PreferenceManager2;
+import app.mellune.smartspace.provider.SmartspaceProvider;
+import app.mellune.theme.ThemeProvider;
+import app.mellune.ui.preferences.components.colorpreference.ColorPreferenceModelList;
+import app.mellune.ui.preferences.data.liveinfo.LiveInformationManager;
+import app.mellune.util.MelluneWindowManagerProxy;
 import dagger.BindsInstance;
 
 /**
@@ -127,9 +127,9 @@ public interface LauncherBaseAppComponent {
     WidgetSizeHandler getWidgetSizeHandler();
 
 
-    // Lawnchair-specific
+    // Mellune-specific
     
-    LawnchairWindowManagerProxy getLWMP();
+    MelluneWindowManagerProxy getLWMP();
     DeviceProfileOverrides getDPO();
     ThemeProvider getThemeProvider();
     SmartspaceProvider getSmartspaceProvider();
@@ -137,7 +137,7 @@ public interface LauncherBaseAppComponent {
     NotificationManager getNotificationManager();
     ColorPreferenceModelList getColorPreferenceModelList();
     LiveInformationManager getLiveInformationManager();
-    LawnchairPredictionManager getLawnchairPredictionManager();
+    MellunePredictionManager getMellunePredictionManager();
     PreferenceManager2 getPreferenceManager2();
     PreferenceManager getPreferenceManager();
     FontCache getFontCache();
@@ -148,7 +148,7 @@ public interface LauncherBaseAppComponent {
     WallpaperService getWallpaperService();
     IconOverrideRepository getIconOverrideRepository();
 
-    LawnchairActivityCachingLogic getLawnchairActivityCachingLogic();
+    MelluneActivityCachingLogic getMelluneActivityCachingLogic();
     FolderService getFolderService();
 
     /** Builder for LauncherBaseAppComponent. */

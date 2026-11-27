@@ -58,17 +58,17 @@ import java.io.PrintWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import app.lawnchair.hotseat.DisabledHotseat;
-import app.lawnchair.hotseat.HotseatMode;
-import app.lawnchair.hotseat.HotseatPagedView;
-import app.lawnchair.hotseat.LawnchairHotseat;
-import app.lawnchair.preferences.PreferenceManager;
-import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
-import app.lawnchair.preferences2.PreferenceManager2;
+import app.mellune.hotseat.DisabledHotseat;
+import app.mellune.hotseat.HotseatMode;
+import app.mellune.hotseat.HotseatPagedView;
+import app.mellune.hotseat.MelluneHotseat;
+import app.mellune.preferences.PreferenceManager;
+import app.mellune.preferences2.PreferenceCacheExtensionsKt;
+import app.mellune.preferences2.PreferenceManager2;
 
 /**
  * View class that represents the bottom dock of the home screen.
- * Hosts a {@link app.lawnchair.hotseat.HotseatPagedView} of icon grids plus an optional QSB.
+ * Hosts a {@link app.mellune.hotseat.HotseatPagedView} of icon grids plus an optional QSB.
  */
 public class Hotseat extends FrameLayout implements Insettable {
 
@@ -144,7 +144,7 @@ public class Hotseat extends FrameLayout implements Insettable {
         if (!hotseatMode.isAvailable(context)) {
             // The current hotseat mode is not available,
             // setting the hotseat mode to one that is always available
-            hotseatMode = LawnchairHotseat.INSTANCE;
+            hotseatMode = MelluneHotseat.INSTANCE;
             com.patrykmichalik.opto.core.PreferenceExtensionsKt.setBlocking(preferenceManager2.getHotseatMode(), hotseatMode);
         }
         int layoutId = hotseatMode.getLayoutResourceId();
