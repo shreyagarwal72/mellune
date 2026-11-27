@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.pm.LauncherApps
 import android.graphics.drawable.Drawable
 import android.os.Process
-import app.mellune.icons.ClockMetadata
+import app.lawnchair.icons.ClockMetadata
 import app.mellune.icons.picker.IconEntry
 import app.mellune.icons.picker.IconPickerCategory
 import app.mellune.icons.picker.IconPickerItem

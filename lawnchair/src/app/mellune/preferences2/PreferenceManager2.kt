@@ -28,13 +28,13 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import app.lawnchair.icons.CustomAdaptiveIconDrawable
 import app.mellune.data.Converters
 import app.mellune.font.FontCache
 import app.mellune.gestures.config.GestureHandlerConfig
 import app.mellune.gestures.handlers.SleepMode
 import app.mellune.gestures.type.GestureType
 import app.mellune.hotseat.HotseatMode
-import app.mellune.icons.CustomAdaptiveIconDrawable
 import app.mellune.icons.shape.IconShape
 import app.mellune.icons.shape.IconShapeManager
 import app.mellune.predictions.PredictionMode

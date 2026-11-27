@@ -6,10 +6,10 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Process
 import android.os.UserHandle
-import app.mellune.icons.ClockMetadata
-import app.mellune.icons.CustomAdaptiveIconDrawable
+import app.lawnchair.icons.ClockMetadata
+import app.lawnchair.icons.CustomAdaptiveIconDrawable
+import app.lawnchair.icons.shouldTransparentBGIcons
 import app.mellune.icons.picker.IconEntry
-import app.mellune.icons.shouldTransparentBGIcons
 import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.dagger.LauncherAppComponent
 import com.android.launcher3.dagger.LauncherAppSingleton

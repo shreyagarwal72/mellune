@@ -9,8 +9,8 @@ import android.content.res.Resources
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
 import android.util.Xml
-import app.mellune.icons.ClockMetadata
-import app.mellune.icons.ExtendedBitmapDrawable
+import app.lawnchair.icons.ClockMetadata
+import app.lawnchair.icons.ExtendedBitmapDrawable
 import app.mellune.icons.picker.IconEntry
 import app.mellune.icons.picker.IconPickerCategory
 import app.mellune.icons.picker.IconPickerItem

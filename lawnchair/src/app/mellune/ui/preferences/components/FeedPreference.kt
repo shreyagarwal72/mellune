@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.lawnchair.icons.CustomAdaptiveIconDrawable
 import app.mellune.FeedBridge
-import app.mellune.icons.CustomAdaptiveIconDrawable
 import app.mellune.preferences.getAdapter
 import app.mellune.preferences.preferenceManager
 import app.mellune.ui.preferences.components.controls.ListPreference

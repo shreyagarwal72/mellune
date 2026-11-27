@@ -107,7 +107,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import app.mellune.icons.ExtendedBitmapDrawable;
+import app.lawnchair.icons.ExtendedBitmapDrawable;
 import app.mellune.preferences.PreferenceManager;
 
 /**

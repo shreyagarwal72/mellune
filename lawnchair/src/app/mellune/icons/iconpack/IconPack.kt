@@ -3,7 +3,7 @@ package app.mellune.icons.iconpack
 import android.content.ComponentName
 import android.content.Context
 import android.graphics.drawable.Drawable
-import app.mellune.icons.ClockMetadata
+import app.lawnchair.icons.ClockMetadata
 import app.mellune.icons.picker.IconEntry
 import app.mellune.icons.picker.IconPickerCategory
 import app.mellune.icons.picker.IconPickerItem

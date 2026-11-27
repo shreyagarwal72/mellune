@@ -21,7 +21,7 @@ import android.content.Intent
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import app.mellune.icons.CustomAdaptiveIconDrawable
+import app.lawnchair.icons.CustomAdaptiveIconDrawable
 import app.mellune.ui.preferences.destinations.icons.IconPackInfo
 import app.mellune.util.Constants.LAWNICONS_PACKAGE_NAME
 import app.mellune.util.getPackageVersionCode

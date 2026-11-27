@@ -26,6 +26,7 @@ import android.util.ArrayMap
 import android.util.Log
 import androidx.core.content.getSystemService
 import androidx.core.graphics.drawable.toDrawable
+import app.lawnchair.icons.CustomAdaptiveIconDrawable
 import app.mellune.data.iconoverride.IconOverrideRepository
 import app.mellune.icons.iconpack.IconPack
 import app.mellune.icons.iconpack.IconPackProvider
