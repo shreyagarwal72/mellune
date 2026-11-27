@@ -372,7 +372,7 @@ composeCompiler {
     stabilityConfigurationFiles.addAll(
         layout.projectDirectory.file("compose_compiler_config.conf"),
     )
-    if (providers.gradleProperty("enableComposeReports").isPresent) {
+    if (providers.gradleProperty("enableComposeReports").present) {
         reportsDestination = layout.buildDirectory.dir("compose_build_reports")
     }
 }
