@@ -191,7 +191,7 @@ object QuickSettingsSearchProvider : SearchProvider {
             torchEnabled = targetState
             context.getString(if (targetState) R.string.quick_toggle_state_on else R.string.quick_toggle_state_off)
         }.onFailure {
-            Toast.makeText(context, R.string.lawnchair_action_failed, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.mellune_action_failed, Toast.LENGTH_SHORT).show()
         }.getOrNull()
     }
 

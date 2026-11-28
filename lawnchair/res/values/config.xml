@@ -88,16 +88,16 @@
     <string name="config_default_app_drawer_bg_color" translatable="false">default</string>
 
     <!-- which smartspace mode to use by default -->
-    <string name="config_default_smartspace_mode" translatable="false">lawnchair</string>
+    <string name="config_default_smartspace_mode" translatable="false">mellune</string>
 
     <!-- which time format to use by default on smartspace -->
     <string name="config_default_smartspace_time_format" translatable="false">system</string>
 
     <!-- which prediction mode to use by default -->
-    <string name="config_default_prediction_mode" translatable="false">lawnchair</string>
+    <string name="config_default_prediction_mode" translatable="false">mellune</string>
 
     <!-- which hotseat mode to use by default -->
-    <string name="config_default_hotseat_mode" translatable="false">lawnchair</string>
+    <string name="config_default_hotseat_mode" translatable="false">mellune</string>
 
     <!-- which web search provider to use by default -->
     <string name="config_default_web_suggestion_provider" translatable="false">google</string>

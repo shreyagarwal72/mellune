@@ -73,7 +73,7 @@
     <plurals name="time_years_ago">
         <item quantity="other">%d ปี</item>
     </plurals>
-    <string name="managed_by_lawnchair">จัดการโดย Mellune</string>
+    <string name="managed_by_mellune">จัดการโดย Mellune</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">ปรับแต่ง</string>
     <string name="settings_button_text">การตั้งค่าหน้าโฮม</string>
@@ -556,7 +556,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">รายงานข้อผิดพลาดให้กับ Mellune</string>
+    <string name="mellune_bug_report">รายงานข้อผิดพลาดให้กับ Mellune</string>
     <string name="crash_report_notif_title">%1$s ทำงานผิดพลาด</string>
     <string name="action_upload_crash_report">อัปโหลด Log ข้อผิดพลาด</string>
     <string name="action_upload_error">อัปโหลดไม่สำเร็จ</string>
@@ -840,7 +840,7 @@
     <string name="grant_requested_permissions_tap">แตะเพื่ออนุญาตสิทธิ์</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">หน้าจอหลักถูกล้างแล้ว</string>
-    <string name="lawnchair_actions">Actions</string>
-    <string name="lawnchair_action_failed">Failed to trigger action</string>
+    <string name="mellune_actions">Actions</string>
+    <string name="mellune_action_failed">Failed to trigger action</string>
     <string name="please_wait">โปรดรอ…</string>
 </resources>

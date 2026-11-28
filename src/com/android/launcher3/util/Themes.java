@@ -109,7 +109,7 @@ public class Themes {
     }
 
     public static float getDialogCornerRadius(Context context) {
-        return context.getResources().getDimension(R.dimen.lawnchair_dialog_corner_radius);
+        return context.getResources().getDimension(R.dimen.mellune_dialog_corner_radius);
     }
 
     public static float getDimension(Context context, int attr, float defaultValue) {

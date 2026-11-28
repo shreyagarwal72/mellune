@@ -86,7 +86,7 @@
         </activity>
 
         <activity
-            android:label="@string/lawnchair_actions"
+            android:label="@string/mellune_actions"
             android:icon="@mipmap/ic_launcher_home"
             android:name="app.mellune.gestures.ui.MelluneShortcutActivity"
             android:exported="true"

@@ -91,7 +91,7 @@
         <item quantity="other">%dy</item>
     </plurals>
 
-    <string name="managed_by_lawnchair">Managed by Mellune</string>
+    <string name="managed_by_mellune">Managed by Mellune</string>
 
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Preferences</string>
@@ -286,7 +286,7 @@
     <string name="prediction_mode_label">Suggestions provider</string>
     <string name="app_predictions_disable_reason_pre_q_description">This feature requires Android 10 or higher</string>
     <string name="prediction_mode_system">System</string>
-    <string name="prediction_mode_lawnchair" translatable="false">Mellune</string>
+    <string name="prediction_mode_mellune" translatable="false">Mellune</string>
     <string name="prediction_mode_none">Off</string>
     <string name="prediction_weighted_usage_stats_label">Use device usage data</string>
     <string name="prediction_weighted_usage_stats_description">Use your device\'s usage statistics to make suggestions more accurate</string>
@@ -564,7 +564,7 @@
 
     <!-- List of available providers -->
     <string name="smartspace_mode_label">At a Glance provider</string>
-    <string name="smartspace_mode_lawnchair" translatable="false">Mellune</string>
+    <string name="smartspace_mode_mellune" translatable="false">Mellune</string>
     <string name="smartspace_mode_google">Google</string>
     <string name="smartspace_mode_google_search">Google Search</string>
     <string name="smartspace_mode_smartspacer" translatable="false">Smartspacer</string>
@@ -719,7 +719,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Mellune bug report</string>
+    <string name="mellune_bug_report">Mellune bug report</string>
     <string name="crash_report_notif_title">%1$s crashed</string>
     <string name="action_upload_crash_report">Upload crash log</string>
 
@@ -826,7 +826,7 @@
     <string name="search_bar_settings">Search bar settings</string>
     <string name="hotseat_mode_label">Search bar widget</string>
     <string name="hotseat_mode_disabled">Disabled</string>
-    <string name="hotseat_mode_lawnchair" translatable="false">Mellune</string>
+    <string name="hotseat_mode_mellune" translatable="false">Mellune</string>
     <string name="hotseat_mode_google_search">Google search bar</string>
 
     <string name="qsb_hotseat_background_transparency">Background opacity</string>
@@ -1111,8 +1111,8 @@
     <string name="grant_requested_permissions_tap">Tap to grant permissions</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Home screen cleared</string>
-    <string name="lawnchair_actions">Actions</string>
-    <string name="lawnchair_action_failed">Failed to trigger action</string>
+    <string name="mellune_actions">Actions</string>
+    <string name="mellune_action_failed">Failed to trigger action</string>
 
     <string name="please_wait">Please wait…</string>
 

@@ -91,7 +91,7 @@
         <item quantity="many">%dy</item>
         <item quantity="other">%dy</item>
     </plurals>
-    <string name="managed_by_lawnchair">Управляется Mellune</string>
+    <string name="managed_by_mellune">Управляется Mellune</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Настройки</string>
     <string name="settings_button_text">Настройки лаунчера</string>
@@ -574,7 +574,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Отчет об ошибках Mellune</string>
+    <string name="mellune_bug_report">Отчет об ошибках Mellune</string>
     <string name="crash_report_notif_title">%1$s - произошел сбой</string>
     <string name="action_upload_crash_report">Отправить лог ошибки</string>
     <string name="action_upload_error">Отправка не удалась</string>
@@ -856,7 +856,7 @@
     <string name="grant_requested_permissions_tap">Нажмите, чтобы предоставить разрешения</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Главный экран очищен</string>
-    <string name="lawnchair_actions">Команды</string>
-    <string name="lawnchair_action_failed">Не удалось выполнить команду</string>
+    <string name="mellune_actions">Команды</string>
+    <string name="mellune_action_failed">Не удалось выполнить команду</string>
     <string name="please_wait">Пожалуйста, подождите…</string>
 </resources>

@@ -73,7 +73,7 @@
     <plurals name="time_years_ago">
         <item quantity="other">%d年</item>
     </plurals>
-    <string name="managed_by_lawnchair">由 Mellune 管理</string>
+    <string name="managed_by_mellune">由 Mellune 管理</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">偏好設定</string>
     <string name="settings_button_text">主畫面設定</string>
@@ -556,7 +556,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">回報 Mellune 問題</string>
+    <string name="mellune_bug_report">回報 Mellune 問題</string>
     <string name="crash_report_notif_title">%1$s 已崩潰</string>
     <string name="action_upload_crash_report">上傳錯誤報告</string>
     <string name="action_upload_error">上傳失敗</string>
@@ -840,7 +840,7 @@
     <string name="grant_requested_permissions_tap">輕觸以賦予權限</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">主畫面已清除</string>
-    <string name="lawnchair_actions">Actions</string>
-    <string name="lawnchair_action_failed">Failed to trigger action</string>
+    <string name="mellune_actions">Actions</string>
+    <string name="mellune_action_failed">Failed to trigger action</string>
     <string name="please_wait">Please wait…</string>
 </resources>

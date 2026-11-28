@@ -144,7 +144,7 @@
     <string name="dynamic">Dynamic</string>
     <string name="all_apps_search_market_message">Search for More Apps</string>
     <string name="show_app_search_bar">Show Search Bar</string>
-    <string name="lawnchair_bug_report">Mellune Bug Report</string>
+    <string name="mellune_bug_report">Mellune Bug Report</string>
     <string name="crash_report_notif_title">%1$s Crashed</string>
     <string name="action_copy_link">Copy Link</string>
     <string name="action_copy">Copy</string>

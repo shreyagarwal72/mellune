@@ -91,7 +91,7 @@
         <item quantity="many">%d let</item>
         <item quantity="other">%d let</item>
     </plurals>
-    <string name="managed_by_lawnchair">Spravováno aplikací Mellune</string>
+    <string name="managed_by_mellune">Spravováno aplikací Mellune</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Předvolby</string>
     <string name="settings_button_text">Nastavení domovské obrazovky</string>
@@ -574,7 +574,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Hlášení o chybě v Mellune</string>
+    <string name="mellune_bug_report">Hlášení o chybě v Mellune</string>
     <string name="crash_report_notif_title">%1$s přestal fungovat</string>
     <string name="action_upload_crash_report">Nahrát protokol pádů</string>
     <string name="action_upload_error">Nahrávání selhalo</string>
@@ -861,7 +861,7 @@
     <string name="grant_requested_permissions_tap">Klepnutím udělíte oprávnění</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Domovská obrazovka byla vymazána</string>
-    <string name="lawnchair_actions">Akce</string>
-    <string name="lawnchair_action_failed">Spuštění akce se nezdařilo</string>
+    <string name="mellune_actions">Akce</string>
+    <string name="mellune_action_failed">Spuštění akce se nezdařilo</string>
     <string name="please_wait">Počkejte prosím…</string>
 </resources>

@@ -130,7 +130,7 @@ class MelluneBackup(
 
         fun generateBackupFileName(): String {
             val fileName = "Mellune_Backup ${SimpleDateFormat.getDateTimeInstance().format(Date())}"
-            return "$fileName.lawnchairbackup"
+            return "$fileName.mellunebackup"
         }
 
         fun getFiles(context: Context, forRestore: Boolean): Map<String, File> {
@@ -150,7 +150,7 @@ class MelluneBackup(
             val colorHints = WallpaperManagerCompat.INSTANCE.get(context).wallpaperColors?.colorHints ?: 0
             val wallpaperSupportsDarkText = (colorHints and WallpaperColorsCompat.HINT_SUPPORTS_DARK_TEXT) != 0
             val info = BackupInfo.newBuilder()
-                .setLawnchairVersion(BuildConfig.VERSION_CODE)
+                .setMelluneVersion(BuildConfig.VERSION_CODE)
                 .setBackupVersion(BACKUP_VERSION)
                 .setCreatedAt(createdAt)
                 .setContents(contents)

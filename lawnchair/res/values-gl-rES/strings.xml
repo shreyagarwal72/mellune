@@ -79,7 +79,7 @@
         <item quantity="one">%d anos</item>
         <item quantity="other">%d anos</item>
     </plurals>
-    <string name="managed_by_lawnchair">Xestionado por Mellune</string>
+    <string name="managed_by_mellune">Xestionado por Mellune</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Preferencias</string>
     <string name="settings_button_text">Configuración do lanzador</string>
@@ -562,7 +562,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Informe de erros de Mellune</string>
+    <string name="mellune_bug_report">Informe de erros de Mellune</string>
     <string name="crash_report_notif_title">Fallou %1$s</string>
     <string name="action_upload_crash_report">Subir rexistro de erros</string>
     <string name="action_upload_error">Erro ao subir</string>
@@ -847,7 +847,7 @@
     <string name="grant_requested_permissions_tap">Preme para conceder permisos</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Pantalla de inicio limpa</string>
-    <string name="lawnchair_actions">Accións</string>
-    <string name="lawnchair_action_failed">Non foi posible activar a acción</string>
+    <string name="mellune_actions">Accións</string>
+    <string name="mellune_action_failed">Non foi posible activar a acción</string>
     <string name="please_wait">Agarde…</string>
 </resources>

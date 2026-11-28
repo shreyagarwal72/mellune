@@ -85,7 +85,7 @@
         <item quantity="few">%dy</item>
         <item quantity="other">%dy</item>
     </plurals>
-    <string name="managed_by_lawnchair">Управља Mellune</string>
+    <string name="managed_by_mellune">Управља Mellune</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Подешавања</string>
     <string name="settings_button_text">Подешавања почетног екрана</string>
@@ -568,7 +568,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Извештај о грешци у Mellune-у</string>
+    <string name="mellune_bug_report">Извештај о грешци у Mellune-у</string>
     <string name="crash_report_notif_title">%1$s је отказао</string>
     <string name="action_upload_crash_report">Отпреми евиденцију о отказивању</string>
     <string name="action_upload_error">Отпремање није успело</string>
@@ -854,7 +854,7 @@
     <string name="grant_requested_permissions_tap">Tap to grant permissions</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Home screen cleared</string>
-    <string name="lawnchair_actions">Actions</string>
-    <string name="lawnchair_action_failed">Failed to trigger action</string>
+    <string name="mellune_actions">Actions</string>
+    <string name="mellune_action_failed">Failed to trigger action</string>
     <string name="please_wait">Please wait…</string>
 </resources>

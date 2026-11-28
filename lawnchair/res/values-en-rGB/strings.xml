@@ -46,7 +46,7 @@
 
     <string name="loading">Loading…</string>
 
-    <string name="managed_by_lawnchair">Managed by Mellune</string>
+    <string name="managed_by_mellune">Managed by Mellune</string>
 
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Preferences</string>
@@ -444,7 +444,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Mellune bug report</string>
+    <string name="mellune_bug_report">Mellune bug report</string>
     <string name="crash_report_notif_title">%1$s crashed</string>
     <string name="action_upload_crash_report">Upload crash log</string>
 

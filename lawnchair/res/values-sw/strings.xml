@@ -231,14 +231,14 @@
     <string name="smartspace_widget_toggle_label">Onyesha kwenye Skrini ya Nyumbani</string>
     <string name="smartspace_widget_toggle_description">Kwa Mtazamo inaweza kuongezwa kwa mikono kwa kuwekan\"Mellune \" wijeti.</string>
     <string name="smartspace_mode_label">Kwa Mtazamo Mhudumu</string>
-    <string name="smartspace_mode_lawnchair">Mellune</string>
+    <string name="smartspace_mode_mellune">Mellune</string>
     <string name="smartspace_mode_google">Google</string>
     <string name="smartspace_mode_google_search">Utafutaji wa Google</string>
     <!-- DockPreferences -->
     <!-- <string name="dock_label" /> -->
     <string name="hotseat_mode_label">Wijeti ya Upau wa Utafutaji</string>
     <string name="hotseat_mode_disabled">Imezimwa</string>
-    <string name="hotseat_mode_lawnchair">Mellune</string>
+    <string name="hotseat_mode_mellune">Mellune</string>
     <string name="hotseat_mode_google_search">Upau wa Utafutaji wa Google</string>
     <string name="search_bar_label">Upau wa Utafutaji</string>
     <string name="corner_radius_label">Radi ya kona</string>
@@ -357,7 +357,7 @@
     <string name="hide_from_drawer">Ficha kutoka kwenye Droo ya Programu</string>
     <string name="suggestion_pref_screen_title">Suggestions</string>
     <!-- Bug reporting -->
-    <string name="lawnchair_bug_report">Ripoti ya Hitilafu ya Mellune</string>
+    <string name="mellune_bug_report">Ripoti ya Hitilafu ya Mellune</string>
     <string name="crash_report_notif_title">%1$s Imesimama Ghafla</string>
     <string name="action_upload_crash_report">Pakia kumbukumbu ya kuacha kufanya kazi</string>
     <string name="action_copy_link">Nakili kiungo</string>

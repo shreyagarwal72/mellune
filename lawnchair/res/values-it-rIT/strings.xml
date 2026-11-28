@@ -79,7 +79,7 @@
         <item quantity="one">%d anni</item>
         <item quantity="other">%d anni</item>
     </plurals>
-    <string name="managed_by_lawnchair">Gestito da Mellune</string>
+    <string name="managed_by_mellune">Gestito da Mellune</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Preferenze</string>
     <string name="settings_button_text">Impostazioni Home</string>
@@ -564,7 +564,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Segnala un bug di Mellune</string>
+    <string name="mellune_bug_report">Segnala un bug di Mellune</string>
     <string name="crash_report_notif_title">%1$s è crashato</string>
     <string name="action_upload_crash_report">Carica log del crash</string>
     <string name="action_upload_error">Caricamento fallito</string>
@@ -848,7 +848,7 @@
     <string name="grant_requested_permissions_tap">Tocca per concedere i permessi</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Schermata Home svuotata</string>
-    <string name="lawnchair_actions">Azioni</string>
-    <string name="lawnchair_action_failed">Impossibile attivare l\'azione</string>
+    <string name="mellune_actions">Azioni</string>
+    <string name="mellune_action_failed">Impossibile attivare l\'azione</string>
     <string name="please_wait">Per favore attendere</string>
 </resources>

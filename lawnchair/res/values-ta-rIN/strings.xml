@@ -79,7 +79,7 @@
         <item quantity="one">%dy</item>
         <item quantity="other">%dy</item>
     </plurals>
-    <string name="managed_by_lawnchair">லான்ச்சர் மூலம் நிர்வகிக்கப்படுகிறது</string>
+    <string name="managed_by_mellune">லான்ச்சர் மூலம் நிர்வகிக்கப்படுகிறது</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">சுமார்ட் இடம் விருப்பங்கள்</string>
     <string name="settings_button_text">முகப்பு அமைப்புகள்</string>
@@ -562,7 +562,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Mellune பிழை அறிக்கை</string>
+    <string name="mellune_bug_report">Mellune பிழை அறிக்கை</string>
     <string name="crash_report_notif_title">%1$s சிதைந்தது</string>
     <string name="action_upload_crash_report">செயலிழப்பு பதிவைப் பதிவேற்றவும்</string>
     <string name="action_upload_error">பதிவேற்றம் தோல்வி</string>
@@ -847,7 +847,7 @@
     <string name="grant_requested_permissions_tap">Tap to grant permissions</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Home screen cleared</string>
-    <string name="lawnchair_actions">Actions</string>
-    <string name="lawnchair_action_failed">Failed to trigger action</string>
+    <string name="mellune_actions">Actions</string>
+    <string name="mellune_action_failed">Failed to trigger action</string>
     <string name="please_wait">Please wait…</string>
 </resources>

@@ -38,7 +38,7 @@ fun CreateActionsScreen(
     }
 
     PreferenceLayoutLazyColumn(
-        label = stringResource(id = R.string.lawnchair_actions),
+        label = stringResource(id = R.string.mellune_actions),
         modifier = modifier,
     ) {
         preferenceGroupItems(items = newOptions, isFirstChild = true) { _, it ->

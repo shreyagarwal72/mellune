@@ -73,7 +73,7 @@
     <plurals name="time_years_ago">
         <item quantity="other">%d년</item>
     </plurals>
-    <string name="managed_by_lawnchair">Mellune에서 관리</string>
+    <string name="managed_by_mellune">Mellune에서 관리</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">설정</string>
     <string name="settings_button_text">홈 화면 설정</string>
@@ -557,7 +557,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Mellune 버그 신고</string>
+    <string name="mellune_bug_report">Mellune 버그 신고</string>
     <string name="crash_report_notif_title">%1$s가 종료되었습니다</string>
     <string name="action_upload_crash_report">크래시 로그 업로드</string>
     <string name="action_upload_error">업로드 실패</string>
@@ -841,7 +841,7 @@
     <string name="grant_requested_permissions_tap">여기를 눌러 권한 허용</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">홈 화면 지우기 완료</string>
-    <string name="lawnchair_actions">동작</string>
-    <string name="lawnchair_action_failed">동작 트리거에 실패함</string>
+    <string name="mellune_actions">동작</string>
+    <string name="mellune_action_failed">동작 트리거에 실패함</string>
     <string name="please_wait">기다려 주세요…</string>
 </resources>

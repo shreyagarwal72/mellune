@@ -31,10 +31,10 @@ sealed class HotseatMode(
 }
 
 object MelluneHotseat : HotseatMode(
-    nameResourceId = R.string.hotseat_mode_lawnchair,
+    nameResourceId = R.string.hotseat_mode_mellune,
     layoutResourceId = R.layout.search_container_hotseat,
 ) {
-    override fun toString() = "lawnchair"
+    override fun toString() = "mellune"
     override fun isAvailable(context: Context): Boolean = true
 }
 

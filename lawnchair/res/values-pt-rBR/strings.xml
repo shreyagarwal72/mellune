@@ -79,7 +79,7 @@
         <item quantity="one">%da</item>
         <item quantity="other">%da</item>
     </plurals>
-    <string name="managed_by_lawnchair">Gerenciado por Mellune</string>
+    <string name="managed_by_mellune">Gerenciado por Mellune</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Preferências</string>
     <string name="settings_button_text">Configurações da tela inicial</string>
@@ -563,7 +563,7 @@ Essa nova versão é atualização Major e pode ser menos estável\".</string>
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Relatório de bugs do Mellune</string>
+    <string name="mellune_bug_report">Relatório de bugs do Mellune</string>
     <string name="crash_report_notif_title">%1$s crashou</string>
     <string name="action_upload_crash_report">Enviar registro de erro</string>
     <string name="action_upload_error">Falha no envio</string>
@@ -843,7 +843,7 @@ Essa nova versão é atualização Major e pode ser menos estável\".</string>
     <string name="grant_requested_permissions_tap">Toque para conceder permissões</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Tela inicial limpada</string>
-    <string name="lawnchair_actions">Ações</string>
-    <string name="lawnchair_action_failed">Não foi possível realizar a ação</string>
+    <string name="mellune_actions">Ações</string>
+    <string name="mellune_action_failed">Não foi possível realizar a ação</string>
     <string name="please_wait">Por favor, aguarde…</string>
 </resources>

@@ -79,7 +79,7 @@
         <item quantity="one">%d v</item>
         <item quantity="other">%d v</item>
     </plurals>
-    <string name="managed_by_lawnchair">Mellunein hallinnoima</string>
+    <string name="managed_by_mellune">Mellunein hallinnoima</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Asetukset</string>
     <string name="settings_button_text">Kotiasetukset</string>
@@ -562,7 +562,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Mellunein virheraportti</string>
+    <string name="mellune_bug_report">Mellunein virheraportti</string>
     <string name="crash_report_notif_title">%1$s kaatui</string>
     <string name="action_upload_crash_report">Lähetä kaatumisloki</string>
     <string name="action_upload_error">Lähetys epäonnistui</string>
@@ -843,7 +843,7 @@
     <string name="grant_requested_permissions_tap">Hyväksy käyttöoikeudet napauttamalla</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Aloitusnäyttö tyhjennetty</string>
-    <string name="lawnchair_actions">Toiminnot</string>
-    <string name="lawnchair_action_failed">Toiminnon käynnistäminen epäonnistui</string>
+    <string name="mellune_actions">Toiminnot</string>
+    <string name="mellune_action_failed">Toiminnon käynnistäminen epäonnistui</string>
     <string name="please_wait">Ole hyvä ja odota…</string>
 </resources>

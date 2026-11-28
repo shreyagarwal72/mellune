@@ -17,7 +17,7 @@ sealed class PredictionMode(
     companion object {
         fun fromString(value: String): PredictionMode = when (value) {
             "system" -> SystemPredictor
-            "lawnchair" -> MellunePredictor
+            "mellune", "lawnchair" -> MellunePredictor
             else -> NoPredictor
         }
 
@@ -40,9 +40,9 @@ object SystemPredictor : PredictionMode(R.string.prediction_mode_system) {
     }
 }
 
-object MellunePredictor : PredictionMode(R.string.prediction_mode_lawnchair) {
+object MellunePredictor : PredictionMode(R.string.prediction_mode_mellune) {
 
-    override fun toString() = "lawnchair"
+    override fun toString() = "mellune"
 
     override fun isAvailable(context: Context) = true
 }

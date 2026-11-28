@@ -79,7 +79,7 @@
         <item quantity="one">%dy</item>
         <item quantity="other">%dy</item>
     </plurals>
-    <string name="managed_by_lawnchair">Beheerd door Mellune</string>
+    <string name="managed_by_mellune">Beheerd door Mellune</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Voorkeuren</string>
     <string name="settings_button_text">Startscherminstellingen</string>
@@ -562,7 +562,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Mellune foutrapportage</string>
+    <string name="mellune_bug_report">Mellune foutrapportage</string>
     <string name="crash_report_notif_title">%1$s is gecrasht</string>
     <string name="action_upload_crash_report">Crash-logboek uploaden</string>
     <string name="action_upload_error">Uploaden mislukt</string>
@@ -842,7 +842,7 @@
     <string name="grant_requested_permissions_tap">Tik om machtigingen te verlenen</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Startscherm gewist</string>
-    <string name="lawnchair_actions">Acties</string>
-    <string name="lawnchair_action_failed">Actie activeren mislukt</string>
+    <string name="mellune_actions">Acties</string>
+    <string name="mellune_action_failed">Actie activeren mislukt</string>
     <string name="please_wait">Wachten a.u.b...</string>
 </resources>

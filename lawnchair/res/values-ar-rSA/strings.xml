@@ -103,7 +103,7 @@
         <item quantity="many">%dعام</item>
         <item quantity="other">%dعام</item>
     </plurals>
-    <string name="managed_by_lawnchair">يُدار بواسطة Mellune</string>
+    <string name="managed_by_mellune">يُدار بواسطة Mellune</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">التفضيلات</string>
     <string name="settings_button_text">إعدادات الشاشة الرئيسية</string>
@@ -586,7 +586,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">تقرير خطأ Mellune</string>
+    <string name="mellune_bug_report">تقرير خطأ Mellune</string>
     <string name="crash_report_notif_title">تعطّل %1$s</string>
     <string name="action_upload_crash_report">رفع سجل التعطل</string>
     <string name="action_upload_error">فشل الرفع</string>
@@ -875,7 +875,7 @@
     <string name="grant_requested_permissions_tap">اضغط لمنح الأذونات</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">تم مسح الشاشة الرئيسية</string>
-    <string name="lawnchair_actions">الإجراءات</string>
-    <string name="lawnchair_action_failed">فشل تنفيذ الإجراء</string>
+    <string name="mellune_actions">الإجراءات</string>
+    <string name="mellune_action_failed">فشل تنفيذ الإجراء</string>
     <string name="please_wait">الرجاء الانتظار…</string>
 </resources>

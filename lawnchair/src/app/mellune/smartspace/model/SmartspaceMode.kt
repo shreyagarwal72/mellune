@@ -34,10 +34,10 @@ sealed class SmartspaceMode(
 }
 
 object MelluneSmartspace : SmartspaceMode(
-    nameResourceId = R.string.smartspace_mode_lawnchair,
+    nameResourceId = R.string.smartspace_mode_mellune,
     layoutResourceId = R.layout.smartspace_container,
 ) {
-    override fun toString() = "lawnchair"
+    override fun toString() = "mellune"
     override fun isAvailable(context: Context): Boolean = true
 }
 

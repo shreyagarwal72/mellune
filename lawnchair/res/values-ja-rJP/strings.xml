@@ -73,7 +73,7 @@
     <plurals name="time_years_ago">
         <item quantity="other">%d年</item>
     </plurals>
-    <string name="managed_by_lawnchair">Mellune に管理されています</string>
+    <string name="managed_by_mellune">Mellune に管理されています</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">設定</string>
     <string name="settings_button_text">ホーム設定</string>
@@ -556,7 +556,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Mellune のバグレポート</string>
+    <string name="mellune_bug_report">Mellune のバグレポート</string>
     <string name="crash_report_notif_title">%1$s がクラッシュしました</string>
     <string name="action_upload_crash_report">クラッシュログをアップロード</string>
     <string name="action_upload_error">アップロードに失敗しました</string>
@@ -835,7 +835,7 @@
     <string name="grant_requested_permissions_tap">タップして権限を付与</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">ホーム画面をクリアする</string>
-    <string name="lawnchair_actions">アクション</string>
-    <string name="lawnchair_action_failed">アクションのトリガーに失敗しました</string>
+    <string name="mellune_actions">アクション</string>
+    <string name="mellune_action_failed">アクションのトリガーに失敗しました</string>
     <string name="please_wait">しばらくお待ちください…</string>
 </resources>

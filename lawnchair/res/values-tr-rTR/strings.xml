@@ -79,7 +79,7 @@
         <item quantity="one">%dy</item>
         <item quantity="other">%dy</item>
     </plurals>
-    <string name="managed_by_lawnchair">Mellune tarafından yönetilmektedir</string>
+    <string name="managed_by_mellune">Mellune tarafından yönetilmektedir</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Tercihler</string>
     <string name="settings_button_text">Ana ekran ayarları</string>
@@ -562,7 +562,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Mellune hata raporu</string>
+    <string name="mellune_bug_report">Mellune hata raporu</string>
     <string name="crash_report_notif_title">%1$s çöktü</string>
     <string name="action_upload_crash_report">Çökme günlüğünü yükle</string>
     <string name="action_upload_error">Yükleme Başarısız</string>
@@ -847,7 +847,7 @@
     <string name="grant_requested_permissions_tap">İzinleri vermek için dokunun</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Ana ekran temizlendi</string>
-    <string name="lawnchair_actions">İşlemler</string>
-    <string name="lawnchair_action_failed">İşlem tetiklenemedi</string>
+    <string name="mellune_actions">İşlemler</string>
+    <string name="mellune_action_failed">İşlem tetiklenemedi</string>
     <string name="please_wait">Lütfen bekleyin…</string>
 </resources>

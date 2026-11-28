@@ -79,7 +79,7 @@
         <item quantity="one">%dy</item>
         <item quantity="other">%dy</item>
     </plurals>
-    <string name="managed_by_lawnchair">Mellune দ্বারা পরিচালিত করা হবে</string>
+    <string name="managed_by_mellune">Mellune দ্বারা পরিচালিত করা হবে</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">পছন্দ-সমুহ</string>
     <string name="settings_button_text">হোম সেটিংস</string>
@@ -562,7 +562,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Mellune bug report</string>
+    <string name="mellune_bug_report">Mellune bug report</string>
     <string name="crash_report_notif_title">%1$s crashed</string>
     <string name="action_upload_crash_report">Upload crash log</string>
     <string name="action_upload_error">আপলোড ব্যর্থ হয়েছে</string>
@@ -847,7 +847,7 @@
     <string name="grant_requested_permissions_tap">অনুমতি প্রদান করতে ট্যাপ করুন</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">হোম স্ক্রিন পরিষ্কার করা হয়েছে</string>
-    <string name="lawnchair_actions">কাজসমূহ</string>
-    <string name="lawnchair_action_failed">Failed to trigger action</string>
+    <string name="mellune_actions">কাজসমূহ</string>
+    <string name="mellune_action_failed">Failed to trigger action</string>
     <string name="please_wait">অনুগ্রহ করে অপেক্ষা করুন</string>
 </resources>

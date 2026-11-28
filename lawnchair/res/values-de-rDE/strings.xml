@@ -79,7 +79,7 @@
         <item quantity="one">%dJ.</item>
         <item quantity="other">%dJ.</item>
     </plurals>
-    <string name="managed_by_lawnchair">Von Mellune verwaltet</string>
+    <string name="managed_by_mellune">Von Mellune verwaltet</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Voreinstellungen</string>
     <string name="settings_button_text">Home-Einstellungen</string>
@@ -562,7 +562,7 @@
     Bug reporting
 
     -->
-    <string name="lawnchair_bug_report">Mellune-Fehlerbericht</string>
+    <string name="mellune_bug_report">Mellune-Fehlerbericht</string>
     <string name="crash_report_notif_title">%1$s abgestürzt</string>
     <string name="action_upload_crash_report">Absturzprotokoll hochladen</string>
     <string name="action_upload_error">Upload fehlgeschlagen</string>
@@ -847,7 +847,7 @@
     <string name="grant_requested_permissions_tap">Tippen um Berechtigungen zu erteilen</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Startbildschirm geleert</string>
-    <string name="lawnchair_actions">Aktionen</string>
-    <string name="lawnchair_action_failed">Aktion fehlgeschlagen</string>
+    <string name="mellune_actions">Aktionen</string>
+    <string name="mellune_action_failed">Aktion fehlgeschlagen</string>
     <string name="please_wait">Bitte warten…</string>
 </resources>

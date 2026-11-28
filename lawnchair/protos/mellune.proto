@@ -6,7 +6,7 @@ option java_outer_classname = "MelluneProto";
 import "google/protobuf/timestamp.proto";
 
 message BackupInfo {
-    int32 lawnchair_version = 1;
+    int32 mellune_version = 1;
     int32 backup_version = 2;
     google.protobuf.Timestamp created_at = 3;
 
