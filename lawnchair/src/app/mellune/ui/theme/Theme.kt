@@ -17,6 +17,7 @@
 package app.mellune.ui.theme
 
 import android.graphics.Color
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
@@ -26,6 +27,8 @@ import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -42,6 +45,7 @@ import app.mellune.preferences.preferenceManager
 import app.mellune.preferences2.asState
 import app.mellune.preferences2.preferenceManager2
 import app.mellune.theme.ThemeProvider
+import app.mellune.theme.color.ColorOption
 import app.mellune.theme.toComposeColorScheme
 import app.mellune.ui.preferences.components.ThemeChoice
 import app.mellune.wallpaper.WallpaperManagerCompat
@@ -96,6 +100,16 @@ fun getColorScheme(darkTheme: Boolean): ColorScheme {
     val preferenceManager2 = preferenceManager2()
     val accentColor by preferenceManager2.accentColor.asState()
     val colorStyle by preferenceManager2.colorStyle.asState()
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+        (accentColor is ColorOption.SystemAccent || accentColor is ColorOption.Default)
+    ) {
+        return if (darkTheme) {
+            dynamicDarkColorScheme(context)
+        } else {
+            dynamicLightColorScheme(context)
+        }
+    }
 
     val colorScheme = remember(accentColor, colorStyle.style) {
         ThemeProvider.INSTANCE.get(context).colorScheme

@@ -17,7 +17,6 @@
 package app.mellune.ui.preferences.about
 
 import android.content.Intent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +28,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -56,13 +54,13 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.mellune.preferences.PreferenceManager
+import app.mellune.ui.components.MelluneLogo
 import app.mellune.ui.m3e.ExpressiveButtonShape
 import app.mellune.ui.m3e.M3EBadgeVariant
 import app.mellune.ui.m3e.M3EConnectedButtonGroup
 import app.mellune.ui.m3e.M3EConnectedButtonItem
 import app.mellune.ui.m3e.M3EGroupIconBadge
 import app.mellune.ui.m3e.M3EHeroCard
-import app.mellune.ui.m3e.M3EMaterialShapes
 import app.mellune.ui.m3e.M3EText
 import app.mellune.ui.preferences.LocalIsExpandedScreen
 import app.mellune.ui.preferences.components.NavigationActionPreference
@@ -295,21 +293,7 @@ private fun AboutHeroBanner(
                 .padding(horizontal = 20.dp, vertical = 22.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Box(
-                modifier = Modifier
-                    .size(84.dp)
-                    .clip(M3EMaterialShapes.Cookie12Sided.toShape())
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_home_comp),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape),
-                )
-            }
+            MelluneLogo(logoSize = 84.dp)
             Spacer(modifier = Modifier.height(14.dp))
             Text(
                 text = stringResource(id = R.string.derived_app_name),
