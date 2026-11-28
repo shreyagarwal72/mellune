@@ -42,6 +42,8 @@ class FeedBridge(private val context: Context) {
         listOf(
             PixelBridgeInfo("com.google.android.apps.nexuslauncher", R.integer.bridge_signature_hash),
             BridgeInfo("app.lawnchair.lawnfeed", R.integer.lawnfeed_signature_hash),
+            CustomBridgeInfo("com.teslacoilsw.launcherclientproxy"),
+            CustomBridgeInfo(context.packageName),
         )
     }
 
@@ -166,6 +168,9 @@ class FeedBridge(private val context: Context) {
             whitelist["amirz.aidlbridge"] = 0xb662cc2f
             whitelist["com.google.android.googlequicksearchbox"] = 0xe3ca78d8
             whitelist["com.google.android.apps.nexuslauncher"] = 0xb662cc2f
+            whitelist["com.teslacoilsw.launcherclientproxy"] =
+                getSignatureHash(context, "com.teslacoilsw.launcherclientproxy")
+            whitelist[context.packageName] = getSignatureHash(context, context.packageName)
         }
 
         fun getAvailableProviders(context: Context) = context.packageManager

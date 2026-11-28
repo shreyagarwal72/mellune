@@ -1236,4 +1236,16 @@
 
     <string name="drawer_quick_filters_label">Smart category chips</string>
     <string name="drawer_quick_filters_desc">Show quick filter chips (All, Frequent, Recent) in the app drawer</string>
+
+    <!-- Mellune Google Companion -->
+    <string name="google_companion_builtin_name">Mellune Google Companion (Built-in)</string>
+    <string name="google_companion_status_title">Google Companion</string>
+    <string name="google_companion_status_ready">Built-in overlay proxy ready</string>
+    <string name="google_companion_status_external">Using external bridge: %1$s</string>
+    <string name="google_companion_status_missing_google">Google App is required for Discover feed</string>
+    <string name="google_companion_sheet_subtitle">Proxies the -1 Discover feed directly to the Google App without requiring an external companion APK.</string>
+    <string name="google_companion_google_app_label">Google App</string>
+    <string name="google_companion_installed">Installed</string>
+    <string name="google_companion_not_installed">Not installed</string>
+    <string name="google_companion_reconnect">Reconnect</string>
 </resources>

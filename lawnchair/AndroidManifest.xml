@@ -106,6 +106,16 @@
         </activity>
 
 
+        <service
+            android:name="app.mellune.nexuslauncher.GoogleOverlayProxyService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.launcher3.WINDOW_OVERLAY" />
+                <data android:scheme="app" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name="com.android.launcher3.secondarydisplay.SecondaryDisplayLauncher"
             tools:node="remove" />
