@@ -586,6 +586,27 @@
     <string name="donate">Donate</string>
 
     <string name="product">Product</string>
+    <string name="about_fork_tagline">A Material 3 Expressive (M3E) fork of Lawnchair</string>
+    <string name="about_description">Material 3 Expressive UI, three-layer spring physics, Quick Settings search, Workspace Organizer, and Pixel Launcher refinements built atop Lawnchair and Launcher3.</string>
+    <string name="about_highlights_heading">Highlights</string>
+    <string name="about_maintainer">Fork maintainer</string>
+    <string name="about_upstream_credits">Upstream Lawnchair team</string>
+    <string name="about_upstream_support">Upstream support &amp; PR</string>
+    <string name="about_releases">Releases</string>
+    <string name="about_issues">Issues</string>
+    <string name="about_upstream_repo">Upstream</string>
+    <string name="about_upstream_source">Lawnchair on GitHub</string>
+    <string name="about_source_license">Source code &amp; License</string>
+    <string name="about_highlight_m3e_title">Material 3 Expressive UI</string>
+    <string name="about_highlight_m3e_desc">Dynamic Monet palette, expressive rolling-thumb sliders, and segmented controls</string>
+    <string name="about_highlight_spring_title">Mellune Spring Engine</string>
+    <string name="about_highlight_spring_desc">Three-layer open/close/unlock physics, ring-appear icons, and AGSL unlock shimmer</string>
+    <string name="about_highlight_search_title">Unified Drawer Search</string>
+    <string name="about_highlight_search_desc">Type-ahead open chip, Quick Settings tiles, keyboard pin prompt, and SearXNG search</string>
+    <string name="about_highlight_workspace_title">Workspace Organizer &amp; Spaces</string>
+    <string name="about_highlight_workspace_desc">Reorder or add pages, curate Spaces, sync Downloads/Home screen files, and 8×3 landscape</string>
+    <string name="about_highlight_widgets_title">Widget Frame &amp; QuickSwitch</string>
+    <string name="about_highlight_widgets_desc">Expressive corner resize frame, Smartspacer support, and QuickSwitch (Android 15–16)</string>
     <string name="design_and_development">Design and development</string>
     <string name="development">Development</string>
     <string name="quickswitch_maintenance">QuickSwitch maintenance</string>

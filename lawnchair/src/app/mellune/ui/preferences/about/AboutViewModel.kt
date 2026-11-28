@@ -43,6 +43,8 @@ class AboutViewModel(
                     BuildConfig.VERSION_NAME
                 },
                 commitHash = BuildConfig.COMMIT_HASH,
+                maintainers = forkMaintainers,
+                highlights = featureHighlights,
                 coreTeam = team,
                 supportAndPr = supportAndPr,
                 topLinks = topLinks,
@@ -52,11 +54,21 @@ class AboutViewModel(
 
         viewModelScope.launch(Dispatchers.Default) {
             val activeContributors = fetchActiveContributors()
+            val updatedMaintainers = uiState.value.maintainers.map { member ->
+                val isActive = member.githubUsername != null &&
+                    activeContributors.contains(member.githubUsername.lowercase())
+                member.copy(status = if (isActive) ContributorStatus.Active else ContributorStatus.Idle)
+            }
             val updatedCoreTeam = uiState.value.coreTeam.map { member ->
                 val status = if (member.githubUsername != null && activeContributors.contains(member.githubUsername.lowercase())) ContributorStatus.Active else ContributorStatus.Idle
                 member.copy(status = status)
             }
-            uiState.update { it.copy(coreTeam = updatedCoreTeam) }
+            uiState.update {
+                it.copy(
+                    maintainers = updatedMaintainers,
+                    coreTeam = updatedCoreTeam,
+                )
+            }
         }
 
         // Check if the build variant is Nightly
@@ -93,6 +105,44 @@ class AboutViewModel(
     }
 
     companion object {
+        private val forkMaintainers = listOf(
+            TeamMember(
+                name = "Shrey Agarwal",
+                role = Role.Development,
+                photoUrl = "https://avatars.githubusercontent.com/shreyagarwal72",
+                socialUrl = "https://github.com/shreyagarwal72",
+                githubUsername = "shreyagarwal72",
+            ),
+        )
+
+        private val featureHighlights = listOf(
+            FeatureHighlight(
+                iconResId = R.drawable.ic_about,
+                titleResId = R.string.about_highlight_m3e_title,
+                descriptionResId = R.string.about_highlight_m3e_desc,
+            ),
+            FeatureHighlight(
+                iconResId = R.drawable.ic_gestures,
+                titleResId = R.string.about_highlight_spring_title,
+                descriptionResId = R.string.about_highlight_spring_desc,
+            ),
+            FeatureHighlight(
+                iconResId = R.drawable.ic_apps,
+                titleResId = R.string.about_highlight_search_title,
+                descriptionResId = R.string.about_highlight_search_desc,
+            ),
+            FeatureHighlight(
+                iconResId = R.drawable.ic_home_screen,
+                titleResId = R.string.about_highlight_workspace_title,
+                descriptionResId = R.string.about_highlight_workspace_desc,
+            ),
+            FeatureHighlight(
+                iconResId = R.drawable.ic_quickstep,
+                titleResId = R.string.about_highlight_widgets_title,
+                descriptionResId = R.string.about_highlight_widgets_desc,
+            ),
+        )
+
         private val team = listOf(
             TeamMember(
                 name = "Amogh Lele",
@@ -187,13 +237,8 @@ class AboutViewModel(
         private val topLinks = listOf(
             Link(
                 iconResId = R.drawable.ic_new_releases,
-                labelResId = R.string.news,
-                url = "https://t.me/lawnchairci",
-            ),
-            Link(
-                iconResId = R.drawable.ic_help,
-                labelResId = R.string.support,
-                url = "https://lawnchair.app/support",
+                labelResId = R.string.about_releases,
+                url = "https://github.com/shreyagarwal72/mellune/releases",
             ),
             Link(
                 iconResId = R.drawable.ic_github,
@@ -201,18 +246,23 @@ class AboutViewModel(
                 url = "https://github.com/shreyagarwal72/mellune",
             ),
             Link(
-                iconResId = R.drawable.ic_translate,
-                labelResId = R.string.translate,
-                url = "https://lawnchair.crowdin.com/lawnchair",
+                iconResId = R.drawable.ic_bug_notification,
+                labelResId = R.string.about_issues,
+                url = "https://github.com/shreyagarwal72/mellune/issues",
             ),
             Link(
-                iconResId = R.drawable.ic_open_collective,
-                labelResId = R.string.donate,
-                url = "https://opencollective.com/lawnchair",
+                iconResId = R.drawable.ic_help,
+                labelResId = R.string.about_upstream_repo,
+                url = "https://github.com/LawnchairLauncher/lawnchair",
             ),
         )
 
         private val bottomLinks = listOf(
+            Link(
+                iconResId = R.drawable.ic_github,
+                labelResId = R.string.about_upstream_source,
+                url = "https://github.com/LawnchairLauncher/lawnchair",
+            ),
             Link(
                 iconResId = R.drawable.ic_telegram,
                 labelResId = R.string.telegram,
@@ -222,11 +272,6 @@ class AboutViewModel(
                 iconResId = R.drawable.ic_discord,
                 labelResId = R.string.discord,
                 url = "https://discord.com/invite/3x8qNWxgGZ",
-            ),
-            Link(
-                iconResId = R.drawable.ic_x_twitter,
-                labelResId = R.string.x_twitter,
-                url = "https://x.com/lawnchairapp",
             ),
         )
 

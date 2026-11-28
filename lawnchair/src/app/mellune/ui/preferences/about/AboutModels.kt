@@ -22,11 +22,26 @@ import java.io.File
 data class AboutUiState(
     val versionName: String = "",
     val commitHash: String = "",
+    val maintainers: List<TeamMember> = emptyList(),
+    val highlights: List<FeatureHighlight> = emptyList(),
     val coreTeam: List<TeamMember> = emptyList(),
     val supportAndPr: List<TeamMember> = emptyList(),
     val topLinks: List<Link> = emptyList(),
     val bottomLinks: List<Link> = emptyList(),
     val updateState: UpdateState = UpdateState.Hidden,
+)
+
+/**
+ * Represents a highlighted capability shown on the About screen.
+ *
+ * @param iconResId Drawable resource for the feature icon.
+ * @param titleResId String resource for the feature title.
+ * @param descriptionResId String resource for the concise feature summary.
+ */
+data class FeatureHighlight(
+    @DrawableRes val iconResId: Int,
+    @StringRes val titleResId: Int,
+    @StringRes val descriptionResId: Int,
 )
 
 /**
