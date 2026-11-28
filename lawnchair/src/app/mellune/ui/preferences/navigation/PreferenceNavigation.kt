@@ -81,12 +81,12 @@ fun PreferenceNavigation(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        enterTransition = { materialSharedAxisXIn(!isRtl, slideDistance) },
-        exitTransition = { materialSharedAxisXOut(!isRtl, slideDistance) },
-        popEnterTransition = { materialSharedAxisXIn(isRtl, slideDistance) },
-        popExitTransition = { materialSharedAxisXOut(isRtl, slideDistance) },
-        predictivePopEnterTransition = { materialSharedAxisXIn(isRtl, slideDistance) },
-        predictivePopExitTransition = { materialSharedAxisXOut(isRtl, slideDistance) },
+        enterTransition = { petalEnterTransition(isRtl) },
+        exitTransition = { petalExitTransition(isRtl) },
+        popEnterTransition = { petalPopEnterTransition(isRtl) },
+        popExitTransition = { petalPopExitTransition(isRtl) },
+        predictivePopEnterTransition = { petalPredictivePopEnterTransition(isRtl) },
+        predictivePopExitTransition = { petalPredictivePopExitTransition(isRtl) },
     ) {
         composable<Root> {
             val isExpandedScreen = LocalIsExpandedScreen.current

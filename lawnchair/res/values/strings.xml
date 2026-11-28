@@ -586,8 +586,8 @@
     <string name="donate">Donate</string>
 
     <string name="product">Product</string>
-    <string name="about_fork_tagline">A Material 3 Expressive (M3E) fork of Lawnchair</string>
-    <string name="about_description">Material 3 Expressive UI, three-layer spring physics, Quick Settings search, Workspace Organizer, and Pixel Launcher refinements built atop Lawnchair and Launcher3.</string>
+    <string name="about_fork_tagline">Material 3 Expressive (M3E) Launcher</string>
+    <string name="about_description">Material 3 Expressive UI, three-layer spring physics, Quick Settings search, Workspace Organizer, and Pixel Launcher refinements.</string>
     <string name="about_highlights_heading">Highlights</string>
     <string name="about_maintainer">Fork maintainer</string>
     <string name="about_upstream_credits">Upstream Lawnchair team</string>

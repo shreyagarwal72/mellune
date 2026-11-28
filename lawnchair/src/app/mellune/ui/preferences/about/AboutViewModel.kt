@@ -143,96 +143,7 @@ class AboutViewModel(
             ),
         )
 
-        private val team = listOf(
-            TeamMember(
-                name = "Amogh Lele",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/31761843",
-                socialUrl = "https://github.com/sphericalkat",
-            ),
-            TeamMember(
-                name = "Antonio J. Roa Valverde",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/914983",
-                socialUrl = "https://x.com/6020peaks",
-            ),
-            TeamMember(
-                name = "David Sn",
-                role = Role.DevOps,
-                photoUrl = "https://i.imgur.com/b65akTl.png",
-                socialUrl = "https://codebucket.de",
-            ),
-            TeamMember(
-                name = "Zongle Wang",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/10363352",
-                socialUrl = "https://github.com/Goooler",
-                githubUsername = "Goooler",
-            ),
-            TeamMember(
-                name = "Harsh Shandilya",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/13348378",
-                socialUrl = "https://github.com/msfjarvis",
-            ),
-            TeamMember(
-                name = "John Andrew Camu (MrSluffy)",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/36076410",
-                socialUrl = "https://github.com/MrSluffy",
-                githubUsername = "MrSluffy",
-            ),
-            TeamMember(
-                name = "Kshitij Gupta",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/18647641",
-                socialUrl = "https://x.com/Agent_Fabulous",
-            ),
-            TeamMember(
-                name = "Manuel Lorenzo",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/183264",
-                socialUrl = "https://x.com/noloman",
-            ),
-            TeamMember(
-                name = "paphonb",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/8080853",
-                socialUrl = "https://x.com/paphonb",
-            ),
-            TeamMember(
-                name = "raphtlw",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/47694127",
-                socialUrl = "https://x.com/raphtlw",
-            ),
-            TeamMember(
-                name = "Rhyse Simpson",
-                role = Role.QuickSwitchMaintenance,
-                photoUrl = "https://avatars.githubusercontent.com/u/7065700",
-                socialUrl = "https://x.com/skittles9823",
-            ),
-            TeamMember(
-                name = "Pun Butrach",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/93124920",
-                socialUrl = "https://github.com/validcube",
-            ),
-            TeamMember(
-                name = "SuperDragonXD",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/70206496",
-                socialUrl = "https://github.com/SuperDragonXD",
-                githubUsername = "SuperDragonXD",
-            ),
-            TeamMember(
-                name = "Yasan Glass",
-                role = Role.Development,
-                photoUrl = "https://avatars.githubusercontent.com/u/41836211",
-                socialUrl = "https://yasan.glass",
-                githubUsername = "yasanglass",
-            ),
-        )
+        private val team = emptyList<TeamMember>()
 
         private val topLinks = listOf(
             Link(
@@ -250,50 +161,10 @@ class AboutViewModel(
                 labelResId = R.string.about_issues,
                 url = "https://github.com/shreyagarwal72/mellune/issues",
             ),
-            Link(
-                iconResId = R.drawable.ic_help,
-                labelResId = R.string.about_upstream_repo,
-                url = "https://github.com/LawnchairLauncher/lawnchair",
-            ),
         )
 
-        private val bottomLinks = listOf(
-            Link(
-                iconResId = R.drawable.ic_github,
-                labelResId = R.string.about_upstream_source,
-                url = "https://github.com/LawnchairLauncher/lawnchair",
-            ),
-            Link(
-                iconResId = R.drawable.ic_telegram,
-                labelResId = R.string.telegram,
-                url = "https://t.me/lccommunity",
-            ),
-            Link(
-                iconResId = R.drawable.ic_discord,
-                labelResId = R.string.discord,
-                url = "https://discord.com/invite/3x8qNWxgGZ",
-            ),
-        )
+        private val bottomLinks = emptyList<Link>()
 
-        private val supportAndPr = listOf(
-            TeamMember(
-                name = "Daniel Souza",
-                role = Role.Support,
-                photoUrl = "https://avatars.githubusercontent.com/u/32078304",
-                socialUrl = "https://github.com/DanGLVK",
-            ),
-            TeamMember(
-                name = "Giuseppe Longobardo",
-                role = Role.Support,
-                photoUrl = "https://avatars.githubusercontent.com/u/49398464",
-                socialUrl = "https://github.com/joseph-20",
-            ),
-            TeamMember(
-                name = "Rik Koedoot",
-                role = Role.SupportAndPr,
-                photoUrl = "https://avatars.githubusercontent.com/u/29402532",
-                socialUrl = "https://github.com/RikKoedoot",
-            ),
-        )
+        private val supportAndPr = emptyList<TeamMember>()
     }
 }
