@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import app.mellune.gestures.config.GestureHandlerConfig
 import app.mellune.gestures.handlers.OpenAppTarget
+import app.mellune.ui.components.expressive.extractFastScrollGlyph
 import app.mellune.ui.preferences.LocalIsExpandedScreen
 import app.mellune.ui.preferences.components.AppItem
 import app.mellune.ui.preferences.components.AppItemPlaceholder
@@ -46,7 +47,13 @@ fun PickAppForGesture() {
     ) {
         Crossfade(targetState = apps.isNotEmpty(), label = "") { present ->
             if (present) {
-                PreferenceLazyColumn(it, state = state) {
+                PreferenceLazyColumn(
+                    it,
+                    state = state,
+                    dragLabelProvider = { index ->
+                        extractFastScrollGlyph(apps.getOrNull(index - 1)?.label)
+                    },
+                ) {
                     preferenceGroupItems(
                         items = apps,
                         isFirstChild = true,

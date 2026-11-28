@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -52,6 +53,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.mellune.ui.components.expressive.ExpressiveScrollBar
+import app.mellune.ui.components.expressive.extractFastScrollGlyph
 import app.mellune.ui.theme.EdgeToEdge
 import app.mellune.ui.theme.MelluneTheme
 import com.android.launcher3.R
@@ -220,26 +223,39 @@ private fun SpaceCreatorScreen(
                     }
                 }
 
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 96.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    items(loaded.allApps, key = { it.toComponentKey().toString() }) { app ->
-                        val key = app.toComponentKey().toString()
-                        val checked = selectedComponentKeys.contains(key)
-                        SpaceAppRow(
-                            app = app,
-                            checked = checked,
-                            onToggle = {
-                                if (checked) {
-                                    selectedComponentKeys.remove(key)
-                                } else {
-                                    selectedComponentKeys.add(key)
-                                }
-                            },
-                        )
+                val listState = rememberLazyListState()
+                Box(modifier = Modifier.weight(1f)) {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 96.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        items(loaded.allApps, key = { it.toComponentKey().toString() }) { app ->
+                            val key = app.toComponentKey().toString()
+                            val checked = selectedComponentKeys.contains(key)
+                            SpaceAppRow(
+                                app = app,
+                                checked = checked,
+                                onToggle = {
+                                    if (checked) {
+                                        selectedComponentKeys.remove(key)
+                                    } else {
+                                        selectedComponentKeys.add(key)
+                                    }
+                                },
+                            )
+                        }
                     }
+                    ExpressiveScrollBar(
+                        listState = listState,
+                        dragLabelProvider = { index ->
+                            extractFastScrollGlyph(loaded.allApps.getOrNull(index)?.title?.toString())
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(top = 8.dp, bottom = 96.dp),
+                    )
                 }
             }
         }

@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import app.mellune.preferences.getAdapter
 import app.mellune.preferences2.preferenceManager2
 import app.mellune.ui.OverflowMenuGrouped
+import app.mellune.ui.components.expressive.extractFastScrollGlyph
 import app.mellune.ui.preferences.LocalIsExpandedScreen
 import app.mellune.ui.preferences.components.AppItem
 import app.mellune.ui.preferences.components.AppItemPlaceholder
@@ -83,7 +84,13 @@ fun HiddenAppsPreferences(
     ) {
         Crossfade(targetState = apps.isNotEmpty(), label = "") { present ->
             if (present) {
-                PreferenceLazyColumn(it, state = state) {
+                PreferenceLazyColumn(
+                    it,
+                    state = state,
+                    dragLabelProvider = { index ->
+                        extractFastScrollGlyph(apps.getOrNull(index - 1)?.label)
+                    },
+                ) {
                     val toggleHiddenApp = { app: App ->
                         val key = app.key.toString()
                         val newSet = apps.asSequence()

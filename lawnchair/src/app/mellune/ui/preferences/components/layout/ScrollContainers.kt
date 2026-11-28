@@ -3,6 +3,7 @@ package app.mellune.ui.preferences.components.layout
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import app.mellune.ui.components.expressive.ExpressiveScrollBar
 import app.mellune.ui.util.addIf
 import kotlinx.coroutines.awaitCancellation
 
@@ -29,24 +31,36 @@ fun PreferenceColumn(
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     scrollState: ScrollState? = rememberScrollState(),
+    showScrollBar: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    NestedScrollStretch(
-        modifier = modifier,
-    ) {
-        Column(
-            verticalArrangement = verticalArrangement,
-            horizontalAlignment = horizontalAlignment,
-            modifier = Modifier
-                .fillMaxHeight()
-                .addIf(scrollState != null) {
-                    this
-                        .verticalScroll(scrollState!!)
-                }
-                .padding(contentPadding)
-                .padding(top = 8.dp, bottom = 16.dp),
-            content = content,
-        )
+    Box(modifier = modifier) {
+        NestedScrollStretch {
+            Column(
+                verticalArrangement = verticalArrangement,
+                horizontalAlignment = horizontalAlignment,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .addIf(scrollState != null) {
+                        this
+                            .verticalScroll(scrollState!!)
+                    }
+                    .padding(contentPadding)
+                    .padding(top = 8.dp, bottom = 16.dp),
+                content = content,
+            )
+        }
+        if (showScrollBar && scrollState != null) {
+            ExpressiveScrollBar(
+                scrollState = scrollState,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(
+                        top = contentPadding.calculateTopPadding() + 8.dp,
+                        bottom = contentPadding.calculateBottomPadding() + 8.dp,
+                    ),
+            )
+        }
     }
 }
 
@@ -57,6 +71,8 @@ fun PreferenceLazyColumn(
     enabled: Boolean = true,
     isChild: Boolean = false,
     state: LazyListState = rememberLazyListState(),
+    showScrollBar: Boolean = !isChild && enabled,
+    dragLabelProvider: ((Int) -> String?)? = null,
     content: LazyListScope.() -> Unit,
 ) {
     if (!enabled) {
@@ -66,17 +82,29 @@ fun PreferenceLazyColumn(
             }
         }
     }
-    NestedScrollStretch(
-        modifier = modifier,
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .addIf(!isChild) {
-                    fillMaxHeight()
-                },
-            contentPadding = contentPadding,
-            state = state,
-            content = content,
-        )
+    Box(modifier = modifier) {
+        NestedScrollStretch {
+            LazyColumn(
+                modifier = Modifier
+                    .addIf(!isChild) {
+                        fillMaxHeight()
+                    },
+                contentPadding = contentPadding,
+                state = state,
+                content = content,
+            )
+        }
+        if (showScrollBar) {
+            ExpressiveScrollBar(
+                listState = state,
+                dragLabelProvider = dragLabelProvider,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(
+                        top = contentPadding.calculateTopPadding() + 8.dp,
+                        bottom = contentPadding.calculateBottomPadding() + 8.dp,
+                    ),
+            )
+        }
     }
 }

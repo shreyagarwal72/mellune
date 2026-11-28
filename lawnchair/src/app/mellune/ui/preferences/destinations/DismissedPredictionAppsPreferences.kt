@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import app.mellune.predictions.MellunePredictionManager
 import app.mellune.predictions.PredictionAppKey
 import app.mellune.ui.OverflowMenuGrouped
+import app.mellune.ui.components.expressive.extractFastScrollGlyph
 import app.mellune.ui.preferences.LocalIsExpandedScreen
 import app.mellune.ui.preferences.components.AppItem
 import app.mellune.ui.preferences.components.AppItemPlaceholder
@@ -84,7 +85,13 @@ fun DismissedPredictionAppsPreferences(
     ) {
         Crossfade(targetState = apps.isNotEmpty(), label = "") { present ->
             if (present) {
-                PreferenceLazyColumn(it, state = rememberLazyListState()) {
+                PreferenceLazyColumn(
+                    it,
+                    state = rememberLazyListState(),
+                    dragLabelProvider = { index ->
+                        extractFastScrollGlyph(apps.getOrNull(index - 1)?.label)
+                    },
+                ) {
                     val toggleDismissedApp = { app: App ->
                         val userSerial = userSerials[app.key.user] ?: userCache.getSerialNumberForUser(app.key.user).toString()
                         val key = PredictionAppKey.create(app.key.componentName, userSerial)

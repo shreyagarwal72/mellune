@@ -101,6 +101,7 @@ fun PreferenceLayoutLazyColumn(
     enabled: Boolean = true,
     backArrowVisible: Boolean = true,
     state: LazyListState = rememberLazyListState(),
+    dragLabelProvider: ((Int) -> String?)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     content: LazyListScope.() -> Unit,
 ) {
@@ -115,6 +116,7 @@ fun PreferenceLayoutLazyColumn(
             modifier = modifier,
             enabled = enabled,
             state = state,
+            dragLabelProvider = dragLabelProvider,
             content = content,
         )
     }

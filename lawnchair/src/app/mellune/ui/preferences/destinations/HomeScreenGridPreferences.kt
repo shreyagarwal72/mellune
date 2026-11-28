@@ -35,6 +35,7 @@ import app.mellune.DeviceProfileOverrides
 import app.mellune.preferences.asPreferenceAdapter
 import app.mellune.preferences.getAdapter
 import app.mellune.preferences.preferenceManager
+import app.mellune.ui.components.expressive.ExpressiveScrollBar
 import app.mellune.ui.preferences.LocalIsExpandedScreen
 import app.mellune.ui.preferences.LocalNavController
 import app.mellune.ui.preferences.components.GridOverridesPreview
@@ -134,14 +135,14 @@ fun HomeScreenGridPreferences(
                     },
                 )
 
-                Column(
+                Box(
                     modifier = Modifier
                         .weight(1f)
                         .heightIn(min = settingsMinHeight),
                 ) {
                     Column(
                         modifier = Modifier
-                            .weight(1f)
+                            .fillMaxHeight()
                             .verticalScroll(controlsScrollState),
                     ) {
                         if (isFoldable) {
@@ -245,6 +246,13 @@ fun HomeScreenGridPreferences(
                             Text(text = stringResource(id = R.string.action_apply))
                         }
                     }
+                    }
+                    ExpressiveScrollBar(
+                        scrollState = controlsScrollState,
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(vertical = 8.dp),
+                    )
                 }
             }
         }

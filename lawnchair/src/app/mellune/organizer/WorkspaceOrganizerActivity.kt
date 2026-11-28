@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -53,6 +54,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.mellune.ui.components.expressive.ExpressiveScrollBar
 import app.mellune.ui.theme.EdgeToEdge
 import app.mellune.ui.theme.MelluneTheme
 import com.android.launcher3.R
@@ -161,59 +163,71 @@ private fun WorkspaceOrganizerScreen(
                 CircularProgressIndicator()
             }
         } else {
-            LazyColumn(
+            val listState = rememberLazyListState()
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 96.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                itemsIndexed(pages, key = { _, page -> page.screenId }) { index, page ->
-                    WorkspacePageCard(
-                        page = page,
-                        canMoveUp = index > 0,
-                        canMoveDown = index < pages.lastIndex,
-                        canDelete = pages.size > 1,
-                        onMoveUp = {
-                            scope.launch {
-                                val updated = pages.toMutableList()
-                                Collections.swap(updated, index, index - 1)
-                                val defaultScreenId = pages.firstOrNull { it.isDefaultPage }?.screenId
-                                WorkspaceRepository.reorderPages(
-                                    context = context,
-                                    orderedScreenIds = updated.map { it.screenId },
-                                    defaultScreenId = defaultScreenId,
-                                )
-                                reload()
-                            }
-                        },
-                        onMoveDown = {
-                            scope.launch {
-                                val updated = pages.toMutableList()
-                                Collections.swap(updated, index, index + 1)
-                                val defaultScreenId = pages.firstOrNull { it.isDefaultPage }?.screenId
-                                WorkspaceRepository.reorderPages(
-                                    context = context,
-                                    orderedScreenIds = updated.map { it.screenId },
-                                    defaultScreenId = defaultScreenId,
-                                )
-                                reload()
-                            }
-                        },
-                        onSetDefault = {
-                            scope.launch {
-                                WorkspaceRepository.setDefaultPage(context, index)
-                                reload()
-                            }
-                        },
-                        onDelete = {
-                            scope.launch {
-                                WorkspaceRepository.deletePage(context, page.screenId)
-                                reload()
-                            }
-                        },
-                    )
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 96.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    itemsIndexed(pages, key = { _, page -> page.screenId }) { index, page ->
+                        WorkspacePageCard(
+                            page = page,
+                            canMoveUp = index > 0,
+                            canMoveDown = index < pages.lastIndex,
+                            canDelete = pages.size > 1,
+                            onMoveUp = {
+                                scope.launch {
+                                    val updated = pages.toMutableList()
+                                    Collections.swap(updated, index, index - 1)
+                                    val defaultScreenId = pages.firstOrNull { it.isDefaultPage }?.screenId
+                                    WorkspaceRepository.reorderPages(
+                                        context = context,
+                                        orderedScreenIds = updated.map { it.screenId },
+                                        defaultScreenId = defaultScreenId,
+                                    )
+                                    reload()
+                                }
+                            },
+                            onMoveDown = {
+                                scope.launch {
+                                    val updated = pages.toMutableList()
+                                    Collections.swap(updated, index, index + 1)
+                                    val defaultScreenId = pages.firstOrNull { it.isDefaultPage }?.screenId
+                                    WorkspaceRepository.reorderPages(
+                                        context = context,
+                                        orderedScreenIds = updated.map { it.screenId },
+                                        defaultScreenId = defaultScreenId,
+                                    )
+                                    reload()
+                                }
+                            },
+                            onSetDefault = {
+                                scope.launch {
+                                    WorkspaceRepository.setDefaultPage(context, index)
+                                    reload()
+                                }
+                            },
+                            onDelete = {
+                                scope.launch {
+                                    WorkspaceRepository.deletePage(context, page.screenId)
+                                    reload()
+                                }
+                            },
+                        )
+                    }
                 }
+                ExpressiveScrollBar(
+                    listState = listState,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(top = 8.dp, bottom = 96.dp),
+                )
             }
         }
     }
