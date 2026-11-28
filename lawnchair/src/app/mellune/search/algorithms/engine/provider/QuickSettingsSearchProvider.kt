@@ -211,9 +211,9 @@ object QuickSettingsSearchProvider : SearchProvider {
         }
     }
 
-    private fun isWifiConnected(context: Context): Boolean {
-        val cm = context.getSystemService(ConnectivityManager::class.java) ?: return false
-        val capabilities = cm.getNetworkCapabilities(cm.activeNetwork) ?: return false
-        return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-    }
+    private fun isWifiConnected(context: Context): Boolean = runCatching {
+        val cm = context.getSystemService(ConnectivityManager::class.java) ?: return@runCatching false
+        val capabilities = cm.getNetworkCapabilities(cm.activeNetwork) ?: return@runCatching false
+        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+    }.getOrDefault(false)
 }
