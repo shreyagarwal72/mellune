@@ -75,6 +75,8 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
     private final AllAppsFastScrollHelper mFastScrollHelper;
     private int mCumulativeVerticalScroll;
     private ConstraintLayout mLetterList;
+    @Nullable
+    private String mLastLetterSectionsSignature;
 
     public AlphabeticalAppsList<?> mApps;
 
@@ -331,23 +333,64 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
 
     public void setLettersToScrollLayout(
             List<AlphabeticalAppsList.FastScrollSectionInfo> fastScrollSections) {
-        if (fastScrollSections.isEmpty()) {
+        if (this instanceof SearchRecyclerView
+                || fastScrollSections == null
+                || fastScrollSections.isEmpty()) {
             return;
         }
-        if (mLetterList != null) {
-            mLetterList.removeAllViews();
-        }
         Context context = getContext();
-        ActivityAllAppsContainerView<?> allAppsContainerView =
-                ActivityContext.lookupContext(context).getAppsView();
-        mLetterList = allAppsContainerView.getFastScrollerLetterList();
-        mLetterList.setPadding(0, getScrollBarTop(), 0, getScrollBarMarginBottom());
+        ActivityContext activityContext;
+        try {
+            activityContext = ActivityContext.lookupContext(context);
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        ActivityAllAppsContainerView<?> allAppsContainerView = activityContext.getAppsView();
+        if (allAppsContainerView == null) {
+            return;
+        }
+        ConstraintLayout letterList = allAppsContainerView.getFastScrollerLetterList();
+        if (letterList == null || letterList.getId() == View.NO_ID) {
+            return;
+        }
+        mLetterList = letterList;
+
+        StringBuilder signatureBuilder = new StringBuilder(fastScrollSections.size() * 2);
+        for (int i = 0; i < fastScrollSections.size(); i++) {
+            signatureBuilder.append(fastScrollSections.get(i).sectionName).append('|');
+        }
+        String signature = signatureBuilder.toString();
+        if (signature.equals(mLastLetterSectionsSignature) && letterList.getChildCount() > 0) {
+            return;
+        }
+        mLastLetterSectionsSignature = signature;
+
+        List<AlphabeticalAppsList.FastScrollSectionInfo> sectionsSnapshot =
+                new ArrayList<>(fastScrollSections);
+        int topPadding = getScrollBarTop();
+        int bottomPadding = getScrollBarMarginBottom();
+        letterList.post(() -> applyLettersToScrollLayout(
+                context, letterList, sectionsSnapshot, topPadding, bottomPadding));
+    }
+
+    private void applyLettersToScrollLayout(
+            Context context,
+            ConstraintLayout letterList,
+            List<AlphabeticalAppsList.FastScrollSectionInfo> fastScrollSections,
+            int topPadding,
+            int bottomPadding) {
+        if (!letterList.isAttachedToWindow()) {
+            mLastLetterSectionsSignature = null;
+            return;
+        }
+        letterList.removeAllViews();
+        letterList.setPadding(0, topPadding, 0, bottomPadding);
         List<LetterListTextView> textViews = new ArrayList<>();
         for (int i = 0; i < fastScrollSections.size(); i++) {
             AlphabeticalAppsList.FastScrollSectionInfo sectionInfo = fastScrollSections.get(i);
             LetterListTextView textView =
                     (LetterListTextView) LayoutInflater.from(context).inflate(
-                            R.layout.fast_scroller_letter_list_text_view, mLetterList, false);
+                            R.layout.fast_scroller_letter_list_text_view, letterList, false);
             int viewId = View.generateViewId();
             textView.apply(sectionInfo /* FastScrollSectionInfo */, viewId /* viewId */);
             sectionInfo.setId(viewId);
@@ -356,7 +399,7 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
                 textView.setVisibility(INVISIBLE);
             }
             textViews.add(textView);
-            mLetterList.addView(textView);
+            letterList.addView(textView);
         }
         // Need to add an extra textview to be aligned.
         LetterListTextView lastLetterListTextView = new LetterListTextView(context);
@@ -364,11 +407,11 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
         lastLetterListTextView.setId(currentId);
         lastLetterListTextView.setVisibility(INVISIBLE);
         textViews.add(lastLetterListTextView);
-        mLetterList.addView(lastLetterListTextView);
-        constraintTextViewsVertically(mLetterList, textViews);
-        mLetterList.setVisibility(VISIBLE);
+        letterList.addView(lastLetterListTextView);
+        constraintTextViewsVertically(letterList, textViews);
+        letterList.setVisibility(VISIBLE);
         // Set the alpha to 0 to avoid the letter list being shown when it shouldn't be.
-        mLetterList.setAlpha(0);
+        letterList.setAlpha(0);
     }
 
     private void constraintTextViewsVertically(ConstraintLayout constraintLayout,

@@ -65,8 +65,9 @@ class MelluneApp : LauncherApplication() {
     val isVibrateOnIconAnimation: Boolean by unsafeLazy { getSystemUiBoolean("config_vibrateOnIconAnimation", false) }
 
     override fun onCreate() {
-        super.onCreate()
         instance = this
+        super.onCreate()
+        MelluneProcessInitializer.ensureColorsLoader()
         QuickStepContract.sRecentsDisabled = !recentsEnabled
         Flowerpot.Manager.getInstance(this)
         registerActivityLifecycleCallbacks(activityHandler)

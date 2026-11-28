@@ -42,3 +42,15 @@
 -keep class app.mellune.util.MelluneSpringEngine { *; }
 -keepclassmembers class app.mellune.util.MelluneSpringEngine { *; }
 
+# Reflectively loaded overrides and launcher singletons
+-keep class app.mellune.MelluneProcessInitializer { *; }
+-keep class app.mellune.AccentColorExtractor { *; }
+-keep class app.mellune.MelluneActivityCachingLogic { *; }
+-keep class app.mellune.MelluneLayoutFactory { *; }
+-keep class app.mellune.overview.TaskOverlayFactoryImpl { *; }
+-keep class app.mellune.factory.MelluneWidgetHolder** { *; }
+-keep class app.mellune.util.MelluneWindowManagerProxy { *; }
+-keep class app.mellune.search.** { *; }
+-keep class app.mellune.organizer.** { *; }
+-keep class app.mellune.homescreenfiles.** { *; }
+

@@ -13,19 +13,29 @@ class MelluneProcessInitializer(context: Context) : QuickstepProcessInitializer(
 
     override fun init(context: Context) {
         MelluneBugReporter.INSTANCE.get(context)
-        ThemedIconDrawable.COLORS_LOADER = {
-            if (Utilities.isDarkTheme(it)) {
-                intArrayOf(
-                    ColorTokens.Accent2_800.resolveColor(it),
-                    ColorTokens.Accent1_200.resolveColor(it),
-                )
-            } else {
-                intArrayOf(
-                    ColorTokens.Accent1_100.resolveColor(it),
-                    ColorTokens.Accent1_700.resolveColor(it),
-                )
+        ensureColorsLoader()
+        super.init(context)
+    }
+
+    companion object {
+        /**
+         * Installs the default monochrome icon palette loader when not yet registered.
+         */
+        fun ensureColorsLoader() {
+            if (ThemedIconDrawable.COLORS_LOADER != null) return
+            ThemedIconDrawable.COLORS_LOADER = {
+                if (Utilities.isDarkTheme(it)) {
+                    intArrayOf(
+                        ColorTokens.Accent2_800.resolveColor(it),
+                        ColorTokens.Accent1_200.resolveColor(it),
+                    )
+                } else {
+                    intArrayOf(
+                        ColorTokens.Accent1_100.resolveColor(it),
+                        ColorTokens.Accent1_700.resolveColor(it),
+                    )
+                }
             }
         }
-        super.init(context)
     }
 }
