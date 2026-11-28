@@ -16,6 +16,10 @@
 
 package app.mellune.ui.preferences.components
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -44,7 +48,15 @@ fun NavigationActionPreference(
         title = { Text(text = label) },
         modifier = modifier,
         description = subtitle?.let { { Text(text = it) } },
-        endWidget = endWidget,
+        endWidget = endWidget ?: destination?.let {
+            {
+                Icon(
+                    imageVector = Icons.Rounded.ChevronRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        },
         onClick = if (destination != null) {
             {
                 mMSDLPlayerWrapper.playToken(MSDLToken.TAP_MEDIUM_EMPHASIS)
@@ -68,7 +80,6 @@ private fun SliderPreferencePreview() {
                 modifier = Modifier,
                 destination = null,
                 subtitle = "Subtitle",
-                endWidget = { Text("End") },
             )
         }
     }

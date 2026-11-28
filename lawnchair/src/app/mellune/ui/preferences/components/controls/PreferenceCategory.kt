@@ -17,26 +17,32 @@
 package app.mellune.ui.preferences.components.controls
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
+import app.mellune.ui.m3e.M3EBadgeVariant
+import app.mellune.ui.m3e.M3EGroupIconBadge
+import app.mellune.ui.m3e.m3eGroupSurfaceColor
 import app.mellune.ui.preferences.components.layout.PreferenceTemplate
 import app.mellune.ui.theme.MelluneTheme
 import app.mellune.ui.util.preview.PreviewMellune
 import com.android.launcher3.R
 import com.android.launcher3.util.MSDLPlayerWrapper
 import com.google.android.msdl.data.model.MSDLToken
+import kotlin.math.abs
+
+private val CategoryBadgePalette = listOf(
+    M3EBadgeVariant.PRIMARY,
+    M3EBadgeVariant.SECONDARY,
+    M3EBadgeVariant.TERTIARY,
+)
 
 @Composable
 fun PreferenceCategory(
@@ -47,31 +53,54 @@ fun PreferenceCategory(
     isSelected: Boolean = false,
     description: String? = null,
 ) {
-    val mMSDLPlayerWrapper = MSDLPlayerWrapper.INSTANCE.get(LocalContext.current)
+    val context = LocalContext.current
+    val mMSDLPlayerWrapper = MSDLPlayerWrapper.INSTANCE.get(context)
+    val badgeVariant = if (isSelected) {
+        M3EBadgeVariant.PRIMARY
+    } else {
+        CategoryBadgePalette[abs(label.hashCode()) % CategoryBadgePalette.size]
+    }
+    val surfaceColor = m3eGroupSurfaceColor()
+
     PreferenceTemplate(
         title = {
             Text(
                 text = label,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                color = if (isSelected) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
             )
         },
-        modifier = modifier
-            .background(
-                if (isSelected) MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp) else Color.Transparent,
-            ),
-        description = description?.let { { Text(text = description) } },
+        modifier = modifier,
+        description = description?.let { { Text(text = it) } },
+        colors = ListItemDefaults.segmentedColors(
+            containerColor = if (isSelected) {
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.72f)
+            } else {
+                surfaceColor
+            },
+            disabledContainerColor = surfaceColor.copy(alpha = 0.5f),
+            supportingContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
         startWidget = {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.size(32.dp),
-            ) {
-                Icon(
-                    painter = painterResource(id = iconResource),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            M3EGroupIconBadge(
+                painter = painterResource(id = iconResource),
+                shapeKey = label,
+                variant = badgeVariant,
+            )
+        },
+        endWidget = {
+            Icon(
+                imageVector = Icons.Rounded.ChevronRight,
+                contentDescription = null,
+                tint = if (isSelected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+            )
         },
         onClick = {
             mMSDLPlayerWrapper.playToken(MSDLToken.TAP_LOW_EMPHASIS)

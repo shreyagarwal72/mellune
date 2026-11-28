@@ -18,11 +18,12 @@ package app.mellune.ui.preferences.about
 
 import android.content.Intent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import app.mellune.ui.m3e.expressiveBadgeShapeForKey
 import app.mellune.ui.placeholder.PlaceholderHighlight
 import app.mellune.ui.placeholder.fade
 import app.mellune.ui.placeholder.placeholder
@@ -41,9 +43,6 @@ import com.android.launcher3.R
 
 /**
  * Displays a row with contributor information.
- *
- * @param member The [TeamMember] data for the contributor.
- * @param modifier Optional [Modifier] for customization.
  */
 @Composable
 fun ContributorRow(
@@ -58,7 +57,7 @@ fun ContributorRow(
     val context = LocalContext.current
     val description = "${
         stringResource(member.role.descriptionResId)
-    } ${if (member.status == ContributorStatus.Active && statusText.isNotBlank()) "• $statusText" else ""}"
+    } ${if (member.status == ContributorStatus.Active && statusText.isNotBlank()) "• $statusText" else ""}".trim()
 
     ContributorRow(
         name = member.name,
@@ -75,15 +74,6 @@ fun ContributorRow(
     )
 }
 
-/**
- * Displays a row with contributor information.
- *
- * @param name The name of the contributor.
- * @param description The role and status of the contributor.
- * @param photoUrl The URL of the contributor's photo.
- * @param onClick The action to perform when the row is clicked.
- * @param modifier Optional [Modifier] for customization.
- */
 @Composable
 fun ContributorRow(
     name: String,
@@ -96,18 +86,14 @@ fun ContributorRow(
         title = { Text(text = name) },
         modifier = modifier,
         onClick = onClick,
-        description = {
-            Text(
-                text = description,
-            )
-        },
+        description = { Text(text = description) },
         startWidget = {
             SubcomposeAsyncImage(
                 model = photoUrl,
                 contentDescription = null,
                 modifier = Modifier
-                    .clip(CircleShape)
-                    .size(32.dp)
+                    .size(42.dp)
+                    .clip(expressiveBadgeShapeForKey(name))
                     .background(MaterialTheme.colorScheme.surfaceContainer),
                 loading = {
                     Box(
@@ -119,6 +105,13 @@ fun ContributorRow(
                             ),
                     )
                 },
+            )
+        },
+        endWidget = {
+            Icon(
+                imageVector = Icons.Rounded.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
     )

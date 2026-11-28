@@ -25,12 +25,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,6 +42,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import app.mellune.ui.m3e.M3EBadgeVariant
+import app.mellune.ui.m3e.M3EGroupIconBadge
 import app.mellune.ui.preferences.components.layout.PreferenceTemplate
 
 @Composable
@@ -105,18 +107,18 @@ fun HorizontalMelluneLink(
             Text(label)
         },
         startWidget = {
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                modifier = Modifier.requiredSize(32.dp),
-            ) {
-                Image(
-                    painterResource(id = iconResId),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSecondaryContainer),
-                    modifier = Modifier.requiredSize(20.dp),
-                )
-            }
+            M3EGroupIconBadge(
+                painter = painterResource(id = iconResId),
+                shapeKey = label,
+                variant = M3EBadgeVariant.SECONDARY,
+            )
+        },
+        endWidget = {
+            Icon(
+                imageVector = Icons.Rounded.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         },
     )
 }

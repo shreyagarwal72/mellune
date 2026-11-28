@@ -19,14 +19,12 @@ package app.mellune.ui.preferences.components.controls
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -43,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import app.mellune.preferences.PreferenceAdapter
 import app.mellune.preferences.rememberTransformAdapter
 import app.mellune.ui.components.expressive.MelluneSlider
+import app.mellune.ui.m3e.M3EText
 import app.mellune.ui.preferences.components.layout.PreferenceTemplate
 import app.mellune.ui.theme.MelluneTheme
 import app.mellune.ui.util.preview.PreferenceGroupPreviewContainer
@@ -64,6 +63,7 @@ fun SliderPreference(
     adapter: PreferenceAdapter<Int>,
     valueRange: ClosedRange<Int>,
     step: Int,
+    modifier: Modifier = Modifier,
     showAsPercentage: Boolean = false,
     showUnit: String = "",
     enabled: Boolean = true,
@@ -80,6 +80,7 @@ fun SliderPreference(
         adapter = transformedAdapter,
         valueRange = start..endInclusive,
         step = step.toFloat(),
+        modifier = modifier,
         showAsPercentage = showAsPercentage,
         showUnit = showUnit,
         enabled = enabled,
@@ -150,30 +151,37 @@ private fun SliderPreference(
             ) {
                 Text(
                     text = label,
+                    style = M3EText.rowTitle,
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 8.dp),
                 )
-                CompositionLocalProvider(
-                    LocalContentColor provides MaterialTheme.colorScheme.onSurface,
-                    LocalTextStyle provides MaterialTheme.typography.bodyLarge,
+                val snappedValue = snapSliderValue(valueRange.start, sliderValue, step)
+                val valueText = if (showAsPercentage) {
+                    (
+                        stringResource(
+                            id = R.string.n_percent,
+                            (snappedValue * 100).roundToInt(),
+                        ) + " $showUnit"
+                        ).trim()
+                } else {
+                    (snappedValue.roundToInt().toString() + " $showUnit").trim()
+                }
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = MaterialTheme.colorScheme.primaryContainer,
                 ) {
-                    val value = snapSliderValue(valueRange.start, sliderValue, step)
                     Text(
-                        text = if (showAsPercentage) {
-                            stringResource(
-                                id = R.string.n_percent,
-                                (value * 100).roundToInt(),
-                            ) + " $showUnit"
-                        } else {
-                            value.roundToInt().toString() + " $showUnit"
-                        },
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        text = valueText,
+                        style = M3EText.value,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                     )
                 }
             }
         },
         modifier = modifier,
+        enabled = enabled,
         description = {
             MelluneSlider(
                 value = sliderValue,
@@ -213,8 +221,7 @@ private fun SliderPreference(
                 onValueChangeFinished = { onValueChangeFinished(sliderValue) },
                 valueRange = valueRange,
                 steps = getSteps(valueRange, step),
-                modifier = Modifier
-                    .padding(top = 4.dp, bottom = 4.dp),
+                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
                 enabled = enabled,
             )
         },

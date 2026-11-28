@@ -1,35 +1,19 @@
 package app.mellune.ui.preferences.components.layout
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import app.mellune.ui.m3e.M3EConnectedButtonGroup
+import app.mellune.ui.m3e.M3EConnectedButtonItem
 import app.mellune.ui.preferences.LocalIsExpandedScreen
-import app.mellune.ui.theme.preferenceGroupColor
-import com.android.launcher3.util.MSDLPlayerWrapper
-import com.google.android.msdl.data.model.MSDLToken
-import kotlin.math.abs
 import kotlinx.coroutines.launch
 
 @Composable
@@ -44,7 +28,6 @@ fun TwoTabPreferenceLayout(
     isExpandedScreen: Boolean = LocalIsExpandedScreen.current,
     defaultPage: Int = 0,
 ) {
-    val mMSDLPlayerWrapper = MSDLPlayerWrapper.INSTANCE.get(LocalContext.current)
     PreferenceLayout(
         label = label,
         modifier = modifier,
@@ -60,32 +43,16 @@ fun TwoTabPreferenceLayout(
         val scrollToPage =
             { page: Int -> scope.launch { pagerState.animateScrollToPage(page) } }
 
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .clip(CircleShape)
-                .background(preferenceGroupColor()),
-        ) {
-            Tab(
-                label = firstPageLabel,
-                onClick = {
-                    mMSDLPlayerWrapper.playToken(MSDLToken.TAP_MEDIUM_EMPHASIS)
-                    scrollToPage(0)
-                },
-                currentOffset = pagerState.currentPage + pagerState.currentPageOffsetFraction,
-                page = 0,
-            )
-            Tab(
-                label = secondPageLabel,
-                onClick = {
-                    mMSDLPlayerWrapper.playToken(MSDLToken.TAP_MEDIUM_EMPHASIS)
-                    scrollToPage(1)
-                },
-                currentOffset = pagerState.currentPage + pagerState.currentPageOffsetFraction,
-                page = 1,
-            )
-        }
+        val tabItems = listOf(
+            M3EConnectedButtonItem(label = firstPageLabel),
+            M3EConnectedButtonItem(label = secondPageLabel),
+        )
+        M3EConnectedButtonGroup(
+            items = tabItems,
+            selectedIndex = pagerState.currentPage,
+            onSelect = { scrollToPage(it) },
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+        )
 
         HorizontalPager(
             state = pagerState,
@@ -106,40 +73,5 @@ fun TwoTabPreferenceLayout(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun RowScope.Tab(
-    label: String,
-    onClick: () -> Unit,
-    currentOffset: Float,
-    page: Int,
-    modifier: Modifier = Modifier,
-) {
-    val selectedProgress = 1f - abs(currentOffset - page).coerceIn(0f, 1f)
-    val shape = CircleShape
-    val textColor = lerp(
-        MaterialTheme.colorScheme.onSurface,
-        MaterialTheme.colorScheme.onPrimaryContainer,
-        selectedProgress,
-    )
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .height(64.dp)
-            .clip(shape)
-            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = selectedProgress))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 24.dp)
-            .weight(1f),
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleMedium,
-            color = textColor,
-            textAlign = TextAlign.Center,
-        )
     }
 }

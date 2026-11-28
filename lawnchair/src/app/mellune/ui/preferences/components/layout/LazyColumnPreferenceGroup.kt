@@ -18,19 +18,19 @@ package app.mellune.ui.preferences.components.layout
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import app.mellune.ui.theme.preferenceGroupColor
+import app.mellune.ui.m3e.m3eGroupPositionFor
+import app.mellune.ui.m3e.m3eGroupShape
+import app.mellune.ui.m3e.m3eGroupSurfaceColor
 
 fun LazyListScope.preferenceGroupItems(
     count: Int,
@@ -52,15 +52,11 @@ fun LazyListScope.preferenceGroupItems(
         PreferenceGroupHeading(heading?.let { it() })
     }
     items(count, key, contentType) {
-        PreferenceGroupItem(cutTop = it > 0, cutBottom = it < count - 1) {
-            Column {
-                if (showDividers && it > 0) {
-                    HorizontalDivider(
-                        modifier = Modifier,
-                        thickness = 3.dp,
-                        color = MaterialTheme.colorScheme.surface,
-                    )
-                }
+        Column {
+            if (showDividers && it > 0) {
+                Spacer(modifier = Modifier.height(3.dp))
+            }
+            PreferenceGroupItem(cutTop = it > 0, cutBottom = it < count - 1) {
                 itemContent(it)
             }
         }
@@ -100,13 +96,13 @@ fun PreferenceGroupItem(
     content: @Composable () -> Unit,
 ) {
     val shape = remember(cutTop, cutBottom) {
-        val top = if (cutTop) 0.dp else 16.dp
-        val bottom = if (cutBottom) 0.dp else 16.dp
-        RoundedCornerShape(top, top, bottom, bottom)
+        m3eGroupShape(m3eGroupPositionFor(cutTop = cutTop, cutBottom = cutBottom))
     }
     Surface(
         modifier = modifier.padding(horizontal = 16.dp),
         shape = shape,
+        color = m3eGroupSurfaceColor(),
+        tonalElevation = 0.dp,
     ) {
         content()
     }

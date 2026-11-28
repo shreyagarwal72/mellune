@@ -21,10 +21,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,9 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import app.mellune.ui.m3e.M3EText
 
 @Composable
 fun PreferenceGroup(
@@ -42,7 +41,7 @@ fun PreferenceGroup(
     heading: String? = null,
     description: String? = null,
     showDescription: Boolean = true,
-    itemSpacing: Dp = ListItemDefaults.SegmentedGap,
+    itemSpacing: Dp = 3.dp,
     content: @Composable () -> Unit,
 ) {
     Column(
@@ -53,7 +52,7 @@ fun PreferenceGroup(
         Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .clip(MaterialTheme.shapes.large),
+                .clip(RoundedCornerShape(24.dp)),
             verticalArrangement = Arrangement.spacedBy(itemSpacing),
         ) {
             content()
@@ -71,15 +70,12 @@ fun PreferenceGroupHeading(
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = modifier
-                .height(48.dp)
-                .padding(horizontal = 32.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 8.dp)
                 .fillMaxWidth(),
         ) {
             Text(
                 text = heading,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary,
+                style = M3EText.sectionHeader,
                 modifier = Modifier.semantics { this.heading() },
             )
         }
@@ -99,7 +95,7 @@ fun PreferenceGroupDescription(
             modifier = modifier,
             visible = showDescription,
         ) {
-            Row(modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 16.dp)) {
+            Row(modifier = Modifier.padding(start = 22.dp, end = 22.dp, top = 10.dp)) {
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodyMedium,

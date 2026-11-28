@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import app.mellune.ui.m3e.M3EButton
 import app.mellune.util.getApkVersionComparison
 import com.android.launcher3.R
 import java.io.File
@@ -62,10 +63,7 @@ fun UpdateSection(
             }
 
             is UpdateState.Available -> {
-                Button(
-                    onClick = onViewChanges,
-                    shapes = ButtonDefaults.shapes(),
-                ) {
+                M3EButton(onClick = onViewChanges) {
                     Text(text = stringResource(R.string.download_update))
                 }
             }
@@ -84,11 +82,10 @@ fun UpdateSection(
             }
 
             is UpdateState.Downloaded -> {
-                Button(
+                M3EButton(
                     onClick = {
                         onInstall(updateState.file)
                     },
-                    shapes = ButtonDefaults.shapes(),
                 ) {
                     Text(text = stringResource(R.string.install_update))
                 }

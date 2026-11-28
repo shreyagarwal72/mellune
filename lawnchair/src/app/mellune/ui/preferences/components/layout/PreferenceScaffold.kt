@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2022, Lawnchair
  *
@@ -17,14 +16,18 @@
 
 package app.mellune.ui.preferences.components.layout
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.graphics.Color
+import app.mellune.ui.m3e.M3EPageBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,20 +40,26 @@ fun PreferenceScaffold(
     bottomBar: @Composable () -> Unit = { BottomSpacer() },
     content: @Composable (PaddingValues) -> Unit,
 ) {
-    val scrollBehavior = if (isExpandedScreen) TopAppBarDefaults.pinnedScrollBehavior() else TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopBar(
-                backArrowVisible = backArrowVisible,
-                label = label,
-                isExpandedScreen = isExpandedScreen,
-                actions = actions,
-                scrollBehavior = scrollBehavior,
-            )
-        },
-        bottomBar = bottomBar,
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
     ) {
-        content(it)
+        M3EPageBackground(pageKey = label)
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = Color.Transparent,
+            topBar = {
+                TopBar(
+                    backArrowVisible = backArrowVisible,
+                    label = label,
+                    isExpandedScreen = isExpandedScreen,
+                    actions = actions,
+                )
+            },
+            bottomBar = bottomBar,
+        ) {
+            content(it)
+        }
     }
 }

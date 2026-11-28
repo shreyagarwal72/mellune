@@ -1,29 +1,31 @@
 package app.mellune.ui.preferences.components.controls
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedListItem
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import app.mellune.preferences.PreferenceAdapter
+import app.mellune.ui.m3e.M3ESpring
+import app.mellune.ui.m3e.M3ESwitch
+import app.mellune.ui.m3e.M3EText
+import app.mellune.ui.m3e.m3eGroupSurfaceColor
+import app.mellune.ui.m3e.m3ePressScale
 import app.mellune.ui.preferences.components.layout.ExpandAndShrink
 import app.mellune.ui.theme.MelluneTheme
 import app.mellune.ui.util.preview.PreferenceGroupPreviewContainer
@@ -75,17 +77,16 @@ fun MainSwitchPreference(
     ExpandAndShrink(description != null) {
         if (description != null) {
             Row(
-                modifier = Modifier.padding(start = 32.dp, end = 32.dp, bottom = 16.dp),
+                modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 12.dp),
             ) {
                 Text(
                     text = description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = M3EText.rowSubtitle,
                 )
             }
         }
     }
-    Crossfade(targetState = checked, label = "") { targetState ->
+    Crossfade(targetState = checked, label = "mainSwitchContent") { targetState ->
         if (targetState) {
             Column {
                 content()
@@ -102,62 +103,65 @@ fun MainSwitchPreference(
     enabled: Boolean = true,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    val contentPadding = 16.dp // This must match [PreferenceGroup]'s padding
     val interactionSource = remember { MutableInteractionSource() }
     val mMSDLPlayerWrapper = MSDLPlayerWrapper.INSTANCE.get(LocalContext.current)
-
-    val wrappedOnCheckedChange: (Boolean) -> Unit = { newValue ->
-        mMSDLPlayerWrapper.playToken(if (newValue) MSDLToken.SWITCH_ON else MSDLToken.SWITCH_OFF)
-        onCheckedChange(newValue)
+    val containerColor by animateColorAsState(
+        targetValue = if (checked) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            m3eGroupSurfaceColor()
+        },
+        animationSpec = M3ESpring.quick(),
+        label = "mainSwitchContainer",
+    )
+    val contentColor = if (checked) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+        MaterialTheme.colorScheme.onSurface
     }
 
-    Column(
-        modifier.padding(horizontal = contentPadding),
-    ) {
-        SegmentedListItem(
-            onClick = { wrappedOnCheckedChange(!checked) },
-            selected = checked,
-            shapes = ListItemDefaults.shapes().copy(
-                shape = MaterialTheme.shapes.medium,
-                selectedShape = MaterialTheme.shapes.extraLarge,
-                pressedShape = CircleShape,
-                focusedShape = CircleShape,
-                hoveredShape = CircleShape,
-            ),
-            enabled = enabled,
-            trailingContent = {
-                Switch(
-                    modifier = Modifier
-                        .padding(top = contentPadding, bottom = contentPadding, start = contentPadding)
-                        .height(24.dp),
-                    checked = checked,
-                    onCheckedChange = wrappedOnCheckedChange,
-                    enabled = enabled,
-                    interactionSource = interactionSource,
-                    thumbContent = {
-                        if (checked) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Filled.Close,
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        }
-                    },
+    Surface(
+        onClick = {
+            if (enabled) {
+                val next = !checked
+                mMSDLPlayerWrapper.playToken(
+                    if (next) MSDLToken.SWITCH_ON else MSDLToken.SWITCH_OFF,
                 )
-            },
-            colors = ListItemDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-            ),
+                onCheckedChange(next)
+            }
+        },
+        enabled = enabled,
+        shape = RoundedCornerShape(24.dp),
+        color = containerColor,
+        contentColor = contentColor,
+        interactionSource = interactionSource,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .m3ePressScale(interactionSource, targetScale = 0.97f),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 72.dp)
+                .padding(horizontal = 20.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(text = label, style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = label,
+                style = M3EText.rowTitle,
+                color = contentColor,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 12.dp),
+            )
+            M3ESwitch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                enabled = enabled,
+                interactionSource = interactionSource,
+            )
         }
     }
 }
@@ -172,32 +176,7 @@ private fun MainSwitchPreferenceCheckedPreview() {
                 onCheckedChange = {},
                 label = "Main Switch Preference",
                 description = "Description of the main switch preference",
-            ) {
-                Text(
-                    text = "Expanded content",
-                    modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
-                )
-            }
-        }
-    }
-}
-
-@PreviewMellune
-@Composable
-private fun MainSwitchPreferenceUncheckedPreview() {
-    MelluneTheme {
-        PreferenceGroupPreviewContainer {
-            MainSwitchPreference(
-                checked = false,
-                onCheckedChange = {},
-                label = "Main Switch Preference",
-                description = "Description of the main switch preference",
-            ) {
-                Text(
-                    text = "Expanded content",
-                    modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
-                )
-            }
+            ) {}
         }
     }
 }

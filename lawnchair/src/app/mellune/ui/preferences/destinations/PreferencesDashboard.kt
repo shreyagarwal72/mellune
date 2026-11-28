@@ -35,13 +35,12 @@ import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Science
 import androidx.compose.material.icons.rounded.TipsAndUpdates
+import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -61,15 +60,13 @@ import app.mellune.preferences.preferenceManager
 import app.mellune.preferences2.firstCached
 import app.mellune.preferences2.preferenceManager2
 import app.mellune.ui.OverflowMenuGrouped
+import app.mellune.ui.m3e.M3EInfoCard
 import app.mellune.ui.preferences.components.AnnouncementPreference
 import app.mellune.ui.preferences.components.controls.PreferenceCategory
-import app.mellune.ui.preferences.components.controls.WarningPreference
 import app.mellune.ui.preferences.components.layout.ClickableIcon
 import app.mellune.ui.preferences.components.layout.ExpandAndShrink
 import app.mellune.ui.preferences.components.layout.PreferenceGroup
 import app.mellune.ui.preferences.components.layout.PreferenceLayout
-import app.mellune.ui.preferences.components.layout.PreferenceTemplate
-import app.mellune.ui.preferences.components.layout.ProvideDescriptionTextStyle
 import app.mellune.ui.preferences.data.liveinfo.SyncLiveInformation
 import app.mellune.ui.preferences.navigation.About
 import app.mellune.ui.preferences.navigation.AppDrawer
@@ -326,14 +323,12 @@ fun RowScope.PreferencesOverflowMenu(
 fun PreferencesDebugWarning(
     modifier: Modifier = Modifier,
 ) {
-    WarningPreference(
-        // Don't move to strings.xml, no need to translate this warning
-        text = "You are using a development build, which may contain bugs and broken features. Use at your own risk!",
+    M3EInfoCard(
+        icon = Icons.Rounded.WarningAmber,
+        title = "Development Build",
+        subtitle = "You are using a development build, which may contain bugs and broken features. Use at your own risk!",
+        isError = true,
         modifier = modifier.padding(horizontal = 16.dp),
-        standalone = true,
-        colors = ListItemDefaults.segmentedColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-        ),
     )
 }
 
@@ -343,37 +338,20 @@ fun PreferencesSetDefaultLauncherWarning(
 ) {
     val context = LocalContext.current
     val mMSDLPlayerWrapper = MSDLPlayerWrapper.INSTANCE.get(context)
-    Surface(
+    M3EInfoCard(
+        icon = Icons.Rounded.TipsAndUpdates,
+        title = stringResource(id = R.string.derived_app_name),
+        subtitle = stringResource(id = R.string.set_default_launcher_tip),
+        actionLabel = stringResource(id = R.string.settings),
+        onAction = {
+            mMSDLPlayerWrapper.playToken(MSDLToken.TAP_MEDIUM_EMPHASIS)
+            Intent(Settings.ACTION_HOME_SETTINGS)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .let { context.startActivity(it) }
+            (context as? Activity)?.finish()
+        },
         modifier = modifier.padding(horizontal = 16.dp),
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceVariant,
-    ) {
-        PreferenceTemplate(
-            modifier = Modifier,
-            onClick = {
-                mMSDLPlayerWrapper.playToken(MSDLToken.TAP_MEDIUM_EMPHASIS)
-                Intent(Settings.ACTION_HOME_SETTINGS)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .let { context.startActivity(it) }
-                (context as? Activity)?.finish()
-            },
-            title = {
-                ProvideDescriptionTextStyle {
-                    Text(
-                        text = stringResource(id = R.string.set_default_launcher_tip),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            },
-            startWidget = {
-                Icon(
-                    imageVector = Icons.Rounded.TipsAndUpdates,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    contentDescription = null,
-                )
-            },
-        )
-    }
+    )
 }
 
 fun openAppInfo(context: Context) {

@@ -18,12 +18,9 @@ package app.mellune.ui.preferences.components.controls
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,6 +28,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.mellune.ui.ModalBottomSheetContent
+import app.mellune.ui.m3e.M3EButton
+import app.mellune.ui.m3e.M3EOutlinedButton
+import app.mellune.ui.m3e.m3eGroupSurfaceColor
 import app.mellune.ui.preferences.components.layout.PreferenceTemplate
 import app.mellune.ui.theme.MelluneTheme
 import app.mellune.ui.util.bottomSheetHandler
@@ -46,8 +46,8 @@ fun ClickablePreference(
     subtitle: String? = null,
     confirmationText: String? = null,
     colors: ListItemColors = ListItemDefaults.segmentedColors(
-        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+        containerColor = m3eGroupSurfaceColor(),
+        disabledContainerColor = m3eGroupSurfaceColor().copy(alpha = 0.5f),
     ),
     hapticToken: MSDLToken? = MSDLToken.TAP_LOW_EMPHASIS,
     onClick: () -> Unit,
@@ -90,19 +90,15 @@ fun PreferenceClickConfirmation(
         title = { Text(text = title) },
         text = { Text(text = text) },
         buttons = {
-            OutlinedButton(
-                onClick = onDismissRequest,
-                shapes = ButtonDefaults.shapes(),
-            ) {
+            M3EOutlinedButton(onClick = onDismissRequest) {
                 Text(text = stringResource(id = android.R.string.cancel))
             }
-            Spacer(modifier = Modifier.requiredWidth(8.dp))
-            Button(
+            Spacer(modifier = Modifier.requiredWidth(4.dp))
+            M3EButton(
                 onClick = {
                     onDismissRequest()
                     onConfirm()
                 },
-                shapes = ButtonDefaults.shapes(),
             ) {
                 Text(text = stringResource(id = android.R.string.ok))
             }

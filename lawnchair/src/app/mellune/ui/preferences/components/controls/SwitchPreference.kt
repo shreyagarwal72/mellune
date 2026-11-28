@@ -20,30 +20,21 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import app.mellune.preferences.PreferenceAdapter
+import app.mellune.ui.m3e.M3ESwitch
 import app.mellune.ui.preferences.components.layout.PreferenceTemplate
 import app.mellune.ui.theme.MelluneTheme
 import app.mellune.ui.util.preview.PreferenceGroupPreviewContainer
 import app.mellune.ui.util.preview.PreviewMellune
-import com.android.launcher3.util.MSDLPlayerWrapper
-import com.google.android.msdl.data.model.MSDLToken
 
 @Composable
 fun SwitchPreference(
@@ -80,12 +71,6 @@ fun SwitchPreference(
     onClick: (() -> Unit)? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val mMSDLPlayerWrapper = MSDLPlayerWrapper.INSTANCE.get(LocalContext.current)
-
-    val wrappedOnCheckedChange: (Boolean) -> Unit = { newValue ->
-        mMSDLPlayerWrapper.playToken(if (newValue) MSDLToken.SWITCH_ON else MSDLToken.SWITCH_OFF)
-        onCheckedChange(newValue)
-    }
 
     PreferenceTemplate(
         title = { Text(text = label) },
@@ -101,29 +86,12 @@ fun SwitchPreference(
                         modifier = Modifier.height(32.dp),
                     )
                 }
-                Switch(
-                    modifier = Modifier
-                        .padding(start = if (onClick != null) 12.dp else 0.dp)
-                        .height(24.dp),
+                M3ESwitch(
                     checked = checked,
-                    onCheckedChange = wrappedOnCheckedChange,
+                    onCheckedChange = onCheckedChange,
                     enabled = enabled,
                     interactionSource = interactionSource,
-                    thumbContent = {
-                        if (checked) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Filled.Close,
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        }
-                    },
+                    modifier = Modifier.padding(start = if (onClick != null) 12.dp else 0.dp),
                 )
             }
         },
@@ -131,7 +99,7 @@ fun SwitchPreference(
             if (onClick != null) {
                 onClick()
             } else {
-                wrappedOnCheckedChange(!checked)
+                onCheckedChange(!checked)
             }
         },
         interactionSource = interactionSource,

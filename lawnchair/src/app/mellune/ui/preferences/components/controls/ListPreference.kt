@@ -17,22 +17,20 @@
 package app.mellune.ui.preferences.components.controls
 
 import android.R as AndroidR
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.mellune.preferences.PreferenceAdapter
 import app.mellune.ui.ModalBottomSheetContent
-import app.mellune.ui.preferences.components.layout.PreferenceDivider
+import app.mellune.ui.m3e.M3EOutlinedButton
+import app.mellune.ui.m3e.M3ESelectableOptionCard
 import app.mellune.ui.preferences.components.layout.PreferenceTemplate
 import app.mellune.ui.theme.MelluneTheme
 import app.mellune.ui.util.bottomSheetHandler
@@ -94,22 +92,19 @@ fun <T> ListPreference(
                     ModalBottomSheetContent(
                         title = { Text(label) },
                         buttons = {
-                            OutlinedButton(
-                                onClick = { bottomSheetHandler.hide() },
-                                shapes = ButtonDefaults.shapes(),
-                            ) {
+                            M3EOutlinedButton(onClick = { bottomSheetHandler.hide() }) {
                                 Text(text = stringResource(id = AndroidR.string.cancel))
                             }
                         },
                     ) {
-                        LazyColumn {
-                            itemsIndexed(entries) { index, item ->
-                                if (index > 0) {
-                                    PreferenceDivider(startIndent = 40.dp)
-                                }
-                                PreferenceTemplate(
-                                    enabled = item.enabled,
-                                    title = { Text(item.label()) },
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            itemsIndexed(entries) { _, item ->
+                                M3ESelectableOptionCard(
+                                    title = item.label(),
+                                    selected = item.value == value,
+                                    modifier = Modifier.alpha(if (item.enabled) 1f else 0.45f),
                                     onClick = {
                                         mMSDLPlayerWrapper.playToken(MSDLToken.TAP_LOW_EMPHASIS)
                                         if (item.enabled) {
@@ -117,18 +112,6 @@ fun <T> ListPreference(
                                             bottomSheetHandler.hide()
                                         }
                                     },
-                                    startWidget = {
-                                        RadioButton(
-                                            selected = item.value == value,
-                                            onClick = null,
-                                            enabled = item.enabled,
-                                        )
-                                    },
-                                    endWidget = item.endWidget,
-                                    colors = ListItemDefaults.colors(
-                                        containerColor = Color.Transparent,
-                                        disabledContainerColor = Color.Transparent,
-                                    ),
                                 )
                             }
                         }

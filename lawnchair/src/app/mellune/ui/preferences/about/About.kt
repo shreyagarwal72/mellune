@@ -18,6 +18,7 @@ package app.mellune.ui.preferences.about
 
 import android.content.Intent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,10 +28,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,13 +50,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.mellune.preferences.PreferenceManager
+import app.mellune.ui.m3e.ExpressiveButtonShape
+import app.mellune.ui.m3e.M3EBadgeVariant
+import app.mellune.ui.m3e.M3EConnectedButtonGroup
+import app.mellune.ui.m3e.M3EConnectedButtonItem
+import app.mellune.ui.m3e.M3EGroupIconBadge
+import app.mellune.ui.m3e.M3EHeroCard
+import app.mellune.ui.m3e.M3EMaterialShapes
+import app.mellune.ui.m3e.M3EText
 import app.mellune.ui.preferences.LocalIsExpandedScreen
 import app.mellune.ui.preferences.components.NavigationActionPreference
 import app.mellune.ui.preferences.components.controls.ClickablePreference
@@ -68,6 +76,12 @@ import app.mellune.ui.preferences.navigation.AboutLicenses
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.R
 import kotlinx.coroutines.launch
+
+private val HighlightPalette = listOf(
+    M3EBadgeVariant.PRIMARY,
+    M3EBadgeVariant.SECONDARY,
+    M3EBadgeVariant.TERTIARY,
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,10 +124,10 @@ fun About(
         backArrowVisible = !LocalIsExpandedScreen.current,
     ) {
         item {
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(10.dp))
         }
         item {
-            AboutHeroCard(
+            AboutHeroBanner(
                 versionDisplayName = if (prefs.hideVersionInfo.get()) {
                     prefs.pseudonymVersion.get() + " (pseudonym)"
                 } else {
@@ -130,6 +144,29 @@ fun About(
         }
         item {
             Spacer(modifier = Modifier.height(12.dp))
+        }
+        if (uiState.topLinks.isNotEmpty()) {
+            item {
+                val quickLinks = uiState.topLinks.map { link ->
+                    M3EConnectedButtonItem(
+                        label = stringResource(id = link.labelResId),
+                        painter = painterResource(id = link.iconResId),
+                        selected = link.labelResId == R.string.github,
+                    )
+                }
+                M3EConnectedButtonGroup(
+                    items = quickLinks,
+                    selectedIndex = uiState.topLinks.indexOfFirst { it.labelResId == R.string.github },
+                    onSelect = { index ->
+                        val picked = uiState.topLinks.getOrNull(index) ?: return@M3EConnectedButtonGroup
+                        val intent = Intent(Intent.ACTION_VIEW, picked.url.toUri())
+                        if (intent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(intent)
+                        }
+                    },
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
         }
         item {
             UpdateSection(
@@ -151,32 +188,16 @@ fun About(
                 },
             )
         }
-        item {
-            Spacer(modifier = Modifier.requiredHeight(12.dp))
-        }
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-            ) {
-                uiState.topLinks.forEach { link ->
-                    MelluneLink(
-                        iconResId = link.iconResId,
-                        label = stringResource(id = link.labelResId),
-                        modifier = Modifier.weight(weight = 1f),
-                        url = link.url,
-                    )
-                }
-            }
-        }
         preferenceGroupItems(
             items = uiState.highlights,
             isFirstChild = false,
             heading = { stringResource(id = R.string.about_highlights_heading) },
             key = { _, it -> it.titleResId },
-        ) { _, highlight ->
-            AboutHighlightRow(highlight = highlight)
+        ) { index, highlight ->
+            AboutHighlightRow(
+                highlight = highlight,
+                variant = HighlightPalette[index % HighlightPalette.size],
+            )
         }
         preferenceGroupItems(
             items = uiState.maintainers,
@@ -226,106 +247,132 @@ fun About(
             )
         }
         item {
-            PreferenceGroupItem(
-                cutTop = false,
-                cutBottom = true,
+            Column(
+                verticalArrangement = Arrangement.spacedBy(3.dp),
             ) {
-                NavigationActionPreference(
-                    label = stringResource(id = R.string.acknowledgements),
-                    destination = AboutLicenses,
-                )
-            }
-        }
-        item {
-            Spacer(Modifier.height(3.dp))
-        }
-        item {
-            PreferenceGroupItem(
-                cutTop = true,
-                cutBottom = false,
-            ) {
-                ClickablePreference(
-                    label = stringResource(id = R.string.about_source_license),
-                    onClick = {
-                        val webpage = MELLUNE_LICENSE_URL.toUri()
-                        val intent = Intent(Intent.ACTION_VIEW, webpage)
-                        if (intent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(intent)
-                        }
-                    },
-                )
+                PreferenceGroupItem(
+                    cutTop = false,
+                    cutBottom = true,
+                ) {
+                    NavigationActionPreference(
+                        label = stringResource(id = R.string.acknowledgements),
+                        destination = AboutLicenses,
+                    )
+                }
+                PreferenceGroupItem(
+                    cutTop = true,
+                    cutBottom = false,
+                ) {
+                    ClickablePreference(
+                        label = stringResource(id = R.string.about_source_license),
+                        onClick = {
+                            val webpage = MELLUNE_LICENSE_URL.toUri()
+                            val intent = Intent(Intent.ACTION_VIEW, webpage)
+                            if (intent.resolveActivity(context.packageManager) != null) {
+                                context.startActivity(intent)
+                            }
+                        },
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun AboutHeroCard(
+private fun AboutHeroBanner(
     versionDisplayName: String,
     onOpenCommit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(28.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+    M3EHeroCard(
+        modifier = modifier.padding(horizontal = 16.dp),
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 24.dp),
+                .padding(horizontal = 20.dp, vertical = 22.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_home_comp),
-                contentDescription = null,
+            Box(
                 modifier = Modifier
-                    .size(76.dp)
-                    .clip(CircleShape),
-            )
+                    .size(84.dp)
+                    .clip(M3EMaterialShapes.Cookie12Sided.toShape())
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_home_comp),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape),
+                )
+            }
             Spacer(modifier = Modifier.height(14.dp))
             Text(
                 text = stringResource(id = R.string.derived_app_name),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.SemiBold,
+                style = M3EText.pageTitle,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Surface(
-                shape = CircleShape,
+                shape = ExpressiveButtonShape,
                 color = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             ) {
                 Text(
                     text = stringResource(id = R.string.about_fork_tagline),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = M3EText.chip,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                 )
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = stringResource(id = R.string.about_description),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = M3EText.cardBody,
+                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.88f),
                 textAlign = TextAlign.Center,
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = versionDisplayName,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center,
+            Spacer(modifier = Modifier.height(14.dp))
+            Surface(
+                shape = ExpressiveButtonShape,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
-                    .clip(CircleShape)
+                    .clip(ExpressiveButtonShape)
                     .combinedClickable(
-                        onClick = {},
+                        onClick = onOpenCommit,
                         onLongClick = onOpenCommit,
+                    ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(ExpressiveButtonShape)
+                            .background(MaterialTheme.colorScheme.primary),
                     )
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-            )
+                    Text(
+                        text = versionDisplayName,
+                        style = M3EText.badge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Icon(
+                        imageVector = Icons.Rounded.OpenInNew,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(14.dp),
+                    )
+                }
+            }
         }
     }
 }
@@ -333,6 +380,7 @@ private fun AboutHeroCard(
 @Composable
 private fun AboutHighlightRow(
     highlight: FeatureHighlight,
+    variant: M3EBadgeVariant,
     modifier: Modifier = Modifier,
 ) {
     PreferenceTemplate(
@@ -340,20 +388,11 @@ private fun AboutHighlightRow(
         modifier = modifier,
         description = { Text(text = stringResource(id = highlight.descriptionResId)) },
         startWidget = {
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                modifier = Modifier.size(38.dp),
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        painter = painterResource(id = highlight.iconResId),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-            }
+            M3EGroupIconBadge(
+                painter = painterResource(id = highlight.iconResId),
+                shapeKey = highlight.titleResId,
+                variant = variant,
+            )
         },
     )
 }

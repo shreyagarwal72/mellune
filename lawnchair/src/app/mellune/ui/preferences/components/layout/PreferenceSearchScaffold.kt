@@ -7,14 +7,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -33,13 +37,26 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import app.mellune.ui.m3e.ExpressiveIconButton
+import app.mellune.ui.m3e.M3EPageBackground
+import app.mellune.ui.m3e.smoothRoundedShape
 import app.mellune.ui.theme.MelluneTheme
 import app.mellune.ui.util.preview.PreviewMellune
+
+private val SearchHeaderShape = smoothRoundedShape(
+    topStart = 0.dp,
+    topEnd = 0.dp,
+    bottomEnd = 36.dp,
+    bottomStart = 36.dp,
+)
 
 @Composable
 fun PreferenceSearchScaffold(
@@ -51,22 +68,49 @@ fun PreferenceSearchScaffold(
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            Surface {
-                SearchBar(
-                    value,
-                    onValueChange,
-                    backDispatcher,
-                    placeholder = placeholder,
-                    actions = actions,
-                )
-            }
-        },
-        bottomBar = { BottomSpacer() },
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
     ) {
-        content(it)
+        M3EPageBackground(pageKey = "search")
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = Color.Transparent,
+            topBar = {
+                val scheme = MaterialTheme.colorScheme
+                val isDarkSurface = scheme.background.luminance() < 0.5f
+                val headerColor = lerp(
+                    scheme.surfaceContainer,
+                    scheme.primaryContainer,
+                    if (isDarkSurface) 0.30f else 0.42f,
+                )
+                Surface(
+                    shape = SearchHeaderShape,
+                    color = headerColor,
+                    shadowElevation = 3.dp,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .statusBarsPadding()
+                            .padding(bottom = 12.dp, top = 8.dp),
+                    ) {
+                        SearchBar(
+                            value = value,
+                            onValueChange = onValueChange,
+                            backDispatcher = backDispatcher,
+                            placeholder = placeholder,
+                            actions = actions,
+                        )
+                    }
+                }
+            },
+            bottomBar = { BottomSpacer() },
+        ) {
+            content(it)
+        }
     }
 }
 
@@ -83,45 +127,55 @@ private fun SearchBar(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .zIndex(1f)
-            .statusBarsPadding()
-            .padding(vertical = 8.dp)
             .padding(horizontal = 16.dp)
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                shape = CircleShape,
-            ),
+            .fillMaxWidth(),
     ) {
-        ClickableIcon(
-            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+        ExpressiveIconButton(
+            icon = Icons.AutoMirrored.Rounded.ArrowBack,
+            contentDescription = "Back",
             onClick = { backDispatcher?.onBackPressed() },
+            size = 44.dp,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         )
-        Box(modifier = Modifier.weight(1f)) {
-            SearchTextField(
-                value,
-                onValueChange,
-            ) {
-                if (placeholder != null) {
-                    placeholder()
-                }
-            }
-        }
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
-            Row(
-                Modifier.fillMaxHeight(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Crossfade(value != "", label = "Close button animation") {
-                    if (it) {
-                        ClickableIcon(
-                            imageVector = Icons.Rounded.Clear,
-                            onClick = { onValueChange("") },
-                        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .weight(1f)
+                .height(52.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.92f),
+                    shape = CircleShape,
+                )
+                .padding(horizontal = 14.dp),
+        ) {
+            Box(modifier = Modifier.weight(1f)) {
+                SearchTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                ) {
+                    if (placeholder != null) {
+                        placeholder()
                     }
                 }
-                actions()
+            }
+            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
+                Row(
+                    Modifier.fillMaxHeight(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Crossfade(value.isNotEmpty(), label = "Close button animation") { hasText ->
+                        if (hasText) {
+                            ClickableIcon(
+                                imageVector = Icons.Rounded.Clear,
+                                onClick = { onValueChange("") },
+                            )
+                        }
+                    }
+                    actions()
+                }
             }
         }
     }
@@ -136,8 +190,7 @@ private fun SearchTextField(
     placeholder: @Composable (() -> Unit)? = null,
 ) {
     val textStyle: TextStyle = LocalTextStyle.current
-
-    val textColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val textColor = MaterialTheme.colorScheme.onSurface
     val mergedTextStyle = textStyle.merge(TextStyle(color = textColor))
 
     Row(
