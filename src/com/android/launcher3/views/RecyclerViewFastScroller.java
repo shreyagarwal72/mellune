@@ -414,15 +414,19 @@ public class RecyclerViewFastScroller extends View {
             canvas.translate(translateX, mThumbOffsetY);
         } else {
             boolean isAllApps = getScrollerLocation() == FastScrollerLocation.ALL_APPS_SCROLLER;
-            float trackHalfW = isAllApps ? Math.max(halfW, mWidth * 0.72f) : halfW;
+            float density = getResources().getDisplayMetrics().density;
+            float trackHalfW = isAllApps ? (mIsDragging ? 4f * density : 2.5f * density) : halfW;
             float trackRadius = trackHalfW * 2f;
+            if (isAllApps) {
+                mTrackPaint.setAlpha(mIsDragging ? 72 : 36);
+            }
             canvas.drawRoundRect(-trackHalfW, 0, trackHalfW, mRv.getScrollbarTrackHeight(),
                     trackRadius, trackRadius, mTrackPaint);
             canvas.translate(0, mThumbOffsetY);
         }
         mThumbDrawOffset.y += mThumbOffsetY;
 
-        /* Draw half circle */
+        /* Draw M3E expressive pill thumb */
         halfW += mThumbPadding;
         float r = getScrollThumbRadius();
         if (useLetterFastScroller) {
@@ -431,13 +435,34 @@ public class RecyclerViewFastScroller extends View {
             canvas.drawCircle(-halfW, halfW, r * 2, mThumbPaint);
         } else {
             boolean isAllApps = getScrollerLocation() == FastScrollerLocation.ALL_APPS_SCROLLER;
-            float thumbHalfW = isAllApps ? (mIsDragging ? halfW * 1.35f : halfW * 1.15f) : halfW;
+            float density = getResources().getDisplayMetrics().density;
+            float thumbHalfW = isAllApps ? (mIsDragging ? 10f * density : 4.5f * density) : halfW;
+            float thumbH = isAllApps ? Math.max(mThumbHeight, 44f * density) : mThumbHeight;
             float thumbRadius = isAllApps ? thumbHalfW : r;
             mThumbPaint.setColor(isAllApps && !mIsDragging
-                    ? androidx.core.graphics.ColorUtils.setAlphaComponent(mThumbColor, 220)
+                    ? androidx.core.graphics.ColorUtils.setAlphaComponent(mThumbColor, 235)
                     : mThumbColor);
-            mThumbBounds.set(-thumbHalfW, 0, thumbHalfW, mThumbHeight);
+            mThumbBounds.set(-thumbHalfW, 0, thumbHalfW, thumbH);
             canvas.drawRoundRect(mThumbBounds, thumbRadius, thumbRadius, mThumbPaint);
+
+            if (isAllApps && mIsDragging) {
+                Paint chevronPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                chevronPaint.setColor(android.graphics.Color.WHITE);
+                chevronPaint.setStyle(Paint.Style.STROKE);
+                chevronPaint.setStrokeWidth(1.8f * density);
+                chevronPaint.setStrokeCap(Paint.Cap.ROUND);
+                chevronPaint.setStrokeJoin(Paint.Join.ROUND);
+                float cx = 0f;
+                float cy = thumbH / 2f;
+                float cw = 3.2f * density;
+                float ch = 2.6f * density;
+                // Top chevron
+                canvas.drawLine(cx - cw, cy - 3f * density, cx, cy - 3f * density - ch, chevronPaint);
+                canvas.drawLine(cx, cy - 3f * density - ch, cx + cw, cy - 3f * density, chevronPaint);
+                // Bottom chevron
+                canvas.drawLine(cx - cw, cy + 3f * density, cx, cy + 3f * density + ch, chevronPaint);
+                canvas.drawLine(cx, cy + 3f * density + ch, cx + cw, cy + 3f * density, chevronPaint);
+            }
         }
         mThumbBounds.roundOut(SYSTEM_GESTURE_EXCLUSION_RECT.get(0));
         // swiping very close to the thumb area (not just within it's bound)
@@ -454,8 +479,7 @@ public class RecyclerViewFastScroller extends View {
     }
 
     boolean shouldUseLetterFastScroller() {
-        return Flags.letterFastScroller()
-                && getScrollerLocation() == FastScrollerLocation.ALL_APPS_SCROLLER;
+        return false;
     }
 
     @Override

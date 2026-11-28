@@ -320,6 +320,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         mFastScroller.setPopupView(findViewById(R.id.fast_scroller_popup));
         mFastScroller.setVisibility(showFastScroller ? VISIBLE : INVISIBLE);
         mFastScrollLetterLayout = findViewById(R.id.scroll_letter_layout);
+        if (mFastScrollLetterLayout != null) {
+            mFastScrollLetterLayout.setVisibility(GONE);
+        }
         setClipChildren(false);
 
         mSearchContainer = inflateSearchBar();
