@@ -66,6 +66,11 @@ public class AllAppsSwipeController extends AbstractStateChangeTouchController {
     // Depth to apply behind All Apps when it's presented on a sheet.
     private static final Interpolator ALL_APPS_SHEET_DEPTH = DECELERATED_EASE;
 
+    // Un-blur/scale-back used when the sheet closes without a finger driving it: finishes at 85%
+    // of the close so the workspace is already settled when the sheet reaches the bottom.
+    private static final Interpolator ALL_APPS_SHEET_CLOSE_DEPTH =
+            Interpolators.clampToProgress(DECELERATED_EASE, 0f, 0.85f);
+
     // ---- Custom interpolators for NORMAL -> ALL_APPS on phones only. ----
 
     public static final float ALL_APPS_STATE_TRANSITION_ATOMIC = 0.3333f;
@@ -209,10 +214,16 @@ public class AllAppsSwipeController extends AbstractStateChangeTouchController {
             if (!config.isUserControlled()) {
                 config.setInterpolator(ANIM_VERTICAL_PROGRESS, EMPHASIZED);
             }
-            config.setInterpolator(ANIM_WORKSPACE_SCALE,
-                Interpolators.reverse(ALL_APPS_SHEET_DEPTH));
-            config.setInterpolator(ANIM_HOTSEAT_SCALE, Interpolators.reverse(ALL_APPS_SHEET_DEPTH));
-            config.setInterpolator(ANIM_DEPTH, Interpolators.reverse(ALL_APPS_SHEET_DEPTH));
+            // A time-reversed decelerate curve holds the blur/scale until the very end of the
+            // close and then drops it in a few frames, which reads as a pop. For atomic closes use
+            // a decelerating un-blur that settles while the sheet is still sliding away. Gesture
+            // driven closes keep the exact reverse so they track the finger symmetrically.
+            Interpolator closeDepth = config.isUserControlled()
+                    ? Interpolators.reverse(ALL_APPS_SHEET_DEPTH)
+                    : ALL_APPS_SHEET_CLOSE_DEPTH;
+            config.setInterpolator(ANIM_WORKSPACE_SCALE, closeDepth);
+            config.setInterpolator(ANIM_HOTSEAT_SCALE, closeDepth);
+            config.setInterpolator(ANIM_DEPTH, closeDepth);
             if (!Flags.allAppsBlur() && launcher.getDeviceProfile().getDeviceProperties().isPhone()) {
                 // On phones without blur, reveal the workspace and hotseat when leaving All Apps.
                 config.setInterpolator(ANIM_WORKSPACE_FADE, INSTANT);

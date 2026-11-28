@@ -685,15 +685,22 @@ class MelluneLauncher : QuickstepLauncher() {
         }
     }
 
-    private val tmpQsbLoc = IntArray(2)
-    private val tmpSearchLoc = IntArray(2)
-
+    /**
+     * Drives the home QSB <-> drawer search hand-off while the drawer sheet slides.
+     *
+     * [progress] is 0 on home and 1 when all apps is fully open. Everything here is a pure
+     * function of [progress]: no screen-position reads and no counter-translation of the sheet.
+     * The drawer search lives inside the sheet, so it must travel with it; pinning it to a screen
+     * position (as the previous QSB morph did) made it float away from the sheet and made both
+     * pills jitter by feeding their own transforms back into the next frame.
+     */
     override fun onAllAppsTransition(progress: Float) {
         super.onAllAppsTransition(progress)
         val homeQsb = hotseat?.qsb
         val drawerSearch = appsView?.searchView
         if (progress <= 0.001f || progress >= 0.999f) {
             homeQsb?.apply {
+                translationX = 0f
                 translationY = 0f
                 scaleX = 1f
                 scaleY = 1f
@@ -711,55 +718,27 @@ class MelluneLauncher : QuickstepLauncher() {
 
         val clamped = progress.coerceIn(0f, 1f)
         val eased = com.android.app.animation.Interpolators.EMPHASIZED.getInterpolation(clamped)
-        val apps = appsView
+        val density = resources.displayMetrics.density
 
-        if (homeQsb != null && drawerSearch != null &&
-            homeQsb.width > 0 && drawerSearch.width > 0 && apps != null
-        ) {
-            homeQsb.getLocationInWindow(tmpQsbLoc)
-            drawerSearch.getLocationInWindow(tmpSearchLoc)
+        // Home QSB fades out early and lifts slightly; it never scales or chases the drawer.
+        homeQsb?.apply {
+            alpha = (1f - clamped / 0.3f).coerceIn(0f, 1f)
+            translationX = 0f
+            translationY = -12f * density * eased
+            scaleX = 1f
+            scaleY = 1f
+        }
 
-            val qsbCenterX = tmpQsbLoc[0] + homeQsb.width / 2f
-            val qsbCenterY = tmpQsbLoc[1] + homeQsb.height / 2f
-
-            // Undo current translations on drawerSearch & appsView to get resting screen center.
-            val searchRestCenterX =
-                tmpSearchLoc[0] - drawerSearch.translationX + drawerSearch.width / 2f
-            val searchRestCenterY =
-                tmpSearchLoc[1] - drawerSearch.translationY - apps.translationY +
-                    drawerSearch.height / 2f
-
-            val targetCenterX = qsbCenterX + (searchRestCenterX - qsbCenterX) * eased
-            val targetCenterY = qsbCenterY + (searchRestCenterY - qsbCenterY) * eased
-
-            val scaleXRatio =
-                (homeQsb.width.toFloat() / drawerSearch.width.toFloat()).coerceIn(0.8f, 1.2f)
-            val scaleYRatio =
-                (homeQsb.height.toFloat() / drawerSearch.height.toFloat()).coerceIn(0.8f, 1.2f)
-
-            // Cross-fade smoothly over the first 30% so homeQsb hands off directly into drawerSearch.
-            val qsbFade = (1f - (clamped / 0.28f)).coerceIn(0f, 1f)
-            val searchFade = (clamped / 0.28f).coerceIn(0f, 1f)
-
-            homeQsb.alpha = qsbFade
-            homeQsb.translationX = targetCenterX - qsbCenterX
-            homeQsb.translationY = targetCenterY - qsbCenterY
-            val qsbScaleX = 1f + (1f / scaleXRatio - 1f) * eased
-            val qsbScaleY = 1f + (1f / scaleYRatio - 1f) * eased
-            homeQsb.scaleX = qsbScaleX
-            homeQsb.scaleY = qsbScaleY
-
-            drawerSearch.alpha = searchFade
-            drawerSearch.translationX = targetCenterX - searchRestCenterX
-            drawerSearch.translationY = targetCenterY - (searchRestCenterY + apps.translationY)
-            drawerSearch.scaleX = scaleXRatio + (1f - scaleXRatio) * eased
-            drawerSearch.scaleY = scaleYRatio + (1f - scaleYRatio) * eased
-        } else if (drawerSearch != null) {
-            val density = resources.displayMetrics.density
-            drawerSearch.alpha = (clamped / 0.35f).coerceIn(0f, 1f)
-            drawerSearch.scaleX = 0.94f + 0.06f * eased
-            drawerSearch.scaleY = 0.94f + 0.06f * eased
-            drawerSearch.translationY = 18f * density * (1f - eased)
+        // Drawer search fades in overlapping the QSB fade-out so there is no empty gap, and
+        // rides along with the sheet (no translation of its own).
+        drawerSearch?.apply {
+            val fadeIn = ((clamped - 0.2f) / 0.4f).coerceIn(0f, 1f)
+            alpha = fadeIn
+            translationX = 0f
+            translationY = 0f
+            val s = 0.96f + 0.04f * fadeIn
+            scaleX = s
+            scaleY = s
         }
     }
 
