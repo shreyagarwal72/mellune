@@ -102,6 +102,20 @@ public class WorkspaceRevealAnim {
         mAnimators.setInterpolator(Interpolators.DECELERATED_EASE);
         mAnimators.addListener(new AnimatorListenerAdapter() {
             @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                if (launcher instanceof QuickstepLauncher) {
+                    app.mellune.util.MelluneSpringEngine.INSTANCE.playHomeReturnChoreography(
+                            launcher.getWorkspace(),
+                            launcher.getHotseat(),
+                            launcher.getDragLayer(),
+                            null,
+                            launcher,
+                            false);
+                }
+            }
+
+            @Override
             public void onAnimationCancel(Animator animation) {
                 super.onAnimationCancel(animation);
                 Log.d(TAG, "onAnimationCancel");

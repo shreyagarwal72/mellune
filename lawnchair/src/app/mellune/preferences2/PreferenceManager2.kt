@@ -870,6 +870,26 @@ class PreferenceManager2 @Inject constructor(
         defaultValue = true,
     )
 
+    val homeReturnAnimations = preference(
+        key = booleanPreferencesKey(name = "enable_home_return_animations"),
+        defaultValue = true,
+    )
+
+    val homeReturnStyle = preference(
+        key = stringPreferencesKey(name = "home_return_animation_style"),
+        defaultValue = "radial_ripple",
+    )
+
+    val homeReturnIntensity = preference(
+        key = floatPreferencesKey(name = "home_return_animation_intensity"),
+        defaultValue = 1.0f,
+    )
+
+    val homeReturnSheen = preference(
+        key = booleanPreferencesKey(name = "enable_home_return_sheen"),
+        defaultValue = true,
+    )
+
     val deckLayout = preference(
         key = booleanPreferencesKey(name = "enable_lawn_deck"),
         defaultValue = false,

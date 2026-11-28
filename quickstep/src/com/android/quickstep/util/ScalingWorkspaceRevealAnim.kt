@@ -259,7 +259,32 @@ class ScalingWorkspaceRevealAnim(
         hotseat.setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
         animation.addListener(
-            AnimatorListeners.forEndCallback { _: Boolean -> restoreWorkspaceVisibility() }
+            object : android.animation.AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: android.animation.Animator) {
+                    app.mellune.util.MelluneSpringEngine.playHomeReturnChoreography(
+                        workspace = launcher.workspace,
+                        hotseat = launcher.hotseat,
+                        dragLayer = launcher.dragLayer,
+                        targetRect = windowTargetRect,
+                        context = launcher,
+                        fromPredictiveBack = !playAlphaReveal,
+                    )
+                }
+            }
+        )
+
+        animation.addListener(
+            AnimatorListeners.forEndCallback { isCancelled: Boolean ->
+                if (isCancelled) {
+                    app.mellune.util.MelluneSpringEngine.resetRestState(
+                        workspace = launcher.workspace,
+                        hotseat = launcher.hotseat,
+                        windowToken = null,
+                        context = launcher,
+                    )
+                }
+                restoreWorkspaceVisibility()
+            }
         )
     }
 

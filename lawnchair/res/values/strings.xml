@@ -1185,4 +1185,16 @@
     <string name="popup_blur_desc">Blur behind long-press icon and home screen popup menus</string>
     <string name="widget_picker_blur_label">Widget picker blur</string>
     <string name="widget_picker_blur_desc">Blur the wallpaper and home screen behind the widget picker</string>
+
+    <!-- Home Return Animations -->
+    <string name="home_return_category">Home return animations</string>
+    <string name="home_return_animations_label">Flagship return animations</string>
+    <string name="home_return_animations_desc">Play spring-driven icon and dock choreography when returning to the home screen</string>
+    <string name="home_return_style_label">Return animation style</string>
+    <string name="home_return_style_radial_ripple">Radial ripple</string>
+    <string name="home_return_style_parallax_lift">Parallax lift</string>
+    <string name="home_return_style_minimal_elastic">Minimal elastic</string>
+    <string name="home_return_intensity_label">Motion intensity</string>
+    <string name="home_return_sheen_label">Return glow sheen</string>
+    <string name="home_return_sheen_desc">Subtle Material You light sweep when settling back to home (Android 13+)</string>
 </resources>

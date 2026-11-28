@@ -5,6 +5,7 @@ import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.graphics.Shader
@@ -19,6 +20,8 @@ import androidx.annotation.RequiresApi
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
+import app.mellune.preferences2.PreferenceManager2
+import app.mellune.preferences2.firstCached
 import com.android.launcher3.BubbleTextView
 import com.android.launcher3.CellLayout
 import com.android.launcher3.Hotseat
@@ -326,6 +329,280 @@ object MelluneSpringEngine {
 
         if (useShaderShimmer && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && dragLayer != null) {
             playUnlockShaderShimmer(dragLayer, context, gen)
+        }
+    }
+
+    /**
+     * Triggers flagship self-created spring choreography when returning to the home screen
+     * via gesture swipe-up, 3-button Home, or predictive back-to-home.
+     */
+    @JvmOverloads
+    fun playHomeReturnChoreography(
+        workspace: Workspace<*>?,
+        hotseat: Hotseat?,
+        dragLayer: ViewGroup?,
+        targetRect: RectF?,
+        context: Context,
+        fromPredictiveBack: Boolean = false,
+    ) {
+        val prefs = PreferenceManager2.getInstance(context)
+        if (!prefs.homeReturnAnimations.firstCached()) {
+            return
+        }
+        val style = prefs.homeReturnStyle.firstCached()
+        val intensity = prefs.homeReturnIntensity.firstCached().coerceIn(0.4f, 1.5f)
+        val useSheen = prefs.homeReturnSheen.firstCached()
+        val gen = ++transitionGeneration
+        val density = context.resources.displayMetrics.density
+
+        if (workspace != null) {
+            clearWorkspaceBlurImmediately(workspace)
+            val container = currentPageContainer(workspace)
+            when (style) {
+                "minimal_elastic" -> {
+                    val startScale = (1f - 0.035f * intensity).coerceIn(0.92f, 0.99f)
+                    animateSpring(
+                        workspace,
+                        DynamicAnimation.SCALE_X,
+                        1.0f,
+                        STIFFNESS_RETURN_ICON,
+                        DAMPING_UNLOCK,
+                        startValue = startScale,
+                    )
+                    animateSpring(
+                        workspace,
+                        DynamicAnimation.SCALE_Y,
+                        1.0f,
+                        STIFFNESS_RETURN_ICON,
+                        DAMPING_UNLOCK,
+                        startValue = startScale,
+                    )
+                }
+
+                "parallax_lift" -> {
+                    if (container != null) {
+                        staggerParallaxLiftChildren(
+                            container = container,
+                            density = density,
+                            intensity = intensity,
+                            fromPredictiveBack = fromPredictiveBack,
+                            generation = gen,
+                        )
+                    }
+                }
+
+                else -> {
+                    if (container != null) {
+                        staggerHomeReturnChildren(
+                            container = container,
+                            targetRect = targetRect,
+                            density = density,
+                            intensity = intensity,
+                            fromPredictiveBack = fromPredictiveBack,
+                            generation = gen,
+                        )
+                    }
+                }
+            }
+        }
+
+        if (hotseat != null && style != "minimal_elastic") {
+            val hotseatScale = (1f - 0.05f * intensity).coerceIn(0.90f, 0.98f)
+            val liftY = 14f * density * intensity
+            animateSpring(
+                hotseat,
+                DynamicAnimation.SCALE_X,
+                1.0f,
+                STIFFNESS_UNLOCK_HOTSEAT,
+                DAMPING_UNLOCK,
+                startValue = hotseatScale,
+            )
+            animateSpring(
+                hotseat,
+                DynamicAnimation.SCALE_Y,
+                1.0f,
+                STIFFNESS_UNLOCK_HOTSEAT,
+                DAMPING_UNLOCK,
+                startValue = hotseatScale,
+            )
+            animateSpring(
+                hotseat,
+                DynamicAnimation.TRANSLATION_Y,
+                0f,
+                STIFFNESS_UNLOCK_HOTSEAT,
+                DAMPING_UNLOCK,
+                startValue = liftY,
+            )
+        }
+
+        if (useSheen && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && dragLayer != null) {
+            playUnlockShaderShimmer(dragLayer, context, gen)
+        }
+    }
+
+    private fun staggerHomeReturnChildren(
+        container: ViewGroup,
+        targetRect: RectF?,
+        density: Float,
+        intensity: Float,
+        fromPredictiveBack: Boolean,
+        generation: Int,
+    ) {
+        if (container.childCount == 0) return
+
+        val containerLoc = IntArray(2)
+        container.getLocationInWindow(containerLoc)
+        val hasTarget = targetRect != null && !targetRect.isEmpty
+        val anchorX = if (hasTarget) targetRect!!.centerX() else containerLoc[0] + container.width / 2f
+        val anchorY = if (hasTarget) targetRect!!.centerY() else containerLoc[1] + container.height / 2f
+        val maxRadius = max(hypot(container.width.toFloat(), container.height.toFloat()), 1f)
+        val childLoc = IntArray(2)
+
+        for (i in 0 until container.childCount) {
+            val child = container.getChildAt(i) ?: continue
+            if (child.visibility != View.VISIBLE) continue
+
+            trackChild(child)
+            child.getLocationInWindow(childLoc)
+            val cx = childLoc[0] + child.width / 2f
+            val cy = childLoc[1] + child.height / 2f
+            val dx = cx - anchorX
+            val dy = cy - anchorY
+            val dist = hypot(dx, dy)
+
+            if (hasTarget && dist < min(child.width, child.height) * 0.55f) {
+                playReturnRebound(child)
+                continue
+            }
+
+            val normDist = min(dist / maxRadius, 1f)
+            val delayMs = (normDist * 65f).toLong().coerceAtMost(75L)
+            val safeDist = max(dist, 1f)
+            val nudge = 7f * density * intensity * (1f - normDist * 0.45f)
+            val startScale = (1f - 0.06f * intensity).coerceIn(0.88f, 0.98f)
+            val startAlpha = if (fromPredictiveBack) 1f else 0.90f
+
+            val runSpring = {
+                if (transitionGeneration == generation && child.isAttachedToWindow) {
+                    animateSpring(
+                        child,
+                        DynamicAnimation.SCALE_X,
+                        1.0f,
+                        STIFFNESS_RETURN_ICON,
+                        DAMPING_UNLOCK,
+                        startValue = startScale,
+                    )
+                    animateSpring(
+                        child,
+                        DynamicAnimation.SCALE_Y,
+                        1.0f,
+                        STIFFNESS_RETURN_ICON,
+                        DAMPING_UNLOCK,
+                        startValue = startScale,
+                    )
+                    animateSpring(
+                        child,
+                        DynamicAnimation.TRANSLATION_X,
+                        0f,
+                        STIFFNESS_RETURN_ICON,
+                        DAMPING_UNLOCK,
+                        startValue = (dx / safeDist) * nudge,
+                    )
+                    animateSpring(
+                        child,
+                        DynamicAnimation.TRANSLATION_Y,
+                        0f,
+                        STIFFNESS_RETURN_ICON,
+                        DAMPING_UNLOCK,
+                        startValue = (dy / safeDist) * nudge,
+                    )
+                    if (startAlpha < 1f) {
+                        animateSpring(
+                            child,
+                            DynamicAnimation.ALPHA,
+                            1.0f,
+                            STIFFNESS_RETURN_ICON,
+                            DAMPING_SMOOTH,
+                            startValue = startAlpha,
+                        )
+                    }
+                }
+            }
+
+            if (delayMs == 0L) {
+                runSpring()
+            } else {
+                child.postDelayed(runSpring, delayMs)
+            }
+        }
+    }
+
+    private fun staggerParallaxLiftChildren(
+        container: ViewGroup,
+        density: Float,
+        intensity: Float,
+        fromPredictiveBack: Boolean,
+        generation: Int,
+    ) {
+        if (container.childCount == 0) return
+        val containerHeight = max(container.height.toFloat(), 1f)
+        val startScale = (1f - 0.05f * intensity).coerceIn(0.90f, 0.98f)
+        val startAlpha = if (fromPredictiveBack) 1f else 0.88f
+
+        for (i in 0 until container.childCount) {
+            val child = container.getChildAt(i) ?: continue
+            if (child.visibility != View.VISIBLE) continue
+
+            trackChild(child)
+            val centerY = child.top + child.height / 2f
+            val fromBottom = (1f - (centerY / containerHeight).coerceIn(0f, 1f))
+            val delayMs = (fromBottom * 60f).toLong().coerceAtMost(65L)
+            val liftY = (10f + 8f * fromBottom) * density * intensity
+
+            val runSpring = {
+                if (transitionGeneration == generation && child.isAttachedToWindow) {
+                    animateSpring(
+                        child,
+                        DynamicAnimation.SCALE_X,
+                        1.0f,
+                        STIFFNESS_RETURN_ICON,
+                        DAMPING_UNLOCK,
+                        startValue = startScale,
+                    )
+                    animateSpring(
+                        child,
+                        DynamicAnimation.SCALE_Y,
+                        1.0f,
+                        STIFFNESS_RETURN_ICON,
+                        DAMPING_UNLOCK,
+                        startValue = startScale,
+                    )
+                    animateSpring(
+                        child,
+                        DynamicAnimation.TRANSLATION_Y,
+                        0f,
+                        STIFFNESS_RETURN_ICON,
+                        DAMPING_UNLOCK,
+                        startValue = liftY,
+                    )
+                    if (startAlpha < 1f) {
+                        animateSpring(
+                            child,
+                            DynamicAnimation.ALPHA,
+                            1.0f,
+                            STIFFNESS_RETURN_ICON,
+                            DAMPING_SMOOTH,
+                            startValue = startAlpha,
+                        )
+                    }
+                }
+            }
+
+            if (delayMs == 0L) {
+                runSpring()
+            } else {
+                child.postDelayed(runSpring, delayMs)
+            }
         }
     }
 

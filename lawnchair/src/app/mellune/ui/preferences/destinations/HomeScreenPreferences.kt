@@ -45,6 +45,7 @@ import app.mellune.ui.preferences.components.NavigationActionPreference
 import app.mellune.ui.preferences.components.OverlayHandlerPreference
 import app.mellune.ui.preferences.components.controls.ClickablePreference
 import app.mellune.ui.preferences.components.controls.ListPreference
+import app.mellune.ui.preferences.components.controls.ListPreferenceEntry
 import app.mellune.ui.preferences.components.controls.SliderPreference
 import app.mellune.ui.preferences.components.controls.SwitchPreference
 import app.mellune.ui.preferences.components.layout.ExpandAndShrink
@@ -214,6 +215,49 @@ fun HomeScreenPreferences(
                         adapter = prefs2.widgetPickerBlur.getAdapter(),
                         label = stringResource(id = R.string.widget_picker_blur_label),
                         description = stringResource(id = R.string.widget_picker_blur_desc),
+                    )
+                }
+            }
+        }
+        val homeReturnAdapter = prefs2.homeReturnAnimations.getAdapter()
+        PreferenceGroup(heading = stringResource(id = R.string.home_return_category)) {
+            SwitchPreference(
+                adapter = homeReturnAdapter,
+                label = stringResource(id = R.string.home_return_animations_label),
+                description = stringResource(id = R.string.home_return_animations_desc),
+            )
+            ExpandAndShrink(visible = homeReturnAdapter.state.value) {
+                val styleEntries = listOf(
+                    ListPreferenceEntry(
+                        value = "radial_ripple",
+                        label = { stringResource(id = R.string.home_return_style_radial_ripple) },
+                    ),
+                    ListPreferenceEntry(
+                        value = "parallax_lift",
+                        label = { stringResource(id = R.string.home_return_style_parallax_lift) },
+                    ),
+                    ListPreferenceEntry(
+                        value = "minimal_elastic",
+                        label = { stringResource(id = R.string.home_return_style_minimal_elastic) },
+                    ),
+                )
+                ListPreference(
+                    adapter = prefs2.homeReturnStyle.getAdapter(),
+                    entries = styleEntries,
+                    label = stringResource(id = R.string.home_return_style_label),
+                )
+                SliderPreference(
+                    label = stringResource(id = R.string.home_return_intensity_label),
+                    adapter = prefs2.homeReturnIntensity.getAdapter(),
+                    step = 0.05F,
+                    valueRange = 0.4F..1.5F,
+                    showAsPercentage = true,
+                )
+                if (Utilities.ATLEAST_T) {
+                    SwitchPreference(
+                        adapter = prefs2.homeReturnSheen.getAdapter(),
+                        label = stringResource(id = R.string.home_return_sheen_label),
+                        description = stringResource(id = R.string.home_return_sheen_desc),
                     )
                 }
             }
