@@ -685,19 +685,28 @@ class MelluneLauncher : QuickstepLauncher() {
         }
     }
 
+    private val tmpQsbLoc = IntArray(2)
+    private val tmpSearchLoc = IntArray(2)
+
+    // Resting (translation-free) geometry of the drawer search in window coordinates:
+    // centerX, centerY (with the sheet fully open), width, height. Cached once, so the morph
+    // never reads back its own transforms.
+    private var searchRest: FloatArray? = null
+
     /**
-     * Drives the home QSB <-> drawer search hand-off while the drawer sheet slides.
+     * Morphs the home QSB into the drawer search bar while the drawer sheet slides.
      *
-     * [progress] is 0 on home and 1 when all apps is fully open. Everything here is a pure
-     * function of [progress]: no screen-position reads and no counter-translation of the sheet.
-     * The drawer search lives inside the sheet, so it must travel with it; pinning it to a screen
-     * position (as the previous QSB morph did) made it float away from the sheet and made both
-     * pills jitter by feeding their own transforms back into the next frame.
+     * [progress] is 0 on home and 1 when all apps is fully open. The drawer search is the single
+     * moving pill. It sits exactly on the home QSB until the top of the sheet reaches it, then
+     * rides on the sheet up to its resting spot, growing from the QSB's size to its own. Closing
+     * is the same path in reverse, so the pill is always attached to either the QSB or the
+     * sheet and never floats on its own. The home QSB is never transformed, only cross-faded.
      */
     override fun onAllAppsTransition(progress: Float) {
         super.onAllAppsTransition(progress)
         val homeQsb = hotseat?.qsb
         val drawerSearch = appsView?.searchView
+        val apps = appsView
         if (progress <= 0.001f || progress >= 0.999f) {
             homeQsb?.apply {
                 translationX = 0f
@@ -713,32 +722,76 @@ class MelluneLauncher : QuickstepLauncher() {
                 scaleY = 1f
                 alpha = 1f
             }
+            if (progress >= 0.999f && drawerSearch != null && drawerSearch.width > 0) {
+                drawerSearch.getLocationInWindow(tmpSearchLoc)
+                searchRest = floatArrayOf(
+                    tmpSearchLoc[0] + drawerSearch.width / 2f,
+                    tmpSearchLoc[1] + drawerSearch.height / 2f,
+                    drawerSearch.width.toFloat(),
+                    drawerSearch.height.toFloat(),
+                )
+            }
             return
         }
 
         val clamped = progress.coerceIn(0f, 1f)
-        val eased = com.android.app.animation.Interpolators.EMPHASIZED.getInterpolation(clamped)
-        val density = resources.displayMetrics.density
 
-        // Home QSB fades out early and lifts slightly; it never scales or chases the drawer.
-        homeQsb?.apply {
-            alpha = (1f - clamped / 0.3f).coerceIn(0f, 1f)
-            translationX = 0f
-            translationY = -12f * density * eased
-            scaleX = 1f
-            scaleY = 1f
+        if (homeQsb == null || drawerSearch == null || apps == null ||
+            homeQsb.width <= 0 || drawerSearch.width <= 0
+        ) {
+            drawerSearch?.alpha = (clamped / 0.35f).coerceIn(0f, 1f)
+            return
         }
 
-        // Drawer search fades in overlapping the QSB fade-out so there is no empty gap, and
-        // rides along with the sheet (no translation of its own).
-        drawerSearch?.apply {
-            val fadeIn = ((clamped - 0.2f) / 0.4f).coerceIn(0f, 1f)
-            alpha = fadeIn
+        // First transition since launch: the drawer search is still untransformed here, so its
+        // resting spot is its current position minus the sheet's current translation.
+        val rest = searchRest ?: run {
+            drawerSearch.getLocationInWindow(tmpSearchLoc)
+            floatArrayOf(
+                tmpSearchLoc[0] + drawerSearch.width / 2f,
+                tmpSearchLoc[1] + drawerSearch.height / 2f - apps.translationY,
+                drawerSearch.width.toFloat(),
+                drawerSearch.height.toFloat(),
+            ).also { searchRest = it }
+        }
+        val restCx = rest[0]
+        val restCy = rest[1]
+
+        // The QSB is never transformed by us, so reading it live is feedback-free and follows
+        // any hotseat scale/translate that the state animation applies.
+        homeQsb.getLocationInWindow(tmpQsbLoc)
+        val qsbCx = tmpQsbLoc[0] + homeQsb.width / 2f
+        val qsbCy = tmpQsbLoc[1] + homeQsb.height / 2f
+
+        // Where the pill would be if it simply rode along with the sheet.
+        val sheetCy = restCy + apps.translationY
+        // It stays on the QSB until the sheet's top catches up, then rides the sheet.
+        val pillCy = minOf(qsbCy, sheetCy)
+
+        val span = qsbCy - restCy
+        val f = if (span > 1f) ((qsbCy - pillCy) / span).coerceIn(0f, 1f) else 1f
+        val fe = f * f * (3f - 2f * f)
+
+        val pillCx = qsbCx + (restCx - qsbCx) * fe
+        val startScaleX = (homeQsb.width.toFloat() / rest[2]).coerceIn(0.5f, 2f)
+        val startScaleY = (homeQsb.height.toFloat() / rest[3]).coerceIn(0.5f, 2f)
+
+        // Both pills occupy the same spot and size at the start, so a short cross-fade is
+        // invisible; after that only the drawer search is shown.
+        val handOff = (clamped / 0.1f).coerceIn(0f, 1f)
+        homeQsb.apply {
             translationX = 0f
             translationY = 0f
-            val s = 0.96f + 0.04f * fadeIn
-            scaleX = s
-            scaleY = s
+            scaleX = 1f
+            scaleY = 1f
+            alpha = 1f - handOff
+        }
+        drawerSearch.apply {
+            alpha = handOff
+            translationX = pillCx - restCx
+            translationY = pillCy - sheetCy
+            scaleX = startScaleX + (1f - startScaleX) * fe
+            scaleY = startScaleY + (1f - startScaleY) * fe
         }
     }
 
