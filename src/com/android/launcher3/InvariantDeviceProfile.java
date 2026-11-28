@@ -358,6 +358,8 @@ public class InvariantDeviceProfile {
 
     private String initGrid(Context context, String gridName) {
         Info displayInfo = mDisplayController.getInfo();
+        InvariantDeviceProfile.displayInfo = displayInfo;
+        InvariantDeviceProfile.deviceType = displayInfo.getDeviceType();
         List<DisplayOption> allOptions = getPredefinedDeviceProfiles(
                 context,
                 gridName,
@@ -398,6 +400,8 @@ public class InvariantDeviceProfile {
     private String initGrid(Context context, String gridName, DeviceProfileOverrides.DBGridInfo dbGridInfo,
             DeviceProfileOverrides.PreviewOverrides previewOverrides) {
         Info displayInfo = mDisplayController.getInfo();
+        InvariantDeviceProfile.displayInfo = displayInfo;
+        InvariantDeviceProfile.deviceType = displayInfo.getDeviceType();
         List<DisplayOption> allOptions = getPredefinedDeviceProfiles(
                 context,
                 gridName,
@@ -876,10 +880,16 @@ public class InvariantDeviceProfile {
      * @return all the grid options that can be shown on the device
      */
     public static List<GridOption> parseAllGridOptions(Context context) {
-        return parseAllDefinedGridOptions(context, displayInfo)
+        Info resolvedDisplayInfo = displayInfo != null
+                ? displayInfo
+                : DisplayController.INSTANCE.get(context).getInfo();
+        int resolvedDeviceType = resolvedDisplayInfo.getDeviceType();
+        boolean fixedLandscape = isFixedLandscape
+                || LauncherPrefs.get(context).get(FIXED_LANDSCAPE_MODE);
+        return parseAllDefinedGridOptions(context, resolvedDisplayInfo)
                 .stream()
-                .filter(go -> go.isEnabled(deviceType))
-                .filter(go -> go.filterByFlag(deviceType, isFixedLandscape))
+                .filter(go -> go.isEnabled(resolvedDeviceType))
+                .filter(go -> go.filterByFlag(resolvedDeviceType, fixedLandscape))
                 .collect(Collectors.toList());
     }
 
