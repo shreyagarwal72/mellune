@@ -685,6 +685,50 @@ class MelluneLauncher : QuickstepLauncher() {
         }
     }
 
+    override fun onAllAppsTransition(progress: Float) {
+        super.onAllAppsTransition(progress)
+        val homeQsb = hotseat?.qsb
+        val drawerSearch = appsView?.searchView
+        if (progress <= 0.001f || progress >= 0.999f) {
+            homeQsb?.apply {
+                translationY = 0f
+                scaleX = 1f
+                scaleY = 1f
+                alpha = 1f
+            }
+            drawerSearch?.apply {
+                translationY = 0f
+                scaleX = 1f
+                scaleY = 1f
+                alpha = 1f
+            }
+            return
+        }
+
+        val clamped = progress.coerceIn(0f, 1f)
+        val eased = com.android.app.animation.Interpolators.EMPHASIZED.getInterpolation(clamped)
+        val density = resources.displayMetrics.density
+
+        homeQsb?.let { qsb ->
+            qsb.alpha = (1f - (clamped / 0.35f)).coerceIn(0f, 1f)
+            qsb.translationY = -28f * density * eased
+            val qsbScale = 1f + 0.04f * eased
+            qsb.scaleX = qsbScale
+            qsb.scaleY = qsbScale
+        }
+
+        drawerSearch?.let { search ->
+            val qsbHeight = homeQsb?.height?.takeIf { it > 0 } ?: search.height.coerceAtLeast(1)
+            val drawerHeight = search.height.coerceAtLeast(1)
+            val startScale = (qsbHeight.toFloat() / drawerHeight.toFloat()).coerceIn(0.88f, 1.12f)
+            val scale = startScale + (1f - startScale) * eased
+            search.alpha = ((clamped - 0.12f) / 0.40f).coerceIn(0f, 1f)
+            search.scaleX = scale
+            search.scaleY = scale
+            search.translationY = -14f * density * (1f - eased)
+        }
+    }
+
     /**
      * Reloads app icons if there is an active icon pack & [PreferenceManager2.alwaysReloadIcons] is enabled.
      */
