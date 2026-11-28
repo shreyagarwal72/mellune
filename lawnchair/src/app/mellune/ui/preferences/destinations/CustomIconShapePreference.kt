@@ -358,9 +358,8 @@ private fun CornerSlider(
                             ModalBottomSheetContent(
                                 title = { Text(stringResource(id = R.string.custom_icon_shape_corner)) },
                                 buttons = {
-                                    OutlinedButton(
+                                    app.mellune.ui.m3e.M3EOutlinedButton(
                                         onClick = { bottomSheetHandler.hide() },
-                                        shapes = ButtonDefaults.shapes(),
                                     ) {
                                         Text(text = stringResource(id = android.R.string.cancel))
                                     }

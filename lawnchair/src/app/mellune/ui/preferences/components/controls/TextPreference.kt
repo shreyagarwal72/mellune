@@ -101,22 +101,16 @@ fun TextPreferenceDialog(
             )
         },
         buttons = {
-            OutlinedButton(
-                onClick = onDismissRequest,
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(text = stringResource(id = android.R.string.cancel))
-            }
-            Spacer(modifier = Modifier.requiredWidth(8.dp))
-            Button(
-                onClick = {
+            app.mellune.ui.m3e.M3ESegmentedActionPair(
+                dismissLabel = stringResource(id = android.R.string.cancel),
+                onDismiss = onDismissRequest,
+                confirmLabel = stringResource(id = android.R.string.ok),
+                onConfirm = {
                     onDismissRequest()
                     onConfirm(value)
                 },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(text = stringResource(id = android.R.string.ok))
-            }
+                modifier = Modifier.weight(1f),
+            )
         },
     )
 }

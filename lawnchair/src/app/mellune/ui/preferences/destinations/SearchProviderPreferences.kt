@@ -211,9 +211,8 @@ private fun SponsorDisclaimer(
 ) {
     ModalBottomSheetContent(
         buttons = {
-            OutlinedButton(
+            app.mellune.ui.m3e.M3EOutlinedButton(
                 onClick = onAcknowledge,
-                shapes = ButtonDefaults.shapes(),
             ) {
                 Text(text = stringResource(id = android.R.string.ok))
             }

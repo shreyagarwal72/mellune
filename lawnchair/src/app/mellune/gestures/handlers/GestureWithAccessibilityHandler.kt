@@ -67,22 +67,16 @@ fun ServiceWarningDialog(
             }
         },
         buttons = {
-            OutlinedButton(
-                onClick = handleClose,
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(text = stringResource(id = android.R.string.cancel))
-            }
-            Spacer(modifier = Modifier.requiredWidth(8.dp))
-            Button(
-                onClick = {
+            app.mellune.ui.m3e.M3ESegmentedActionPair(
+                dismissLabel = stringResource(id = android.R.string.cancel),
+                onDismiss = handleClose,
+                confirmLabel = stringResource(id = R.string.open_permission_settings),
+                onConfirm = {
                     context.startActivity(settingsIntent)
                     handleClose()
                 },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(text = stringResource(id = R.string.open_permission_settings))
-            }
+                modifier = Modifier.weight(1f),
+            )
         },
     )
 }

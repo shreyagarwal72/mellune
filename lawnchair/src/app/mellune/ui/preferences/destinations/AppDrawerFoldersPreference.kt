@@ -231,22 +231,16 @@ fun FolderEditSheet(
 
     ModalBottomSheetContent(
         buttons = {
-            OutlinedButton(
-                onClick = onDismiss,
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(android.R.string.cancel))
-            }
-            Spacer(Modifier.width(8.dp))
-            Button(
-                onClick = {
+            app.mellune.ui.m3e.M3ESegmentedActionPair(
+                dismissLabel = stringResource(android.R.string.cancel),
+                onDismiss = onDismiss,
+                confirmLabel = stringResource(android.R.string.ok),
+                onConfirm = {
                     onRename(folderId, textFieldValue.text)
                     onDismiss()
                 },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(android.R.string.ok))
-            }
+                modifier = Modifier.weight(1f),
+            )
         },
         modifier = modifier,
     ) {

@@ -105,22 +105,16 @@ fun ChangesDialog(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .fillMaxWidth(),
             ) {
-                OutlinedButton(
-                    onClick = onDismiss,
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(text = stringResource(android.R.string.cancel))
-                }
-                Spacer(Modifier.width(8.dp))
-                Button(
-                    onClick = {
+                app.mellune.ui.m3e.M3ESegmentedActionPair(
+                    dismissLabel = stringResource(android.R.string.cancel),
+                    onDismiss = onDismiss,
+                    confirmLabel = stringResource(R.string.download_update),
+                    onConfirm = {
                         onDownload()
                         onDismiss()
                     },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(text = stringResource(R.string.download_update))
-                }
+                    modifier = Modifier.weight(1f),
+                )
             }
         }
     }

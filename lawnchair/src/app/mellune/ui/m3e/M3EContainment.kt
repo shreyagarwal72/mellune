@@ -37,6 +37,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.ChipColors
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
@@ -46,7 +47,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -830,15 +830,76 @@ fun M3EOutlinedButton(
     content: @Composable RowScope.() -> Unit,
 ) {
     val source = remember { MutableInteractionSource() }
-    OutlinedButton(
+    FilledTonalButton(
         onClick = onClick,
         modifier = modifier.m3ePressScale(source, targetScale = 0.95f),
         enabled = enabled,
         shape = ExpressiveButtonShape,
+        colors = ButtonDefaults.filledTonalButtonColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ),
         contentPadding = contentPadding,
         interactionSource = source,
         content = content,
     )
+}
+
+@Composable
+fun M3ESegmentedActionPair(
+    dismissLabel: String,
+    onDismiss: () -> Unit,
+    confirmLabel: String,
+    onConfirm: () -> Unit,
+    modifier: Modifier = Modifier,
+    confirmEnabled: Boolean = true,
+) {
+    val context = LocalContext.current
+    val msdl = remember(context) { MSDLPlayerWrapper.INSTANCE.get(context) }
+    val dismissSource = remember { MutableInteractionSource() }
+    val confirmSource = remember { MutableInteractionSource() }
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        FilledTonalButton(
+            onClick = {
+                msdl.playToken(MSDLToken.TAP_LOW_EMPHASIS)
+                onDismiss()
+            },
+            modifier = Modifier
+                .weight(1f)
+                .defaultMinSize(minHeight = 46.dp)
+                .m3ePressScale(dismissSource, targetScale = 0.96f),
+            shape = m3eConnectedShape(index = 0, count = 2),
+            colors = ButtonDefaults.filledTonalButtonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 11.dp),
+            interactionSource = dismissSource,
+        ) {
+            Text(text = dismissLabel, maxLines = 1)
+        }
+        Button(
+            onClick = {
+                msdl.playToken(MSDLToken.TAP_MEDIUM_EMPHASIS)
+                onConfirm()
+            },
+            modifier = Modifier
+                .weight(1f)
+                .defaultMinSize(minHeight = 46.dp)
+                .m3ePressScale(confirmSource, targetScale = 0.96f),
+            enabled = confirmEnabled,
+            shape = m3eConnectedShape(index = 1, count = 2),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 11.dp),
+            interactionSource = confirmSource,
+        ) {
+            Text(text = confirmLabel, maxLines = 1)
+        }
+    }
 }
 
 @Composable

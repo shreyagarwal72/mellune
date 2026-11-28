@@ -109,11 +109,10 @@ fun SearchPopupPreference(
                 }
             },
             dismissButton = {
-                OutlinedButton(
+                app.mellune.ui.m3e.M3EOutlinedButton(
                     onClick = {
                         showPopup = false
                     },
-                    shapes = ButtonDefaults.shapes(),
                 ) {
                     Text(text = stringResource(id = android.R.string.cancel))
                 }

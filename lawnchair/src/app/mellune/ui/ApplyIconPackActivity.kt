@@ -145,19 +145,13 @@ private fun ApplyIconPackSheet(
                 }
             },
             buttons = {
-                OutlinedButton(
-                    onClick = onDismiss,
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(text = stringResource(id = android.R.string.cancel))
-                }
-                Spacer(modifier = Modifier.requiredWidth(8.dp))
-                Button(
-                    onClick = onConfirm,
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(text = stringResource(id = R.string.action_apply))
-                }
+                app.mellune.ui.m3e.M3ESegmentedActionPair(
+                    dismissLabel = stringResource(id = android.R.string.cancel),
+                    onDismiss = onDismiss,
+                    confirmLabel = stringResource(id = R.string.action_apply),
+                    onConfirm = onConfirm,
+                    modifier = Modifier.weight(1f),
+                )
             },
         )
     }

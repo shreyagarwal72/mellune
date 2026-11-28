@@ -76,9 +76,8 @@ fun GestureHandlerPreference(
                 ModalBottomSheetContent(
                     title = { Text(label) },
                     buttons = {
-                        OutlinedButton(
+                        app.mellune.ui.m3e.M3EOutlinedButton(
                             onClick = { bottomSheetHandler.hide() },
-                            shapes = ButtonDefaults.shapes(),
                         ) {
                             Text(text = stringResource(id = AndroidR.string.cancel))
                         }

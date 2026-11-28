@@ -63,9 +63,8 @@ class BlankActivity : ComponentActivity() {
                             }
                         },
                         dismissButton = {
-                            OutlinedButton(
+                            app.mellune.ui.m3e.M3EOutlinedButton(
                                 onClick = { finish() },
-                                shapes = ButtonDefaults.shapes(),
                             ) {
                                 Text(text = stringResource(id = android.R.string.cancel))
                             }

@@ -59,7 +59,9 @@ fun OverlayHandlerPreference(
                 ModalBottomSheetContent(
                     title = { Text(label) },
                     buttons = {
-                        OutlinedButton(onClick = { bottomSheetHandler.hide() }) {
+                        app.mellune.ui.m3e.M3EOutlinedButton(
+                            onClick = { bottomSheetHandler.hide() },
+                        ) {
                             Text(text = stringResource(id = AndroidR.string.cancel))
                         }
                     },

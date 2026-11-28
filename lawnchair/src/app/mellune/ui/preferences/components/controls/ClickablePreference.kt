@@ -90,18 +90,16 @@ fun PreferenceClickConfirmation(
         title = { Text(text = title) },
         text = { Text(text = text) },
         buttons = {
-            M3EOutlinedButton(onClick = onDismissRequest) {
-                Text(text = stringResource(id = android.R.string.cancel))
-            }
-            Spacer(modifier = Modifier.requiredWidth(4.dp))
-            M3EButton(
-                onClick = {
+            app.mellune.ui.m3e.M3ESegmentedActionPair(
+                dismissLabel = stringResource(id = android.R.string.cancel),
+                onDismiss = onDismissRequest,
+                confirmLabel = stringResource(id = android.R.string.ok),
+                onConfirm = {
                     onDismissRequest()
                     onConfirm()
                 },
-            ) {
-                Text(text = stringResource(id = android.R.string.ok))
-            }
+                modifier = Modifier.weight(1f),
+            )
         },
         modifier = modifier,
     )
