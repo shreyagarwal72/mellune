@@ -17,6 +17,8 @@
 package app.mellune.ui.preferences.destinations
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +29,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import app.mellune.MelluneApp
 import app.mellune.data.iconoverride.IconOverrideRepository
+import app.mellune.homescreenfiles.HomeScreenFilesManager
 import app.mellune.nexuslauncher.OverlayCallbackImpl
+import app.mellune.organizer.SpaceCreatorActivity
+import app.mellune.organizer.WorkspaceOrganizerActivity
 import app.mellune.preferences.getAdapter
 import app.mellune.preferences.preferenceManager
 import app.mellune.preferences2.preferenceManager2
@@ -103,6 +108,29 @@ fun HomeScreenPreferences(
         }
         PreferenceGroup(heading = stringResource(id = R.string.home_screen_actions)) {
             ClickablePreference(
+                label = stringResource(id = R.string.organize_pages_title),
+                subtitle = stringResource(id = R.string.organize_pages_desc),
+                onClick = {
+                    context.startActivity(Intent(context, WorkspaceOrganizerActivity::class.java))
+                },
+            )
+            ClickablePreference(
+                label = stringResource(id = R.string.create_space_title),
+                subtitle = stringResource(id = R.string.create_space_desc),
+                onClick = {
+                    context.startActivity(Intent(context, SpaceCreatorActivity::class.java))
+                },
+            )
+            ClickablePreference(
+                label = stringResource(id = R.string.home_screen_files_title),
+                subtitle = stringResource(id = R.string.home_screen_files_desc),
+                onClick = {
+                    scope.launch {
+                        HomeScreenFilesManager.syncFilesToWorkspace(context)
+                    }
+                },
+            )
+            ClickablePreference(
                 label = stringResource(id = R.string.remove_all_views_from_home_screen),
                 confirmationText = stringResource(id = R.string.remove_all_views_from_home_screen_desc),
                 onClick = {
@@ -131,6 +159,18 @@ fun HomeScreenPreferences(
                 adapter = prefs2.closingAppOverlay.getAdapter(),
                 label = stringResource(id = R.string.app_closing_animation),
             )
+            SwitchPreference(
+                adapter = prefs2.enableUnlockRingAnimation.getAdapter(),
+                label = stringResource(id = R.string.unlock_ring_animation_label),
+                description = stringResource(id = R.string.unlock_ring_animation_desc),
+            )
+            ExpandAndShrink(visible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                SwitchPreference(
+                    adapter = prefs2.enableUnlockShaderShimmer.getAdapter(),
+                    label = stringResource(id = R.string.unlock_shader_shimmer_label),
+                    description = stringResource(id = R.string.unlock_shader_shimmer_desc),
+                )
+            }
         }
         PreferenceGroup(heading = stringResource(id = R.string.wallpaper)) {
             SwitchPreference(

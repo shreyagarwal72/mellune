@@ -14,6 +14,7 @@ import app.mellune.search.algorithms.engine.ContactsSectionBuilder
 import app.mellune.search.algorithms.engine.EmptyStateSectionBuilder
 import app.mellune.search.algorithms.engine.FilesSectionBuilder
 import app.mellune.search.algorithms.engine.HistorySectionBuilder
+import app.mellune.search.algorithms.engine.QuickTogglesSectionBuilder
 import app.mellune.search.algorithms.engine.SearchProvider
 import app.mellune.search.algorithms.engine.SearchResult
 import app.mellune.search.algorithms.engine.SearchSettingsSectionBuilder
@@ -24,6 +25,7 @@ import app.mellune.search.algorithms.engine.provider.CalculatorSearchProvider
 import app.mellune.search.algorithms.engine.provider.ContactsSearchProvider
 import app.mellune.search.algorithms.engine.provider.FileSearchProvider
 import app.mellune.search.algorithms.engine.provider.HistorySearchProvider
+import app.mellune.search.algorithms.engine.provider.QuickSettingsSearchProvider
 import app.mellune.search.algorithms.engine.provider.SettingsSearchProvider
 import app.mellune.search.algorithms.engine.provider.ShortcutSearchProvider
 import app.mellune.search.algorithms.engine.provider.apps.AppSearchProvider
@@ -56,6 +58,7 @@ class MelluneLocalSearchAlgorithm(context: Context) : MelluneSearchAlgorithm(con
     private val historySearchProvider = HistorySearchProvider
 
     private val searchProviders: List<SearchProvider> = listOf(
+        QuickSettingsSearchProvider,
         SettingsSearchProvider,
         FileSearchProvider,
         ContactsSearchProvider,
@@ -184,6 +187,7 @@ class MelluneLocalSearchAlgorithm(context: Context) : MelluneSearchAlgorithm(con
         WebSuggestionsSectionBuilder,
         ContactsSectionBuilder,
         FilesSectionBuilder,
+        QuickTogglesSectionBuilder,
         SettingsSectionBuilder,
         HistorySectionBuilder,
         ActionsSectionBuilder,

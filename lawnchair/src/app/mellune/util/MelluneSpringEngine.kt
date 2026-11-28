@@ -3,14 +3,19 @@ package app.mellune.util
 import android.animation.ValueAnimator
 import android.app.WallpaperManager
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.RenderEffect
+import android.graphics.RuntimeShader
 import android.graphics.Shader
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
+import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.PathInterpolator
+import androidx.annotation.RequiresApi
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
@@ -18,6 +23,7 @@ import com.android.launcher3.BubbleTextView
 import com.android.launcher3.CellLayout
 import com.android.launcher3.Hotseat
 import com.android.launcher3.Workspace
+import com.android.launcher3.util.Themes
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import kotlin.math.hypot
@@ -215,11 +221,18 @@ object MelluneSpringEngine {
     /**
      * Triggers staggered 3-layer bloom parallax when unlocking onto the home screen.
      */
+    /**
+     * Triggers 3-layer unlock parallax when returning from keyguard / screen-off to home.
+     * Supports Pixel Launcher 17's concentric Ring-Appear reveal and API 33+ AGSL unlock shimmer.
+     */
     fun playUnlockParallax(
         workspace: Workspace<*>?,
         hotseat: Hotseat?,
         windowToken: IBinder?,
         context: Context,
+        dragLayer: ViewGroup? = null,
+        useRingAnimation: Boolean = true,
+        useShaderShimmer: Boolean = true,
     ) {
         val gen = ++transitionGeneration
         val density = context.resources.displayMetrics.density
@@ -259,11 +272,21 @@ object MelluneSpringEngine {
                 DAMPING_SMOOTH,
                 startValue = 0.85f,
             )
-            staggerUnlockPageChildren(
-                container = currentPageContainer(workspace),
-                density = density,
-                generation = gen,
-            )
+            val currentPage = currentCellLayout(workspace)
+            val container = currentPage?.shortcutsAndWidgets
+            if (useRingAnimation && currentPage != null && container != null) {
+                staggerUnlockRingChildren(
+                    cellLayout = currentPage,
+                    container = container,
+                    generation = gen,
+                )
+            } else {
+                staggerUnlockPageChildren(
+                    container = container,
+                    density = density,
+                    generation = gen,
+                )
+            }
         }
 
         if (hotseat != null) {
@@ -299,6 +322,10 @@ object MelluneSpringEngine {
                 DAMPING_SMOOTH,
                 startValue = 0.4f,
             )
+        }
+
+        if (useShaderShimmer && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && dragLayer != null) {
+            playUnlockShaderShimmer(dragLayer, context, gen)
         }
     }
 
@@ -372,10 +399,217 @@ object MelluneSpringEngine {
         trackedChildren.clear()
     }
 
-    private fun currentPageContainer(workspace: Workspace<*>?): ViewGroup? {
+    private fun currentCellLayout(workspace: Workspace<*>?): CellLayout? {
         if (workspace == null || workspace.pageCount <= 0) return null
-        val page = workspace.getPageAt(workspace.currentPage) as? CellLayout ?: return null
-        return page.shortcutsAndWidgets
+        return workspace.getPageAt(workspace.currentPage) as? CellLayout
+    }
+
+    private fun currentPageContainer(workspace: Workspace<*>?): ViewGroup? =
+        currentCellLayout(workspace)?.shortcutsAndWidgets
+
+    private fun staggerUnlockRingChildren(
+        cellLayout: CellLayout,
+        container: ViewGroup,
+        generation: Int,
+    ) {
+        if (container.childCount == 0) return
+
+        val countX = max(cellLayout.countX, 1)
+        val countY = max(cellLayout.countY, 1)
+        val gridCenterX = container.width / 2f
+        val gridCenterY = container.height / 2f
+
+        // Partition workspace children into concentric rectangular rings walking inward
+        // (matching Pixel Launcher 17's RingAppearAnimation choreography).
+        val seen = LinkedHashSet<View>()
+        val rings = mutableListOf<List<View>>()
+        var left = 0
+        var top = 0
+        var right = countX - 1
+        var bottom = countY - 1
+
+        while (top <= bottom && left <= right) {
+            val ringViews = mutableListOf<View>()
+            for (y in top..bottom) {
+                val xs = if (y == top || y == bottom) (left..right) else listOf(left, right)
+                for (x in xs) {
+                    val child = container.let {
+                        cellLayout.getChildAt(x, y)
+                    } ?: continue
+                    if (child.visibility == View.VISIBLE && seen.add(child)) {
+                        ringViews.add(child)
+                    }
+                }
+            }
+            if (ringViews.isNotEmpty()) {
+                rings.add(ringViews)
+            }
+            top++
+            bottom--
+            left++
+            right--
+        }
+
+        // Fallback for any child outside cell bounds
+        val leftovers = (0 until container.childCount)
+            .mapNotNull { container.getChildAt(it) }
+            .filter { it.visibility == View.VISIBLE && seen.add(it) }
+        if (leftovers.isNotEmpty()) {
+            rings.add(leftovers)
+        }
+
+        rings.forEachIndexed { ringIndex, ringViews ->
+            val delayMs = min(ringIndex * 42L, 210L)
+            for (child in ringViews) {
+                trackChild(child)
+                cancelSprings(child)
+                val childCenterX = child.x + child.width / 2f
+                val childCenterY = child.y + child.height / 2f
+                val startTx = (gridCenterX - childCenterX) * 0.28f
+                val startTy = (gridCenterY - childCenterY) * 0.28f
+
+                child.scaleX = 0.68f
+                child.scaleY = 0.68f
+                child.translationX = startTx
+                child.translationY = startTy
+                child.alpha = 0f
+
+                child.postDelayed(
+                    {
+                        if (generation != transitionGeneration || !child.isAttachedToWindow) return@postDelayed
+                        animateSpring(child, DynamicAnimation.SCALE_X, 1.0f, STIFFNESS_UNLOCK, DAMPING_UNLOCK, child.scaleX)
+                        animateSpring(child, DynamicAnimation.SCALE_Y, 1.0f, STIFFNESS_UNLOCK, DAMPING_UNLOCK, child.scaleY)
+                        animateSpring(child, DynamicAnimation.TRANSLATION_X, 0f, STIFFNESS_UNLOCK, DAMPING_UNLOCK, child.translationX)
+                        animateSpring(child, DynamicAnimation.TRANSLATION_Y, 0f, STIFFNESS_UNLOCK, DAMPING_UNLOCK, child.translationY)
+                        animateSpring(child, DynamicAnimation.ALPHA, 1.0f, STIFFNESS_UNLOCK, DAMPING_SMOOTH, child.alpha)
+                    },
+                    delayMs,
+                )
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun playUnlockShaderShimmer(
+        dragLayer: ViewGroup,
+        context: Context,
+        generation: Int,
+    ) {
+        if (!dragLayer.isAttachedToWindow || dragLayer.width <= 0 || dragLayer.height <= 0) return
+        val accentColor = Themes.getColorAccent(context)
+        val overlayView = UnlockShaderOverlayView(context, accentColor).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            )
+            isClickable = false
+            isFocusable = false
+        }
+        dragLayer.addView(overlayView)
+        overlayView.startEffect {
+            if (overlayView.parent === dragLayer || generation != transitionGeneration) {
+                dragLayer.removeView(overlayView)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private class UnlockShaderOverlayView(
+        context: Context,
+        accentColor: Int,
+    ) : View(context) {
+
+        private val shader = runCatching {
+            RuntimeShader(UNLOCK_SHIMMER_AGSL)
+        }.getOrNull()
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        private val r = ((accentColor shr 16) and 0xFF) / 255f
+        private val g = ((accentColor shr 8) and 0xFF) / 255f
+        private val b = (accentColor and 0xFF) / 255f
+        private var startTimeMs = 0L
+        private var animator: ValueAnimator? = null
+
+        fun startEffect(onFinished: () -> Unit) {
+            val runtimeShader = shader
+            if (runtimeShader == null) {
+                onFinished()
+                return
+            }
+            startTimeMs = SystemClock.uptimeMillis()
+            paint.shader = runtimeShader
+            animator = ValueAnimator.ofFloat(0f, 1f).apply {
+                duration = 620L
+                interpolator = zoomInterpolator
+                addUpdateListener { anim ->
+                    val progress = anim.animatedValue as Float
+                    val elapsedSec = (SystemClock.uptimeMillis() - startTimeMs) / 1000f
+                    runtimeShader.setFloatUniform("in_resolution", width.toFloat(), height.toFloat())
+                    runtimeShader.setFloatUniform("in_progress", progress)
+                    runtimeShader.setFloatUniform("in_time", elapsedSec)
+                    runtimeShader.setFloatUniform("in_color", r, g, b)
+                    postInvalidateOnAnimation()
+                }
+                addListener(object : android.animation.AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: android.animation.Animator) {
+                        onFinished()
+                    }
+
+                    override fun onAnimationCancel(animation: android.animation.Animator) {
+                        onFinished()
+                    }
+                })
+                start()
+            }
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            if (shader != null && width > 0 && height > 0) {
+                canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+            }
+        }
+
+        override fun onDetachedFromWindow() {
+            animator?.cancel()
+            super.onDetachedFromWindow()
+        }
+
+        companion object {
+            private const val UNLOCK_SHIMMER_AGSL = """
+                uniform float2 in_resolution;
+                uniform float in_progress;
+                uniform float in_time;
+                uniform float3 in_color;
+
+                float hash(float2 p) {
+                    p = fract(p * float2(123.34, 456.21));
+                    p += dot(p, p + 45.32);
+                    return fract(p.x * p.y);
+                }
+
+                float noise(float2 p) {
+                    float2 i = floor(p);
+                    float2 f = fract(p);
+                    float2 u = f * f * (3.0 - 2.0 * f);
+                    float a = hash(i);
+                    float b = hash(i + float2(1.0, 0.0));
+                    float c = hash(i + float2(0.0, 1.0));
+                    float d = hash(i + float2(1.0, 1.0));
+                    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+                }
+
+                half4 main(float2 fragCoord) {
+                    float2 uv = fragCoord / max(in_resolution, float2(1.0));
+                    float2 centered = uv - float2(0.5);
+                    float dist = length(centered);
+                    float wavePos = in_progress * 0.95;
+                    float ring = exp(-pow((dist - wavePos) * 5.2, 2.0));
+                    float n = noise(uv * 6.0 + float2(in_time * 1.4, -in_time * 1.1));
+                    float fade = sin(in_progress * 3.14159);
+                    float intensity = ring * (0.55 + 0.45 * n) * fade * 0.22;
+                    return half4(in_color * intensity, intensity);
+                }
+            """
+        }
     }
 
     private fun spreadSurroundingItems(

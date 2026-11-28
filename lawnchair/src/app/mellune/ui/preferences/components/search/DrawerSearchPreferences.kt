@@ -213,4 +213,9 @@ private fun LocalSearchSettings(
         adapter = prefs.searchResultCalculator.getAdapter(),
         label = stringResource(R.string.all_apps_search_result_calculator),
     )
+    SwitchPreference(
+        adapter = prefs2.searchResultQuickToggles.getAdapter(),
+        label = stringResource(R.string.search_pref_quick_toggles_title),
+        description = stringResource(R.string.search_pref_quick_toggles_desc),
+    )
 }

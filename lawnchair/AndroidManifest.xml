@@ -200,6 +200,21 @@
                 android:resource="@xml/smartspace_appwidget_info" />
         </receiver>
 
+        <activity
+            android:name="app.mellune.organizer.WorkspaceOrganizerActivity"
+            android:exported="false"
+            android:label="@string/organize_pages_title"
+            android:theme="@style/Theme.Mellune"
+            android:enableOnBackInvokedCallback="true" />
+
+        <activity
+            android:name="app.mellune.organizer.SpaceCreatorActivity"
+            android:exported="false"
+            android:label="@string/create_space_title"
+            android:theme="@style/Theme.Mellune"
+            android:windowSoftInputMode="adjustResize"
+            android:enableOnBackInvokedCallback="true" />
+
         <meta-data
             android:name="xyz.paphonb.quickstepswitcher.minSdk"
             android:value="${quickstepMinSdk}" />

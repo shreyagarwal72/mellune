@@ -412,7 +412,7 @@ public final class FeatureFlagsImpl implements FeatureFlags {
 
 
     public boolean enableTabletTwoPanePickerV2() {
-        return false;
+        return true;
     }
 
     @Override
@@ -496,7 +496,7 @@ public final class FeatureFlagsImpl implements FeatureFlags {
 
 
     public boolean enableWidgetPickerRefactor() {
-        return false;
+        return true;
     }
 
     @Override
@@ -580,7 +580,7 @@ public final class FeatureFlagsImpl implements FeatureFlags {
 
 
     public boolean letterFastScroller() {
-        return false;
+        return true;
     }
 
     @Override

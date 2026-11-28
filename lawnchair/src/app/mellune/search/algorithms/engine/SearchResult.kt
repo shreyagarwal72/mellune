@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import app.mellune.search.algorithms.data.ContactInfo
 import app.mellune.search.algorithms.data.IFileInfo
+import app.mellune.search.algorithms.data.QuickToggleInfo
 import app.mellune.search.algorithms.data.RecentKeyword
 import app.mellune.search.algorithms.data.SettingInfo
 import com.android.launcher3.model.data.AppInfo
@@ -18,6 +19,7 @@ sealed interface SearchResult {
     data class Contact(val data: ContactInfo) : SearchResult
     data class File(val data: IFileInfo) : SearchResult
     data class Setting(val data: SettingInfo) : SearchResult
+    data class QuickToggle(val data: QuickToggleInfo) : SearchResult
     data class Shortcut(val data: ShortcutInfo) : SearchResult
     data class WebSuggestion(val suggestion: String, val provider: String) : SearchResult
     data class History(val data: RecentKeyword) : SearchResult

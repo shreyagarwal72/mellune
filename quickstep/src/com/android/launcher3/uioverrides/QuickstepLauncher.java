@@ -1715,6 +1715,19 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     }
 
     @Override
+    public boolean openWidgetPicker() {
+        if (Flags.enableWidgetPickerRefactor()
+                && com.android.launcher3.compose.ComposeFacade.INSTANCE.isComposeAvailable()
+                && !getPackageManager().isSafeMode()) {
+            Intent intent = new Intent(
+                    asContext(), com.android.launcher3.QuickstepWidgetPickerActivity.class);
+            asContext().startActivity(intent);
+            return true;
+        }
+        return super.openWidgetPicker();
+    }
+
+    @Override
     public SplitSelectStateController getSplitSelectStateController() {
         return mSplitSelectStateController;
     }

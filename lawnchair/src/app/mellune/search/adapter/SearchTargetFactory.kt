@@ -26,8 +26,10 @@ import app.mellune.search.algorithms.data.FileInfo
 import app.mellune.search.algorithms.data.FileInfo.Companion.isImageType
 import app.mellune.search.algorithms.data.FolderInfo
 import app.mellune.search.algorithms.data.IFileInfo
+import app.mellune.search.algorithms.data.QuickToggleInfo
 import app.mellune.search.algorithms.data.RecentKeyword
 import app.mellune.search.algorithms.data.SettingInfo
+import app.mellune.search.algorithms.engine.provider.QuickSettingsSearchProvider
 import app.mellune.search.algorithms.engine.provider.web.WebSearchProvider
 import app.mellune.theme.color.tokens.ColorTokens
 import app.mellune.util.calculateInSampleSize
@@ -191,6 +193,28 @@ class SearchTargetFactory(
             LayoutType.ICON_SLICE,
             SearchTargetCompat.RESULT_TYPE_SETTING_TILE,
             SETTINGS,
+        )
+    }
+
+    fun createQuickToggleTarget(info: QuickToggleInfo): SearchTargetCompat {
+        val id = "quick_toggle:${info.id}"
+        val bitmap = createSmallSearchResultBitmap(context, info.iconRes)
+        val action = SearchActionCompat.Builder(id, info.title)
+            .setIcon(Icon.createWithAdaptiveBitmap(bitmap))
+            .setSubtitle(info.subtitle)
+            .setIntent(info.intent)
+            .build()
+
+        val extras = Bundle().apply {
+            info.directActionKey?.let { putString(QuickSettingsSearchProvider.EXTRA_QUICK_TOGGLE_ID, it) }
+        }
+        return createSearchTarget(
+            id,
+            action,
+            LayoutType.ICON_SLICE,
+            SearchTargetCompat.RESULT_TYPE_SETTING_TILE,
+            SETTINGS,
+            extras,
         )
     }
 

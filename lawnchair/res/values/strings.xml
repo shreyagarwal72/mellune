@@ -1097,4 +1097,56 @@
 
     <!-- Mellune Custom Search Providers -->
     <string name="search_provider_searxng">SearXNG</string>
+
+    <!-- Pixel Launcher 17 Features -->
+    <string name="search_type_ahead_open">open</string>
+    <string name="pin_keyboard_snackbar_question">Always show keyboard here?</string>
+    <string name="pin_keyboard_snackbar_yes">Yes</string>
+    <string name="pin_keyboard_snackbar_dismiss">Dismiss</string>
+    <string name="unlock_ring_animation_label">Ring-appear unlock animation</string>
+    <string name="unlock_ring_animation_desc">Animate workspace icons and widgets in concentric rings when unlocking</string>
+    <string name="unlock_shader_shimmer_label">Unlock shimmer overlay</string>
+    <string name="unlock_shader_shimmer_desc">Play a GPU turbulence-noise shimmer across the home screen on unlock</string>
+    <string name="all_apps_search_result_quick_settings">Quick settings</string>
+    <string name="quick_toggle_flashlight">Flashlight</string>
+    <string name="quick_toggle_wifi">Internet &amp; Wi‑Fi</string>
+    <string name="quick_toggle_bluetooth">Bluetooth</string>
+    <string name="quick_toggle_volume">Sound &amp; Volume</string>
+    <string name="quick_toggle_dark_mode">Dark theme</string>
+    <string name="quick_toggle_night_light">Night Light</string>
+    <string name="quick_toggle_airplane">Airplane mode</string>
+    <string name="quick_toggle_hotspot">Hotspot &amp; Tethering</string>
+    <string name="quick_toggle_state_on">On</string>
+    <string name="quick_toggle_state_off">Off</string>
+    <string name="quick_toggle_open_panel">Tap to open controls</string>
+    <string name="search_pref_quick_toggles_title">Quick settings toggles</string>
+    <string name="search_pref_quick_toggles_desc">Show actionable system tiles such as Flashlight, Wi‑Fi, Bluetooth, and Volume in search</string>
+
+    <!-- Workspace Organizer, Space Creator & Home Screen Files -->
+    <string name="organize_pages_title">Organize pages</string>
+    <string name="organize_pages_desc">Reorder, add, delete, or set the default home screen page</string>
+    <string name="organize_pages_page_n">Page %1$d</string>
+    <string name="organize_pages_default_badge">Home</string>
+    <string name="organize_pages_set_default">Set as home page</string>
+    <string name="organize_pages_add_blank">Add blank page</string>
+    <string name="organize_pages_delete">Remove page</string>
+    <string name="organize_pages_counts">%1$d apps · %2$d folders · %3$d widgets</string>
+    <string name="organize_pages_empty">Empty page</string>
+    <string name="create_space_title">Create curated space</string>
+    <string name="create_space_desc">Build a topic-based home screen page from your most-used &amp; categorized apps</string>
+    <string name="create_space_name_label">Space name</string>
+    <string name="create_space_default_name">New Space</string>
+    <string name="create_space_most_used">Most Used</string>
+    <string name="create_space_group_folder">Group apps into a folder on the page</string>
+    <string name="create_space_confirm">Create space (%1$d)</string>
+    <string name="create_space_select_prompt">Select at least one app</string>
+    <string name="create_space_done">Created \"%1$s\"</string>
+    <string name="home_screen_files_title">Sync Home screen/ files</string>
+    <string name="home_screen_files_desc">Pin files from Downloads/Home screen into a home screen folder</string>
+    <string name="home_screen_files_folder_name">Home screen files</string>
+    <string name="home_screen_files_synced">Synced %1$d file(s) to Home screen</string>
+    <string name="home_screen_files_empty">No files found in Downloads/Home screen</string>
+    <string name="home_screen_files_permission_needed">Grant file access in Search settings to read Downloads/Home screen</string>
+    <string name="fixed_landscape_mode_label">Fixed landscape mode</string>
+    <string name="fixed_landscape_mode_desc">Lock home screen to a dedicated 8×3 landscape layout on phones</string>
 </resources>

@@ -26,6 +26,9 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.PathInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -251,7 +254,19 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
 
         dl.addView(frame);
         frame.mIsOpen = true;
-        frame.post(() -> frame.snapToWidget(false));
+        frame.setAlpha(0f);
+        frame.setScaleX(0.95f);
+        frame.setScaleY(0.95f);
+        frame.post(() -> {
+            frame.snapToWidget(false);
+            frame.animate()
+                    .alpha(1f)
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(180L)
+                    .setInterpolator(new DecelerateInterpolator())
+                    .start();
+        });
     }
 
     private void setCornerRadiusFromWidget() {
@@ -413,9 +428,13 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
 
         if (anyBordersActive) {
             mDragHandles[INDEX_LEFT].setAlpha(mLeftBorderActive ? 1.0f : DIMMED_HANDLE_ALPHA);
-            mDragHandles[INDEX_RIGHT].setAlpha(mRightBorderActive ? 1.0f :DIMMED_HANDLE_ALPHA);
+            mDragHandles[INDEX_RIGHT].setAlpha(mRightBorderActive ? 1.0f : DIMMED_HANDLE_ALPHA);
             mDragHandles[INDEX_TOP].setAlpha(mTopBorderActive ? 1.0f : DIMMED_HANDLE_ALPHA);
             mDragHandles[INDEX_BOTTOM].setAlpha(mBottomBorderActive ? 1.0f : DIMMED_HANDLE_ALPHA);
+            animateHandleScale(mDragHandles[INDEX_LEFT], mLeftBorderActive ? 1.35f : 0.9f);
+            animateHandleScale(mDragHandles[INDEX_RIGHT], mRightBorderActive ? 1.35f : 0.9f);
+            animateHandleScale(mDragHandles[INDEX_TOP], mTopBorderActive ? 1.35f : 0.9f);
+            animateHandleScale(mDragHandles[INDEX_BOTTOM], mBottomBorderActive ? 1.35f : 0.9f);
         }
 
         // LC-Note: Bound the widget's edge (the frame overhangs it by mBackgroundPadding) so the
@@ -629,8 +648,23 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         mDeltaX = 0;
         mDeltaY = 0;
         mHorizontalEdgeReached = false; // LC-Note: Reset along with the deltas.
+        for (int i = 0; i < HANDLE_COUNT; i++) {
+            animateHandleScale(mDragHandles[i], 1.0f);
+        }
 
         post(() -> snapToWidget(true));
+    }
+
+    private static void animateHandleScale(View handle, float targetScale) {
+        if (handle == null) {
+            return;
+        }
+        handle.animate()
+                .scaleX(targetScale)
+                .scaleY(targetScale)
+                .setDuration(140L)
+                .setInterpolator(new PathInterpolator(0.22f, 1.18f, 0.36f, 1f))
+                .start();
     }
 
     /**
@@ -752,7 +786,9 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
                 updateInvalidResizeEffect(mCellLayout, pairedCellLayout, /* alpha= */ 1f,
                         /* springLoadedProgress= */ 0f, /* animatorSet= */ set);
             }
-            set.setDuration(SNAP_DURATION_MS);
+            Interpolator springInterpolator = new PathInterpolator(0.22f, 1.12f, 0.36f, 1f);
+            set.setInterpolator(springInterpolator);
+            set.setDuration(220L);
             set.start();
         }
 

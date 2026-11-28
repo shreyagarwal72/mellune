@@ -3,14 +3,20 @@ package app.mellune.allapps
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.RectF
 import android.provider.SearchRecentSuggestions
 import android.text.Selection
 import android.text.SpannableStringBuilder
+import android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
 import android.text.Spanned.SPAN_POINT_MARK
 import android.text.method.TextKeyListener
 import android.text.style.ForegroundColorSpan
+import android.text.style.ReplacementSpan
+import kotlin.math.roundToInt
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -104,6 +110,7 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
 
     private var isDirectFocus = false
     private var focusedResultTitle = ""
+    private var focusedResultShowArrow = false
     private var canShowHint = false
     private var queryEmpty by mutableStateOf(true)
 
@@ -283,6 +290,7 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
 
                 if (input.text.toString().isEmpty() && isDirectFocus) {
                     searchAlgorithm?.doZeroStateSearch(this)
+                    PinKeyboardSnackBar.recordDirectSearchAndMaybeShow(context, this)
                     setDirectFocus(false)
                 }
 
@@ -301,8 +309,10 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
                     animatePadding(initialPaddingLeft, initialPaddingRight)
                 }
                 focusedResultTitle = ""
+                focusedResultShowArrow = false
                 input.setHint("")
                 hint.text = ""
+                hint.isInvisible = true
             }
 
             if (::appsView.isInitialized) {
@@ -393,6 +403,7 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
 
     override fun setFocusedResultTitle(title: CharSequence?, sub: CharSequence?, showArrow: Boolean) {
         focusedResultTitle = title?.toString().orEmpty()
+        focusedResultShowArrow = showArrow
         updateHint()
     }
 
@@ -404,19 +415,98 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
         val inputString = input.text.toString()
         val inputLowerCase = inputString.lowercase(Locale.getDefault())
         val focusedLowerCase = focusedResultTitle.lowercase(Locale.getDefault())
-        if (canShowHint &&
-            inputLowerCase.isNotEmpty() &&
-            focusedLowerCase.isNotEmpty() &&
-            focusedLowerCase.matches(Regex("^[\\x00-\\x7F]*$")) &&
+        if (!canShowHint || inputLowerCase.isEmpty() || focusedLowerCase.isEmpty()) {
+            hint.text = ""
+            hint.isInvisible = true
+            return
+        }
+
+        val hintColor = Themes.getAttrColor(context, android.R.attr.textColorTertiary)
+        val canInlineComplete = focusedLowerCase.matches(Regex("^[\\x00-\\x7F]*$")) &&
             focusedLowerCase.startsWith(inputLowerCase)
-        ) {
-            val hintColor = Themes.getAttrColor(context, android.R.attr.textColorTertiary)
+
+        if (canInlineComplete) {
             val hintText = SpannableStringBuilder(inputString)
                 .append(focusedLowerCase.substring(inputLowerCase.length))
             hintText.setSpan(ForegroundColorSpan(Color.TRANSPARENT), 0, inputLowerCase.length, SPAN_POINT_MARK)
             hintText.setSpan(ForegroundColorSpan(hintColor), inputLowerCase.length, hintText.length, SPAN_POINT_MARK)
+            if (focusedResultShowArrow) {
+                val chipLabel = "${context.getString(R.string.search_type_ahead_open)} →"
+                val chipStart = hintText.length + 1
+                hintText.append(" ").append(chipLabel)
+                hintText.setSpan(
+                    QuickLaunchChipSpan(
+                        bgColor = ColorTokens.Accent1_100.resolveColor(context),
+                        textColor = ColorTokens.Neutral1_900.resolveColor(context),
+                        density = resources.displayMetrics.density,
+                    ),
+                    chipStart,
+                    hintText.length,
+                    SPAN_EXCLUSIVE_EXCLUSIVE,
+                )
+            }
             hint.text = hintText
             hint.isVisible = true
+        } else {
+            hint.text = ""
+            hint.isInvisible = true
+        }
+    }
+
+    private class QuickLaunchChipSpan(
+        private val bgColor: Int,
+        private val textColor: Int,
+        density: Float,
+    ) : ReplacementSpan() {
+
+        private val horizontalPadding = 8f * density
+        private val verticalPadding = 2.5f * density
+        private val cornerRadius = 10f * density
+        private val chipTextScale = 0.78f
+        private val chipRect = RectF()
+
+        override fun getSize(
+            paint: Paint,
+            text: CharSequence,
+            start: Int,
+            end: Int,
+            fm: Paint.FontMetricsInt?,
+        ): Int {
+            val savedSize = paint.textSize
+            paint.textSize = savedSize * chipTextScale
+            val width = (paint.measureText(text, start, end) + horizontalPadding * 2f).roundToInt()
+            paint.textSize = savedSize
+            return width
+        }
+
+        override fun draw(
+            canvas: Canvas,
+            text: CharSequence,
+            start: Int,
+            end: Int,
+            x: Float,
+            top: Int,
+            y: Int,
+            bottom: Int,
+            paint: Paint,
+        ) {
+            val savedColor = paint.color
+            val savedSize = paint.textSize
+            paint.textSize = savedSize * chipTextScale
+            val fm = paint.fontMetrics
+            val textWidth = paint.measureText(text, start, end)
+            val rectTop = y + fm.ascent - verticalPadding
+            val rectBottom = y + fm.descent + verticalPadding
+            chipRect.set(x, rectTop, x + textWidth + horizontalPadding * 2f, rectBottom)
+
+            paint.color = bgColor
+            canvas.drawRoundRect(chipRect, cornerRadius, cornerRadius, paint)
+
+            paint.color = textColor
+            canvas.drawText(text, start, end, x + horizontalPadding, y.toFloat(), paint)
+
+            paint.color = savedColor
+            paint.textSize = savedSize
         }
     }
 

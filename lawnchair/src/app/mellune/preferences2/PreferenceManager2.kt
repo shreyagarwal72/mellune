@@ -488,6 +488,31 @@ class PreferenceManager2 @Inject constructor(
         defaultValue = context.resources.getBoolean(R.bool.config_default_auto_show_keyboard_in_drawer),
     )
 
+    val pinKeyboardSnackbarDismissed = preference(
+        key = booleanPreferencesKey(name = "pin_keyboard_snackbar_dismissed"),
+        defaultValue = false,
+    )
+
+    val pinKeyboardDirectFocusCount = preference(
+        key = intPreferencesKey(name = "pin_keyboard_direct_focus_count"),
+        defaultValue = 0,
+    )
+
+    val enableUnlockRingAnimation = preference(
+        key = booleanPreferencesKey(name = "enable_unlock_ring_animation"),
+        defaultValue = true,
+    )
+
+    val enableUnlockShaderShimmer = preference(
+        key = booleanPreferencesKey(name = "enable_unlock_shader_shimmer"),
+        defaultValue = true,
+    )
+
+    val searchResultQuickToggles = preference(
+        key = booleanPreferencesKey(name = "search_result_quick_toggles"),
+        defaultValue = true,
+    )
+
     val workspaceTextColor = preference(
         key = stringPreferencesKey(name = "workspace_text_color"),
         defaultValue = ColorMode.AUTO,

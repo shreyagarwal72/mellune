@@ -166,6 +166,9 @@ class MelluneLauncher : QuickstepLauncher() {
             hotseat = hotseat,
             windowToken = dragLayer?.windowToken,
             context = this,
+            dragLayer = dragLayer,
+            useRingAnimation = preferenceManager2.enableUnlockRingAnimation.firstCached(),
+            useShaderShimmer = preferenceManager2.enableUnlockShaderShimmer.firstCached(),
         )
         return true
     }

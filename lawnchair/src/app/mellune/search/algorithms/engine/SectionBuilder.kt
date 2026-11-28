@@ -79,6 +79,25 @@ data object SettingsSectionBuilder : SectionBuilder {
     }
 }
 
+data object QuickTogglesSectionBuilder : SectionBuilder {
+    override fun build(
+        context: Context,
+        factory: SearchTargetFactory,
+        results: List<SearchResult>,
+    ): List<SearchTargetCompat> {
+        val toggles = results.filterIsInstance<SearchResult.QuickToggle>()
+        if (toggles.isEmpty()) {
+            return emptyList()
+        }
+
+        val targets = mutableListOf<SearchTargetCompat>()
+        targets.add(factory.createHeaderTarget(context.getString(R.string.all_apps_search_result_quick_settings)))
+        targets.addAll(toggles.map { factory.createQuickToggleTarget(it.data) })
+        targets.add(factory.createHeaderTarget(SPACE))
+        return targets
+    }
+}
+
 data object CalculationSectionBuilder : SectionBuilder {
     override fun build(
         context: Context,

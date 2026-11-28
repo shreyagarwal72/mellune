@@ -3043,10 +3043,10 @@ public class Launcher extends StatefulActivity<LauncherState>
             Toast.makeText(this, R.string.safemode_widget_error, Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            if (com.android.launcher3.Flags.enableWidgetPickerRefactor() &&
-                     ComposeFacade.INSTANCE.isComposeAvailable()) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setPackage(asContext().getPackageName());
+            if (com.android.launcher3.Flags.enableWidgetPickerRefactor()
+                    && ComposeFacade.INSTANCE.isComposeAvailable()) {
+                Intent intent = new Intent(
+                        asContext(), com.android.launcher3.widgetpicker.WidgetPickerActivity.class);
                 asContext().startActivity(intent);
                 return true;
             }

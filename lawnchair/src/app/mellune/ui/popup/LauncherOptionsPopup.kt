@@ -1,9 +1,12 @@
 package app.mellune.ui.popup
 
+import android.content.Intent
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import app.mellune.organizer.SpaceCreatorActivity
+import app.mellune.organizer.WorkspaceOrganizerActivity
 import app.mellune.preferences2.PreferenceManager2.Companion.getInstance
 import app.mellune.preferences2.firstCached
 import com.android.launcher3.Launcher
@@ -24,6 +27,8 @@ object LauncherOptionsPopup {
         LauncherOptionPopupItem("all_apps", true),
         LauncherOptionPopupItem("home_settings", true),
         LauncherOptionPopupItem("sys_settings", false),
+        LauncherOptionPopupItem("organize_pages", true),
+        LauncherOptionPopupItem("create_space", true),
         LauncherOptionPopupItem("default_page", false),
     )
 
@@ -134,6 +139,20 @@ object LauncherOptionsPopup {
                 LauncherEvent.IGNORE,
                 ::setAsDefaultHomePage,
             ),
+            "organize_pages" to OptionItem(
+                launcher,
+                R.string.organize_pages_title,
+                R.drawable.ic_edit,
+                LauncherEvent.IGNORE,
+                ::openWorkspaceOrganizer,
+            ),
+            "create_space" to OptionItem(
+                launcher,
+                R.string.create_space_title,
+                R.drawable.ic_folder,
+                LauncherEvent.IGNORE,
+                ::openSpaceCreator,
+            ),
         )
 
         val options = ArrayList<OptionItem>()
@@ -160,6 +179,18 @@ object LauncherOptionsPopup {
         val currentPage = launcher.workspace.getNextPage()
         launcher.workspace.setDefaultPage(currentPage)
         Toast.makeText(launcher, R.string.default_home_page_set, Toast.LENGTH_SHORT).show()
+        return true
+    }
+
+    private fun openWorkspaceOrganizer(v: View): Boolean {
+        val launcher = Launcher.getLauncher(v.context)
+        launcher.startActivity(Intent(launcher, WorkspaceOrganizerActivity::class.java))
+        return true
+    }
+
+    private fun openSpaceCreator(v: View): Boolean {
+        val launcher = Launcher.getLauncher(v.context)
+        launcher.startActivity(Intent(launcher, SpaceCreatorActivity::class.java))
         return true
     }
 
@@ -209,6 +240,16 @@ object LauncherOptionsPopup {
             "default_page" -> LauncherOptionMetadata(
                 label = R.string.set_default_home_page,
                 icon = R.drawable.ic_home_pin,
+            )
+
+            "organize_pages" -> LauncherOptionMetadata(
+                label = R.string.organize_pages_title,
+                icon = R.drawable.ic_edit,
+            )
+
+            "create_space" -> LauncherOptionMetadata(
+                label = R.string.create_space_title,
+                icon = R.drawable.ic_folder,
             )
 
             else -> throw IllegalArgumentException("invalid popup option")

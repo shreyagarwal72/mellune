@@ -14,6 +14,7 @@ import app.mellune.search.adapter.HISTORY
 import app.mellune.search.adapter.SETTINGS
 import app.mellune.search.adapter.SearchTargetCompat
 import app.mellune.search.adapter.WEB_SUGGESTION
+import app.mellune.search.algorithms.engine.provider.QuickSettingsSearchProvider
 import app.mellune.util.copyToClipboard
 import com.android.app.search.LayoutType
 import com.android.launcher3.R
@@ -120,7 +121,15 @@ class SearchResultIconRow(context: Context, attrs: AttributeSet?) :
         if (isSuggestion || isSetting) {
             layoutParams.height = resources.getDimensionPixelSize(R.dimen.search_result_small_row_height)
             setOnClickListener {
-                target.searchAction?.intent?.let { intent -> handleSearchTargetClick(context, intent) }
+                val quickToggleId = target.extras.getString(QuickSettingsSearchProvider.EXTRA_QUICK_TOGGLE_ID)
+                if (quickToggleId == QuickSettingsSearchProvider.ACTION_TOGGLE_FLASHLIGHT) {
+                    val newState = QuickSettingsSearchProvider.toggleFlashlight(context)
+                    if (newState != null) {
+                        setSubtitleText(newState, showDelimiter = true)
+                    }
+                } else {
+                    target.searchAction?.intent?.let { intent -> handleSearchTargetClick(context, intent) }
+                }
             }
         }
         if (isCalculator) {
