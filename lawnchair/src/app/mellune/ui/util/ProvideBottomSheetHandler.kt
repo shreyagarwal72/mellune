@@ -132,7 +132,7 @@ fun ProvideBottomSheetHandler(
                     )
                 }
 
-                ModalBottomSheet(
+                app.mellune.ui.components.MelluneModalBottomSheet(
                     sheetState = bottomSheetState,
                     onDismissRequest = {
                         showBottomSheet = false

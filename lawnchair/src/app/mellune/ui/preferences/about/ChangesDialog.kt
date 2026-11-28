@@ -18,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import app.mellune.ui.components.MelluneModalBottomSheet
 import app.mellune.ui.preferences.components.layout.PreferenceGroupItem
 import app.mellune.ui.preferences.components.layout.PreferenceTemplate
 import com.android.launcher3.R
@@ -47,10 +47,9 @@ fun ChangesDialog(
     val currentBuild = changelogState?.currentBuildNumber ?: 0
     val latestBuild = changelogState?.latestBuildNumber ?: 0
 
-    ModalBottomSheet(
+    MelluneModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surface,
     ) {
         Column(
             modifier = Modifier

@@ -124,10 +124,9 @@ private fun ApplyIconPackSheet(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    ModalBottomSheet(
+    app.mellune.ui.components.MelluneModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        containerColor = MaterialTheme.colorScheme.surface,
     ) {
         ModalBottomSheetContent(
             title = { Text(text = stringResource(id = R.string.apply_icon_pack_title)) },

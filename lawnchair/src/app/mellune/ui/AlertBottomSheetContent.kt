@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,32 +28,53 @@ fun ModalBottomSheetContent(
     text: @Composable (() -> Unit)? = null,
     content: @Composable (() -> Unit)? = null,
 ) {
-    val contentPadding = Modifier.padding(start = 20.dp, top = 12.dp, end = 20.dp)
-
     Column(
         modifier = modifier
             .fillMaxWidth()
             .safeDrawingPadding(),
     ) {
         title?.let {
-            Box(modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 8.dp)) {
-                ProvideTextStyle(M3EText.pageTitle, title)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 6.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                ) {
+                    Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                        ProvideTextStyle(M3EText.pageTitle, title)
+                    }
+                }
             }
         }
         text?.let {
-            Box(modifier = contentPadding) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 22.dp, top = 10.dp, end = 22.dp),
+            ) {
                 ProvideTextStyle(M3EText.rowSubtitle, text)
             }
         }
         content?.let {
-            Box(
-                modifier = Modifier.padding(
-                    top = if (title != null || text != null) 16.dp else 0.dp,
-                    start = 16.dp,
-                    end = 16.dp,
-                ),
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = if (title != null || text != null) 14.dp else 4.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                    ),
+                shape = RoundedCornerShape(22.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.72f),
             ) {
-                content()
+                Box(modifier = Modifier.padding(4.dp)) {
+                    content()
+                }
             }
         }
         Row(
