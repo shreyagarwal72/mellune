@@ -1,11 +1,11 @@
-# Lawnchair prebuilt libraries
+# Mellune prebuilt libraries
 
 Launcher3 has some dependencies on internal AOSP modules. 
-To build Lawnchair, you have to build AOSP and obtain these JARs.
+To build Mellune, you have to build AOSP and obtain these JARs.
 
 ## Usage
 
-Lawnchair relies on these JARs:
+Mellune relies on these JARs:
 
 | File                       | Command                 | Android Tag                 | Target Configuration                               |
 |----------------------------|-------------------------|-----------------------------|----------------------------------------------------|

@@ -415,7 +415,7 @@ class PreferenceManager2 @Inject constructor(
     )
 
     val mellunePredictorUseWeightedUsageStats = preference(
-        key = booleanPreferencesKey(name = "lawnchair_prediction_use_weighted_usage"),
+        key = booleanPreferencesKey(name = "mellune_prediction_use_weighted_usage"),
         defaultValue = false,
     )
 

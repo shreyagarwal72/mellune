@@ -25,12 +25,12 @@ class OnboardingProvider(context: Context) :
     ) {
 
     companion object {
-        const val PREF_LAWNCHAIR_MAJOR_VERSION = "pref_lawnchairMajorVersion"
+        const val PREF_MELLUNE_MAJOR_VERSION = "pref_melluneMajorVersion"
         const val PREF_HAS_OPENED_SETTINGS = "pref_hasOpenedSettings"
 
         private val HOME_BOUNCE_KEY = OnboardingPrefs.HOME_BOUNCE_SEEN.sharedPrefKey
         private val PREF_KEYS = setOf(
-            PREF_LAWNCHAIR_MAJOR_VERSION,
+            PREF_MELLUNE_MAJOR_VERSION,
             PREF_HAS_OPENED_SETTINGS,
             HOME_BOUNCE_KEY,
         )
@@ -86,7 +86,7 @@ class OnboardingProvider(context: Context) :
     }
 
     private fun hasRecentlyUpgradedMajor(): Boolean {
-        return context.getApkVersionComparison().first[0] > prefs.getInt(PREF_LAWNCHAIR_MAJOR_VERSION, 123456)
+        return context.getApkVersionComparison().first[0] > prefs.getInt(PREF_MELLUNE_MAJOR_VERSION, 123456)
     }
 
     private fun getSmartspaceTarget(): SmartspaceTarget? {
@@ -123,7 +123,7 @@ class OnboardingProvider(context: Context) :
 
             hasRecentlyUpgradedMajor() -> {
                 if (true) return null // pE-TODO(FeatureFlags): upgraded onboarding
-                prefs.edit { putInt(PREF_LAWNCHAIR_MAJOR_VERSION, context.getApkVersionComparison().first[0]) }
+                prefs.edit { putInt(PREF_MELLUNE_MAJOR_VERSION, context.getApkVersionComparison().first[0]) }
                 SmartspaceTarget(
                     id = "onboarding-upgrade",
                     headerAction = SmartspaceAction(

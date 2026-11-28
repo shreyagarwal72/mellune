@@ -24,7 +24,7 @@ class MellunePredictionManager @Inject constructor(
         private const val STORE_DELIMITER = ";"
 
         private val Context.predictionDataStore by preferencesDataStore(
-            name = "lawnchair-predictions",
+            name = "mellune-predictions",
         )
 
         @JvmField

@@ -197,7 +197,7 @@ class PreferenceManager @Inject constructor(
     val hasOpenedSettings = BoolPref("pref_hasOpenedSettings", false)
 
     val melluneMajorVersion = IntPref(
-        "pref_lawnchairMajorVersion",
+        "pref_melluneMajorVersion",
         context.getApkVersionComparison().first[0],
     )
 
