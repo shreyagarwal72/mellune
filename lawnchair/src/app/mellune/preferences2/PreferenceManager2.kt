@@ -835,6 +835,41 @@ class PreferenceManager2 @Inject constructor(
         onSet = { reloadHelper.recreate() },
     )
 
+    val flagshipBlur = preference(
+        key = booleanPreferencesKey(name = "enable_flagship_blur"),
+        defaultValue = true,
+    )
+
+    val flagshipBlurIntensity = preference(
+        key = floatPreferencesKey(name = "flagship_blur_intensity"),
+        defaultValue = 1.0f,
+    )
+
+    val folderBlur = preference(
+        key = booleanPreferencesKey(name = "enable_folder_blur"),
+        defaultValue = true,
+    )
+
+    val folderBlurIntensity = preference(
+        key = floatPreferencesKey(name = "folder_blur_intensity"),
+        defaultValue = 0.55f,
+    )
+
+    val folderGlassEffect = preference(
+        key = booleanPreferencesKey(name = "enable_folder_glass_effect"),
+        defaultValue = true,
+    )
+
+    val popupBlur = preference(
+        key = booleanPreferencesKey(name = "enable_popup_blur"),
+        defaultValue = true,
+    )
+
+    val widgetPickerBlur = preference(
+        key = booleanPreferencesKey(name = "enable_widget_picker_blur"),
+        defaultValue = true,
+    )
+
     val deckLayout = preference(
         key = booleanPreferencesKey(name = "enable_lawn_deck"),
         defaultValue = false,

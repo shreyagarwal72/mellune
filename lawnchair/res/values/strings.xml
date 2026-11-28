@@ -1170,4 +1170,19 @@
     <string name="home_screen_files_permission_needed">Grant file access in Search settings to read Downloads/Home screen</string>
     <string name="fixed_landscape_mode_label">Fixed landscape mode</string>
     <string name="fixed_landscape_mode_desc">Lock home screen to a dedicated 8×3 landscape layout on phones</string>
+
+    <!-- Flagship Blur Customization -->
+    <string name="flagship_blur_category">Blur &amp; depth</string>
+    <string name="flagship_blur_label">Flagship launcher blur</string>
+    <string name="flagship_blur_desc">Apply depth blur behind open folders, popups, app drawer, and widget picker</string>
+    <string name="flagship_blur_intensity_label">Blur strength</string>
+    <string name="folder_blur_label">Folder backdrop blur</string>
+    <string name="folder_blur_desc">Blur the wallpaper and home screen behind open folders</string>
+    <string name="folder_blur_intensity_label">Folder blur intensity</string>
+    <string name="folder_glass_effect_label">Frosted glass folder surface</string>
+    <string name="folder_glass_effect_desc">Use translucent frosted glass and subtle edge highlight on open folders</string>
+    <string name="popup_blur_label">Popup menu blur</string>
+    <string name="popup_blur_desc">Blur behind long-press icon and home screen popup menus</string>
+    <string name="widget_picker_blur_label">Widget picker blur</string>
+    <string name="widget_picker_blur_desc">Blur the wallpaper and home screen behind the widget picker</string>
 </resources>

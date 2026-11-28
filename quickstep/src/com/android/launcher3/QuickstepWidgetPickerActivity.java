@@ -144,11 +144,37 @@ public class QuickstepWidgetPickerActivity extends
         return verdict.isAcceptable;
     };
 
+    private void applyFlagshipWindowBlur() {
+        if (!Utilities.ATLEAST_S
+                || !app.mellune.util.MelluneUtilsKt.isWidgetPickerBlurEnabled(this)) {
+            return;
+        }
+        android.view.Window window = getWindow();
+        if (window == null) {
+            return;
+        }
+        android.view.CrossWindowBlurListeners listeners =
+                android.view.CrossWindowBlurListeners.getInstance();
+        if (!listeners.isCrossWindowBlurEnabled()) {
+            return;
+        }
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+        int maxBlur = getResources().getDimensionPixelSize(R.dimen.max_depth_blur_radius_enhanced);
+        float scale = Math.max(0f, app.mellune.preferences2.PreferenceCacheExtensionsKt.firstCached(
+                app.mellune.preferences2.PreferenceManager2.getInstance(this)
+                        .getFlagshipBlurIntensity()));
+        int radius = Math.round(maxBlur * 0.85f * scale);
+        window.getAttributes().setBlurBehindRadius(radius);
+        window.setBackgroundBlurRadius(radius);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setWidgetPickerConfig(parseIntentExtras());
 
         super.onCreate(savedInstanceState);
+
+        applyFlagshipWindowBlur();
 
         if (!Flags.enableWidgetPickerRefactor() || !ComposeFacade.INSTANCE.isComposeAvailable()) {
             if (getWidgetPickerConfig().getUiSurface().equals(LOCKSCREEN_WIDGETS_HUB_UI_SURFACE)) {

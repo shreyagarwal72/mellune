@@ -27,14 +27,17 @@ import android.content.Intent
 import android.content.pm.PackageInfo.REQUESTED_PERMISSION_GRANTED
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Looper
@@ -184,6 +187,53 @@ fun getFolderPreviewAlpha(context: Context): Int {
 fun getFolderBackgroundAlpha(context: Context): Int {
     val prefs2 = PreferenceManager2.getInstance(context)
     return (prefs2.folderBackgroundOpacity.firstCached() * 255).toInt()
+}
+
+fun isFlagshipBlurEnabled(context: Context): Boolean =
+    PreferenceManager2.getInstance(context).flagshipBlur.firstCached()
+
+fun isFolderBlurEnabled(context: Context): Boolean {
+    val prefs2 = PreferenceManager2.getInstance(context)
+    return prefs2.flagshipBlur.firstCached() && prefs2.folderBlur.firstCached()
+}
+
+fun getFolderBlurTargetDepth(context: Context): Float {
+    val prefs2 = PreferenceManager2.getInstance(context)
+    if (!prefs2.flagshipBlur.firstCached() || !prefs2.folderBlur.firstCached()) return 0f
+    return prefs2.folderBlurIntensity.firstCached().coerceIn(0f, 1f)
+}
+
+fun isFolderGlassEnabled(context: Context): Boolean {
+    val prefs2 = PreferenceManager2.getInstance(context)
+    return prefs2.flagshipBlur.firstCached() && prefs2.folderGlassEffect.firstCached()
+}
+
+fun isPopupBlurEnabled(context: Context): Boolean {
+    val prefs2 = PreferenceManager2.getInstance(context)
+    return prefs2.flagshipBlur.firstCached() && prefs2.popupBlur.firstCached()
+}
+
+fun isWidgetPickerBlurEnabled(context: Context): Boolean {
+    val prefs2 = PreferenceManager2.getInstance(context)
+    return prefs2.flagshipBlur.firstCached() && prefs2.widgetPickerBlur.firstCached()
+}
+
+fun applyFolderGlassSurface(context: Context, background: GradientDrawable) {
+    val userAlpha = getFolderBackgroundAlpha(context)
+    if (isFolderGlassEnabled(context)) {
+        val frostedAlpha = minOf(userAlpha, 214)
+        background.alpha = frostedAlpha
+        val isNight = (
+            context.resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK
+            ) == Configuration.UI_MODE_NIGHT_YES
+        val strokePx = maxOf(1, (1.25f * context.resources.displayMetrics.density).toInt())
+        val strokeColor = ColorUtils.setAlphaComponent(Color.WHITE, if (isNight) 44 else 112)
+        background.setStroke(strokePx, strokeColor)
+    } else {
+        background.alpha = userAlpha
+        background.setStroke(0, Color.TRANSPARENT)
+    }
 }
 
 /**

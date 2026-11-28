@@ -37,6 +37,16 @@ interface BaseDepthController {
     val widgetDepth: MultiPropertyFactory<*>.MultiProperty?
 
     /**
+     * Property for folder backdrop blur/depth.
+     */
+    val folderDepth: MultiPropertyFactory<*>.MultiProperty?
+
+    /**
+     * Property for popup backdrop blur/depth.
+     */
+    val popupDepth: MultiPropertyFactory<*>.MultiProperty?
+
+    /**
      * Property for folder expansion wallpaper zoom.
      */
     val folderZoom: MultiPropertyFactory<*>.MultiProperty?

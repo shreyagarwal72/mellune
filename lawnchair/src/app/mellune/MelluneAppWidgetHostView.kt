@@ -19,7 +19,7 @@ class MelluneAppWidgetHostView @JvmOverloads constructor(
 
     private var customView: ViewGroup? = null
 
-    override fun setAppWidget(appWidgetId: Int, info: AppWidgetProviderInfo) {
+    override fun setAppWidget(appWidgetId: Int, info: AppWidgetProviderInfo?) {
         inflateCustomView(info)
         super.setAppWidget(appWidgetId, info)
     }
@@ -29,7 +29,10 @@ class MelluneAppWidgetHostView @JvmOverloads constructor(
         inflateCustomView(appWidgetInfo)
     }
 
-    private fun inflateCustomView(info: AppWidgetProviderInfo) {
+    private fun inflateCustomView(info: AppWidgetProviderInfo?) {
+        if (info == null) {
+            return
+        }
         customView = inflateCustomView(context, info, previewMode)
         if (customView == null) {
             return

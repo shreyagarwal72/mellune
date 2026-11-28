@@ -113,6 +113,8 @@ import androidx.annotation.RequiresApi;
 
 import androidx.core.content.ContextCompat;
 import com.android.app.viewcapture.ViewCaptureFactory;
+import app.mellune.preferences2.PreferenceCacheExtensionsKt;
+import app.mellune.preferences2.PreferenceManager2;
 import com.android.launcher3.AbstractFloatingView;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Flags;
@@ -1029,9 +1031,16 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         super.onWidgetsTransition(progress);
         onTaskbarInAppDisplayProgressUpdate(progress, WIDGETS_PAGE_PROGRESS_INDEX);
         if (mEnableWidgetDepth) {
-            getDepthController().widgetDepth.setValue(Utilities.mapToRange(
-                    progress, 0f, 1f, 0f,
-                    getDeviceProfile().getBottomSheetProfile().getBottomSheetDepth(), EMPHASIZED));
+            PreferenceManager2 prefs = PreferenceManager2.getInstance(this);
+            boolean blurEnabled = PreferenceCacheExtensionsKt.firstCached(prefs.getFlagshipBlur())
+                    && PreferenceCacheExtensionsKt.firstCached(prefs.getWidgetPickerBlur());
+            float targetDepth = blurEnabled
+                    ? Utilities.mapToRange(
+                            progress, 0f, 1f, 0f,
+                            getDeviceProfile().getBottomSheetProfile().getBottomSheetDepth(),
+                            EMPHASIZED)
+                    : 0f;
+            getDepthController().widgetDepth.setValue(targetDepth);
         }
     }
 

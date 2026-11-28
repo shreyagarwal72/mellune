@@ -359,10 +359,7 @@ private fun RemoteViewsWidgetPreview(
                                                         providerInfo = previewLayoutProviderInfo
                                                     )
 
-                                                else ->
-                                                    throw IllegalStateException(
-                                                        "No preview during drag"
-                                                    )
+                                                else -> WidgetPreview.PlaceholderWidgetPreview
                                             },
                                     )
                                 )

@@ -141,7 +141,7 @@ public class PendingItemDragHelper extends DragPreviewProvider {
                             && drawable.getIntrinsicHeight() > 0) {
                         previewSizeBeforeScale[0] = drawable.getIntrinsicWidth();
                     }
-                } else {
+                } else if (mWidgetPreviewInfo.providerInfo != null) {
                     mAppWidgetHostViewPreview = new MelluneAppWidgetHostView(launcher);
                     mAppWidgetHostViewPreview.setAppWidget(/* appWidgetId= */ -1,
                             mWidgetPreviewInfo.providerInfo);
@@ -204,7 +204,7 @@ public class PendingItemDragHelper extends DragPreviewProvider {
                 previewWidth = preview.getIntrinsicWidth();
                 previewHeight = preview.getIntrinsicHeight();
             }
-            scale = previewBounds.width() / (float) previewWidth;
+            scale = previewWidth > 0 ? previewBounds.width() / (float) previewWidth : 1f;
             launcher.getDragController().addDragListener(new WidgetHostViewLoader(launcher, mView));
 
             dragRegion = null;

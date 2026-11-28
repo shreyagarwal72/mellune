@@ -91,6 +91,9 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
             launcherDelegate.launcher?.depthController?.folderZoom?.let {
                 addWallpaperZoomAnimator(folder.context, animatorSet, folderAnimData.isOpening, it)
             }
+            launcherDelegate.launcher?.depthController?.folderDepth?.let {
+                addFolderBlurAnimator(folder.context, animatorSet, folderAnimData.isOpening, it)
+            }
             iconAnimData.forEach { addContentIconAnimators(folder.context, animatorSet, it) }
             return FolderSpringAnimatorSet(animatorSet)
         }
@@ -237,6 +240,20 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
             )
         }
 
+        private fun addFolderBlurAnimator(
+            context: Context,
+            animatorSet: AnimatorSet,
+            isOpening: Boolean,
+            folderDepth: MultiProperty,
+        ) {
+            val targetDepth = app.mellune.util.getFolderBlurTargetDepth(context)
+            val start = if (isOpening) 0f else targetDepth
+            val end = if (isOpening) targetDepth else 0f
+            val blurAnimator = ObjectAnimator.ofFloat(folderDepth, MULTI_PROPERTY_VALUE, start, end)
+            blurAnimator.duration = 250
+            animatorSet.play(blurAnimator)
+        }
+
         private fun addWallpaperZoomAnimator(
             context: Context,
             animatorSet: AnimatorSet,
@@ -271,6 +288,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                 val finalColor = app.mellune.util.resolveFolderBackgroundColor(context)
                 folderBackground.mutate()
                 folderBackground.setColor(if (isOpening) initialColor else finalColor)
+                app.mellune.util.applyFolderGlassSurface(context, folderBackground)
                 // TODO: convert to spring animation?
                 animatorSet.play(
                     ObjectAnimator.ofArgb(
@@ -374,7 +392,12 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
             val hotseat = launcher.hotseat
             val workspaceScale = WORKSPACE_SCALE_PROPERTY_FACTORY.get(SCALE_INDEX_FOLDER_ANIM)
             val hotseatScale = HOTSEAT_SCALE_PROPERTY_FACTORY.get(SCALE_INDEX_FOLDER_ANIM)
-            val finalScrimAlpha = if (isDarkTheme(context)) 0.32f else 0.2f
+            val finalScrimAlpha =
+                if (app.mellune.util.isFolderBlurEnabled(context)) {
+                    if (isDarkTheme(context)) 0.18f else 0.12f
+                } else {
+                    if (isDarkTheme(context)) 0.32f else 0.2f
+                }
             scrimView.setBackgroundColor(Color.BLACK)
             playSpringAnimation(
                 context = context,

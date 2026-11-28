@@ -32,10 +32,14 @@ import android.util.Log;
 import android.view.AttachedSurfaceControl;
 import android.view.CrossWindowBlurListeners;
 import android.view.SurfaceControl;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
+import app.mellune.preferences2.PreferenceCacheExtensionsKt;
+import app.mellune.preferences2.PreferenceManager2;
 
 import com.android.app.animation.Interpolators;
 import com.android.launcher3.Flags;
@@ -75,7 +79,9 @@ public class BaseDepthControllerImpl implements BaseDepthController {
 
     private static final int DEPTH_INDEX_STATE_TRANSITION = 0;
     private static final int DEPTH_INDEX_WIDGET = 1;
-    private static final int DEPTH_INDEX_COUNT = 2;
+    private static final int DEPTH_INDEX_FOLDER = 2;
+    private static final int DEPTH_INDEX_POPUP = 3;
+    private static final int DEPTH_INDEX_COUNT = 4;
 
     private static final int ZOOM_INDEX_FOLDER = 0;
     private static final int ZOOM_INDEX_COUNT = 1;
@@ -88,6 +94,10 @@ public class BaseDepthControllerImpl implements BaseDepthController {
     public final MultiProperty stateDepth;
     /** Property to set the depth for widget picker. */
     public final MultiProperty widgetDepth;
+    /** Property to set the depth/blur for open folders. */
+    public final MultiProperty folderDepth;
+    /** Property to set the depth/blur for open popups. */
+    public final MultiProperty popupDepth;
     /** Property to set just the wallpaper zoom for folder expansion. */
     public final MultiProperty folderZoom;
 
@@ -122,6 +132,7 @@ public class BaseDepthControllerImpl implements BaseDepthController {
      * Last blur value, in pixels, that was applied.
      */
     protected int mCurrentBlur;
+    protected int mCurrentWorkspaceBlur;
     /**
      * If we requested early wake-up offsets to SurfaceFlinger.
      */
@@ -155,6 +166,8 @@ public class BaseDepthControllerImpl implements BaseDepthController {
                 new MultiPropertyFactory<>(this, DEPTH, DEPTH_INDEX_COUNT, Float::max);
         stateDepth = depthProperty.get(DEPTH_INDEX_STATE_TRANSITION);
         widgetDepth = depthProperty.get(DEPTH_INDEX_WIDGET);
+        folderDepth = depthProperty.get(DEPTH_INDEX_FOLDER);
+        popupDepth = depthProperty.get(DEPTH_INDEX_POPUP);
 
         if (Flags.enableExpressiveFolderExpansion()) {
             MultiPropertyFactory<AnimatedFloat> folderZoomFactory =
@@ -177,6 +190,31 @@ public class BaseDepthControllerImpl implements BaseDepthController {
     @Override
     public MultiProperty getWidgetDepth() {
         return widgetDepth;
+    }
+
+    @Override
+    public MultiProperty getFolderDepth() {
+        return folderDepth;
+    }
+
+    @Override
+    public MultiProperty getPopupDepth() {
+        return popupDepth;
+    }
+
+    protected boolean hasActiveOverlayDepth() {
+        return folderDepth.getValue() > 0f
+                || popupDepth.getValue() > 0f
+                || widgetDepth.getValue() > 0f;
+    }
+
+    protected float getBlurScaleFactor() {
+        PreferenceManager2 prefs = PreferenceManager2.getInstance(mLauncher);
+        if (!PreferenceCacheExtensionsKt.firstCached(prefs.getFlagshipBlur())) {
+            return 0f;
+        }
+        return Math.max(0f,
+                PreferenceCacheExtensionsKt.firstCached(prefs.getFlagshipBlurIntensity()));
     }
 
     @Override
@@ -256,25 +294,31 @@ public class BaseDepthControllerImpl implements BaseDepthController {
         boolean isSurfaceOpaque = !mHasContentBehindLauncher && hasOpaqueBg && !mPauseBlurs;
 
         float blurAmount;
+        float stateAndWidgetDepth = Math.max(stateDepth.getValue(), widgetDepth.getValue());
+        float overlayBlurDepth = Math.max(folderDepth.getValue(), popupDepth.getValue());
         if (enableScalingRevealHomeAnimation()) {
-            blurAmount = mapDepthToBlur(depth);
+            blurAmount = Math.max(mapDepthToBlur(stateAndWidgetDepth), overlayBlurDepth);
         } else {
-            blurAmount = depth;
+            blurAmount = Math.max(depth, overlayBlurDepth);
         }
 
+        float blurScale = getBlurScaleFactor();
         int previousBlur = mCurrentBlur;
+        int previousWorkspaceBlur = mCurrentWorkspaceBlur;
+        int newWorkspaceBlur = !hasOpaqueBg && !mPauseBlurs && blurScale > 0f
+                ? Math.round(blurAmount * mMaxBlurRadius * blurScale) : 0;
         int newBlur = BlurUtils.supportsBlursOnWindows() && mCrossWindowBlursEnabled
-                && !hasOpaqueBg && !mPauseBlurs
-                ? (int) (blurAmount * mMaxBlurRadius) : 0;
-        int delta = Math.abs(newBlur - previousBlur);
-        boolean skipUpdate = skipSimilarBlur && delta < Utilities.dpToPx(1) && newBlur != 0
-                && previousBlur != 0 && blurAmount != 1f;
+                ? newWorkspaceBlur : 0;
+        int delta = Math.max(Math.abs(newBlur - previousBlur),
+                Math.abs(newWorkspaceBlur - previousWorkspaceBlur));
+        boolean skipUpdate = skipSimilarBlur && delta < Utilities.dpToPx(1)
+                && newWorkspaceBlur != 0 && previousWorkspaceBlur != 0 && blurAmount != 1f;
 
-        // Always keep mCurrentBlur and workspace RenderEffects in sync with depth, even when the
-        // SurfaceControl is temporarily unavailable. Otherwise setDepth(0) can early-return later
-        // (same depth) and leave workspace/hotseat stuck blurred until the activity restarts.
+        // Always keep mCurrentBlur, mCurrentWorkspaceBlur and workspace RenderEffects in sync with
+        // depth, even when the SurfaceControl is temporarily unavailable.
         if (!skipUpdate) {
             mCurrentBlur = newBlur;
+            mCurrentWorkspaceBlur = newWorkspaceBlur;
             blurWorkspaceDepthTargets();
         }
 
@@ -380,35 +424,51 @@ public class BaseDepthControllerImpl implements BaseDepthController {
         }
         StateManager<LauncherState, Launcher> stateManager = mLauncher.getStateManager();
         LauncherState settledState = stateManager.getState();
+        boolean overlayBlurActive = hasActiveOverlayDepth();
+        int workspaceBlur = mCurrentWorkspaceBlur > 0 ? mCurrentWorkspaceBlur : mCurrentBlur;
 
-        // Stuck-blur bug: AllAppsState.shouldBlurWorkspace(NORMAL) is true during close, and a
-        // skipped/interrupted apply can leave RenderEffect on workspace/hotseat icons after home
-        // is settled. Always clear once we are on NORMAL with no active transition, or depth is 0.
+        // Clear once depth/blur is 0, or if settled at NORMAL without any active transition or
+        // overlay (Folder, Popup, Widget sheet).
         if (!Flags.allAppsBlur()
                 || mDepth <= 0f
-                || mCurrentBlur <= 0
-                || (settledState == LauncherState.NORMAL && !stateManager.isInTransition())) {
+                || workspaceBlur <= 0) {
             clearWorkspaceRenderEffects();
             return false;
         }
 
-        LauncherState targetState = stateManager.getTargetState() != null
-                ? stateManager.getTargetState() : settledState;
-        // Only blur workspace if the current state wants to blur based on the target state.
-        if (!stateManager.getCurrentStableState().shouldBlurWorkspace(targetState)) {
-            clearWorkspaceRenderEffects();
-            return false;
+        if (!overlayBlurActive) {
+            if (settledState == LauncherState.NORMAL && !stateManager.isInTransition()) {
+                clearWorkspaceRenderEffects();
+                return false;
+            }
+            LauncherState targetState = stateManager.getTargetState() != null
+                    ? stateManager.getTargetState() : settledState;
+            // Only blur workspace if the current state wants to blur based on the target state.
+            if (!stateManager.getCurrentStableState().shouldBlurWorkspace(targetState)) {
+                clearWorkspaceRenderEffects();
+                return false;
+            }
         }
 
         RenderEffect blurEffect = RenderEffect.createBlurEffect(
-                mCurrentBlur, mCurrentBlur, Shader.TileMode.DECAL);
+                workspaceBlur, workspaceBlur, Shader.TileMode.DECAL);
         mLauncher.getDepthBlurTargets().forEach(target -> target.setRenderEffect(blurEffect));
+        View appsView = mLauncher.getAppsView();
+        if (appsView != null) {
+            if (settledState == LauncherState.ALL_APPS
+                    && (folderDepth.getValue() > 0f || popupDepth.getValue() > 0f)) {
+                appsView.setRenderEffect(blurEffect);
+            } else {
+                appsView.setRenderEffect(null);
+                appsView.invalidate();
+            }
+        }
         return true;
     }
 
     /**
-     * Clears {@link RenderEffect} from workspace/hotseat. Public so callers can drop a stuck
-     * icon blur without going through SurfaceControl apply.
+     * Clears {@link RenderEffect} from workspace, hotseat, and app drawer. Public so callers can
+     * drop a stuck icon blur without going through SurfaceControl apply.
      */
     public void clearWorkspaceRenderEffects() {
         if (!Utilities.ATLEAST_S) {
@@ -418,6 +478,11 @@ public class BaseDepthControllerImpl implements BaseDepthController {
             target.setRenderEffect(null);
             target.invalidate();
         });
+        View appsView = mLauncher.getAppsView();
+        if (appsView != null) {
+            appsView.setRenderEffect(null);
+            appsView.invalidate();
+        }
     }
 
     private void setDepth(float depth) {
@@ -437,7 +502,7 @@ public class BaseDepthControllerImpl implements BaseDepthController {
         if (Float.compare(mDepth, depthF) == 0) {
             // Depth is unchanged, but a previous apply may have returned early (invalid surface)
             // leaving blur stuck. Force a re-apply when clearing.
-            if (depthF == 0f && mCurrentBlur != 0) {
+            if (depthF == 0f && (mCurrentBlur != 0 || mCurrentWorkspaceBlur != 0)) {
                 applyDepthAndBlur();
             }
             return;

@@ -189,6 +189,35 @@ fun HomeScreenPreferences(
                 label = stringResource(id = R.string.show_sys_ui_scrim),
             )
         }
+        if (Utilities.ATLEAST_S) {
+            val flagshipBlurAdapter = prefs2.flagshipBlur.getAdapter()
+            PreferenceGroup(heading = stringResource(id = R.string.flagship_blur_category)) {
+                SwitchPreference(
+                    adapter = flagshipBlurAdapter,
+                    label = stringResource(id = R.string.flagship_blur_label),
+                    description = stringResource(id = R.string.flagship_blur_desc),
+                )
+                ExpandAndShrink(visible = flagshipBlurAdapter.state.value) {
+                    SliderPreference(
+                        label = stringResource(id = R.string.flagship_blur_intensity_label),
+                        adapter = prefs2.flagshipBlurIntensity.getAdapter(),
+                        step = 0.05F,
+                        valueRange = 0.25F..1.5F,
+                        showAsPercentage = true,
+                    )
+                    SwitchPreference(
+                        adapter = prefs2.popupBlur.getAdapter(),
+                        label = stringResource(id = R.string.popup_blur_label),
+                        description = stringResource(id = R.string.popup_blur_desc),
+                    )
+                    SwitchPreference(
+                        adapter = prefs2.widgetPickerBlur.getAdapter(),
+                        label = stringResource(id = R.string.widget_picker_blur_label),
+                        description = stringResource(id = R.string.widget_picker_blur_desc),
+                    )
+                }
+            }
+        }
         val columns by prefs.workspaceColumns.getAdapter()
         val rows by prefs.workspaceRows.getAdapter()
         PreferenceGroup(heading = stringResource(id = R.string.layout)) {

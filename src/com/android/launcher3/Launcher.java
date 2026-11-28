@@ -1515,13 +1515,14 @@ public class Launcher extends StatefulActivity<LauncherState>
             // Show resize frame on the newly inflated LauncherAppWidgetHostView.
             LauncherAppWidgetHostView reInflatedHostView =
                     getWorkspace().getWidgetForAppWidgetId(appWidgetId);
-            showWidgetResizeFrame(
-                    reInflatedHostView,
-                    (LauncherAppWidgetInfo) reInflatedHostView.getTag(),
-                    presenterPos);
-            // We always update widget size after re-inflating PendingAppWidgetHostView
-            WidgetSizes.updateWidgetSizeRanges(
-                    reInflatedHostView, this, itemInfo.spanX, itemInfo.spanY);
+            if (reInflatedHostView != null) {
+                if (reInflatedHostView.getTag() instanceof LauncherAppWidgetInfo widgetTag) {
+                    showWidgetResizeFrame(reInflatedHostView, widgetTag, presenterPos);
+                }
+                // We always update widget size after re-inflating PendingAppWidgetHostView
+                WidgetSizes.updateWidgetSizeRanges(
+                        reInflatedHostView, this, itemInfo.spanX, itemInfo.spanY);
+            }
             return;
         }
         if (updateWidgetSize) {
@@ -1555,6 +1556,9 @@ public class Launcher extends StatefulActivity<LauncherState>
             LauncherAppWidgetInfo launcherInfo,
             CellPos presenterPos) {
         CellLayout cellLayout = getCellLayout(launcherInfo.container, presenterPos.screenId);
+        if (cellLayout == null || launcherHostView == null) {
+            return;
+        }
         // We should wait until launcher is not animating to show resize frame so that
         // {@link View#hasIdentityMatrix()} returns true (no scale effect) from CellLayout and
         // Workspace (they are widget's parent view). Otherwise widget's

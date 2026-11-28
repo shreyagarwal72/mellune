@@ -383,19 +383,29 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
     protected int findSpaceOnWorkspace(ItemInfo info, int[] outCoordinates) {
         Workspace<?> workspace = mContext.getWorkspace();
         IntArray workspaceScreens = workspace.getScreenOrder();
-        int screenId;
+        int screenId = -1;
+        int spanX = Math.max(1, info.spanX);
+        int spanY = Math.max(1, info.spanY);
 
         // First check if there is space on the current screen.
         int screenIndex = workspace.getCurrentPage();
-        screenId = workspaceScreens.get(screenIndex);
-        CellLayout layout = (CellLayout) workspace.getPageAt(screenIndex);
+        boolean found = false;
+        CellLayout layout = null;
+        if (screenIndex >= 0 && screenIndex < workspaceScreens.size()) {
+            screenId = workspaceScreens.get(screenIndex);
+            layout = (CellLayout) workspace.getPageAt(screenIndex);
+            if (layout != null) {
+                found = layout.findCellForSpan(outCoordinates, spanX, spanY);
+            }
+        }
 
-        boolean found = layout.findCellForSpan(outCoordinates, info.spanX, info.spanY);
         screenIndex = 0;
         while (!found && screenIndex < workspaceScreens.size()) {
             screenId = workspaceScreens.get(screenIndex);
             layout = (CellLayout) workspace.getPageAt(screenIndex);
-            found = layout.findCellForSpan(outCoordinates, info.spanX, info.spanY);
+            if (layout != null) {
+                found = layout.findCellForSpan(outCoordinates, spanX, spanY);
+            }
             screenIndex++;
         }
 
@@ -412,7 +422,10 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
 
         screenId = emptyScreenIds.getArray().get(0);
         layout = workspace.getScreenWithId(screenId);
-        found = layout.findCellForSpan(outCoordinates, info.spanX, info.spanY);
+        if (layout == null) {
+            return -1;
+        }
+        found = layout.findCellForSpan(outCoordinates, spanX, spanY);
 
         if (!found) {
             Log.wtf(TAG, "Not enough space on an empty screen");

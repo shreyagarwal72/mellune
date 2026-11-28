@@ -193,6 +193,7 @@ public class FolderAnimationManager implements FolderAnimationCreator {
 
         mFolderBackground.mutate();
         mFolderBackground.setColor(mIsOpening ? initialColor : finalColor);
+        MelluneUtilsKt.applyFolderGlassSurface(mContext, mFolderBackground);
 
         // Set up the reveal animation that clips the Folder.
         int totalOffsetX = paddingOffsetX + previewItemOffsetX;
@@ -355,6 +356,16 @@ public class FolderAnimationManager implements FolderAnimationCreator {
                 // Background can have a scaled radius in drag and drop mode, so we need to add the
                 // difference to keep the preview items centered.
                 (int) (previewItemOffsetX / scaleRelativeToDragLayer) + radiusDiff, radiusDiff);
+        var depthController = mLauncher.getDepthController();
+        if (depthController != null && depthController.getFolderDepth() != null) {
+            float targetDepth = MelluneUtilsKt.getFolderBlurTargetDepth(mContext);
+            float start = mIsOpening ? 0f : targetDepth;
+            float end = mIsOpening ? targetDepth : 0f;
+            play(a, ObjectAnimator.ofFloat(
+                    depthController.getFolderDepth(),
+                    com.android.launcher3.util.MultiPropertyFactory.MULTI_PROPERTY_VALUE,
+                    start, end));
+        }
         return a;
     }
 

@@ -19,7 +19,9 @@ package com.android.launcher3.widgetpicker.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import app.mellune.util.isWidgetPickerBlurEnabled
 import com.android.launcher3.R
 import com.android.launcher3.widgetpicker.ui.theme.WidgetPickerColors
 
@@ -28,10 +30,12 @@ import com.android.launcher3.widgetpicker.ui.theme.WidgetPickerColors
  * [WidgetPickerColors] accepted by the widget picker module.
  */
 @Composable
-fun darkWidgetPickerColors() =
-    WidgetPickerColors(
+fun darkWidgetPickerColors(): WidgetPickerColors {
+    val blurEnabled = isWidgetPickerBlurEnabled(LocalContext.current)
+    return WidgetPickerColors(
         // Bottom Sheet
-        sheetBackground = colorResource(R.color.widget_picker_primary_surface_color_dark),
+        sheetBackground = colorResource(R.color.widget_picker_primary_surface_color_dark)
+            .let { if (blurEnabled) it.copy(alpha = 0.82f) else it },
         dragHandle = colorResource(R.color.widget_picker_collapse_handle_color_dark),
         sheetTitle = colorResource(R.color.widget_picker_title_color_dark),
         sheetDescription = colorResource(R.color.widget_picker_description_color_dark),
@@ -95,16 +99,19 @@ fun darkWidgetPickerColors() =
         searchBarBackButtonIcon = colorResource(R.color.widget_picker_search_text_color_dark),
         searchBarCursor = colorResource(R.color.widget_picker_search_cursor_color_dark),
     )
+}
 
 /**
  * An adapter that maps the resource tokens for widget picker light colors to the
  * [WidgetPickerColors] accepted by the widget picker module
  */
 @Composable
-fun lightWidgetPickerColors() =
-    WidgetPickerColors(
+fun lightWidgetPickerColors(): WidgetPickerColors {
+    val blurEnabled = isWidgetPickerBlurEnabled(LocalContext.current)
+    return WidgetPickerColors(
         // Bottom Sheet
-        sheetBackground = colorResource(R.color.widget_picker_primary_surface_color_light),
+        sheetBackground = colorResource(R.color.widget_picker_primary_surface_color_light)
+            .let { if (blurEnabled) it.copy(alpha = 0.84f) else it },
         dragHandle = colorResource(R.color.widget_picker_collapse_handle_color_light),
         sheetTitle = colorResource(R.color.widget_picker_title_color_light),
         sheetDescription = colorResource(R.color.widget_picker_description_color_light),
@@ -170,3 +177,4 @@ fun lightWidgetPickerColors() =
         searchBarBackButtonIcon = colorResource(R.color.widget_picker_search_text_color_light),
         searchBarCursor = colorResource(R.color.widget_picker_search_cursor_color_light),
     )
+}

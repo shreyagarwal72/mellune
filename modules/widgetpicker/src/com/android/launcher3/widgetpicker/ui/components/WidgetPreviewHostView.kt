@@ -57,23 +57,27 @@ class WidgetPreviewHostView(context: Context) : AppWidgetHostView(context) {
     override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {}
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        previewContainerSizePx?.let { containerSizePx ->
+        val containerSizePx = previewContainerSizePx
+        if (containerSizePx != null && childCount > 0) {
             val child = getChildAt(0)
             val (childWidth, childHeight) = measureChild(child, containerSizePx)
+            if (childWidth > 0f && childHeight > 0f) {
+                val widthScale: Float = containerSizePx.width / childWidth
+                val heightScale: Float = containerSizePx.height / childHeight
+                val scale = widthScale.coerceAtMost(heightScale)
 
-            val widthScale: Float = containerSizePx.width / childWidth
-            val heightScale: Float = containerSizePx.height / childHeight
-            val scale = widthScale.coerceAtMost(heightScale)
+                child.scaleX = scale
+                child.scaleY = scale
+                contentScale = scale
 
-            child.scaleX = scale
-            child.scaleY = scale
-            contentScale = scale
-
-            setMeasuredDimension(
-                (scale * childWidth).roundToInt(),
-                (scale * childHeight).roundToInt(),
-            )
-        } ?: super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+                setMeasuredDimension(
+                    (scale * childWidth).roundToInt(),
+                    (scale * childHeight).roundToInt(),
+                )
+                return
+            }
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     private fun measureChild(child: View, containerSizePx: IntSize): Pair<Float, Float> {

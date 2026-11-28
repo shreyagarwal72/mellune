@@ -49,6 +49,7 @@ class FolderScrimAnimationListener(
     }
 
     private fun restoreScrimAfterFolderClose() {
+        launcher.depthController?.folderDepth?.value = 0f
         scrimView.alpha = 1f
         scrimView.setScrimColors(
             launcher.stateManager.state.getWorkspaceScrimColor(launcher),

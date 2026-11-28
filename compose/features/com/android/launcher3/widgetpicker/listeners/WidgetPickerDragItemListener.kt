@@ -105,10 +105,9 @@ class WidgetPickerDragItemListener(
                 info.providerInfo = widgetInfo.appWidgetProviderInfo
             }
 
-            else ->
-                throw IllegalStateException(
-                    "Unsupported preview type when dropping widget to launcher"
-                )
+            else -> {
+                info.providerInfo = widgetInfo.appWidgetProviderInfo
+            }
         }
         dragHelper.setWidgetPreviewInfo(info)
     }

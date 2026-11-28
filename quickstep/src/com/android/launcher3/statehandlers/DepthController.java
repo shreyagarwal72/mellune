@@ -187,6 +187,8 @@ public class DepthController extends BaseDepthControllerImpl implements StateHan
         // Re-apply even when depth is already 0 so an interrupted All Apps / depth transition
         // cannot leave workspace RenderEffect or surface blur stuck until the next resume.
         if (toState == LauncherState.NORMAL) {
+            folderDepth.setValue(0f);
+            popupDepth.setValue(0f);
             clearWorkspaceRenderEffects();
             applyDepthAndBlur();
         }
@@ -222,7 +224,17 @@ public class DepthController extends BaseDepthControllerImpl implements StateHan
     public void clearStuckBlurOnResumeIfHome() {
         if (mLauncher.getStateManager().getState() == LauncherState.NORMAL
                 && !mLauncher.getStateManager().isInTransition()) {
-            clearWorkspaceRenderEffects();
+            if (com.android.launcher3.AbstractFloatingView.getTopOpenViewWithType(
+                    mLauncher,
+                    com.android.launcher3.AbstractFloatingView.TYPE_FOLDER
+                            | com.android.launcher3.AbstractFloatingView.TYPE_ACTION_POPUP
+                            | com.android.launcher3.AbstractFloatingView.TYPE_WIDGETS_BOTTOM_SHEET)
+                    == null) {
+                folderDepth.setValue(0f);
+                popupDepth.setValue(0f);
+                widgetDepth.setValue(0f);
+                clearWorkspaceRenderEffects();
+            }
             applyDepthAndBlur();
         }
     }
@@ -230,7 +242,8 @@ public class DepthController extends BaseDepthControllerImpl implements StateHan
     @Override
     protected void applyDepthAndBlur() {
         try {
-            if (MelluneQuickstepCompat.ATLEAST_R && mEnableDepth) {
+            if (MelluneQuickstepCompat.ATLEAST_R
+                    && (mEnableDepth || hasActiveOverlayDepth() || getBlurScaleFactor() > 0f)) {
                 ensureDependencies();
                 super.applyDepthAndBlur();
             } else if (mLauncher.getStateManager().getState() == LauncherState.NORMAL
@@ -298,6 +311,8 @@ public class DepthController extends BaseDepthControllerImpl implements StateHan
         writer.println(prefix + "\tmBaseSurfaceOverride=" + mBaseSurfaceOverride);
         writer.println(prefix + "\tmStateDepth=" + stateDepth.getValue());
         writer.println(prefix + "\tmWidgetDepth=" + widgetDepth.getValue());
+        writer.println(prefix + "\tmFolderDepth=" + folderDepth.getValue());
+        writer.println(prefix + "\tmPopupDepth=" + popupDepth.getValue());
         writer.println(prefix + "\tmCurrentBlur=" + mCurrentBlur);
         writer.println(prefix + "\tmInEarlyWakeUp=" + mInEarlyWakeUp);
         writer.println(prefix + "\tmIgnoreStateChangesDuringMultiWindowAnimation="

@@ -638,6 +638,10 @@ public class PopupContainerWithArrow<T extends Context & ActivityContext>
     public void onDragStart(DropTarget.DragObject dragObject, DragOptions options) {
         // Either the original icon or one of the shortcuts was dragged.
         // Hide the container, but don't remove it yet because that interferes with touch events.
+        var depthController = mActivityContext.getDepthController();
+        if (depthController != null && depthController.getPopupDepth() != null) {
+            depthController.getPopupDepth().setValue(0f);
+        }
         mDeferContainerRemoval = true;
         animateClose();
     }

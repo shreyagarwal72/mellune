@@ -56,17 +56,24 @@ class WidgetPickerAddItemListener(private val widgetInfo: WidgetInfo) :
                     )
             }
 
-        val view = View(launcher)
-        view.tag = pendingAddItemInfo
-
-        launcher.accessibilityDelegate?.addToWorkspace(
-            /*item=*/ pendingAddItemInfo,
-            /*accessibility=*/ false,
-        ) {
-            launcher.statsLogManager
-                .logger()
-                .withItemInfo(pendingAddItemInfo)
-                .log(LauncherEvent.LAUNCHER_WIDGET_ADD_BUTTON_TAP)
+        val performAdd = Runnable {
+            if (launcher.isDestroyed) {
+                return@Runnable
+            }
+            launcher.accessibilityDelegate?.addToWorkspace(
+                /*item=*/ pendingAddItemInfo,
+                /*accessibility=*/ false,
+            ) {
+                launcher.statsLogManager
+                    .logger()
+                    .withItemInfo(pendingAddItemInfo)
+                    .log(LauncherEvent.LAUNCHER_WIDGET_ADD_BUTTON_TAP)
+            }
+        }
+        if (isHomeStarted || launcher.workspace == null) {
+            performAdd.run()
+        } else {
+            launcher.workspace.post(performAdd)
         }
         return false // don't receive any more callbacks as we got launcher and handled it
     }

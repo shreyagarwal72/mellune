@@ -340,8 +340,7 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
 
         mBackground = DrawableTokens.RoundRectFolder.resolve(getContext());
         mBackground.setColor(MelluneUtilsKt.resolveFolderBackgroundColor(getContext()));
-        var alpha = MelluneUtilsKt.getFolderBackgroundAlpha(getContext());
-        mBackground.setAlpha(alpha);
+        MelluneUtilsKt.applyFolderGlassSurface(getContext(), mBackground);
 
         mContent = findViewById(R.id.folder_content);
         mContent.setPadding(paddingLeftRight, dp.folderContentPaddingTop, paddingLeftRight, 0);
@@ -1143,6 +1142,10 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
         if (Flags.enableExpressiveFolderExpansion()) {
             FolderAnimationSpringBuilderManager.resetLauncherScale(mLauncherDelegate);
             FolderAnimationSpringBuilderManager.resetScrimAndZoom(mLauncherDelegate);
+        }
+        var depthController = mActivityContext.getDepthController();
+        if (depthController != null && depthController.getFolderDepth() != null) {
+            depthController.getFolderDepth().setValue(0f);
         }
     }
 

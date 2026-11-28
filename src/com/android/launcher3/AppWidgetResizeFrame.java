@@ -290,10 +290,22 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
 
     private void setupForWidget(LauncherAppWidgetHostView widgetView, CellLayout cellLayout,
             DragLayer dragLayer, boolean force, boolean unlimited) {
+        if (widgetView == null || cellLayout == null
+                || !(widgetView.getTag() instanceof LauncherAppWidgetInfo)) {
+            return;
+        }
         mCellLayout = cellLayout;
         mWidgetView = widgetView;
-        LauncherAppWidgetProviderInfo info = (LauncherAppWidgetProviderInfo)
-                widgetView.getAppWidgetInfo();
+        AppWidgetProviderInfo rawInfo = widgetView.getAppWidgetInfo();
+        LauncherAppWidgetProviderInfo info = rawInfo instanceof LauncherAppWidgetProviderInfo
+                ? (LauncherAppWidgetProviderInfo) rawInfo
+                : (rawInfo != null
+                        ? LauncherAppWidgetProviderInfo.fromProviderInfo(
+                                cellLayout.getContext(), rawInfo)
+                        : null);
+        if (info == null) {
+            return;
+        }
         mDragLayer = dragLayer;
         InvariantDeviceProfile idp = LauncherAppState.getIDP(cellLayout.getContext());
 

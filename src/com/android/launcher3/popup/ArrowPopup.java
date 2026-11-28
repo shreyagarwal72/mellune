@@ -570,6 +570,20 @@ public abstract class ArrowPopup<T extends Context & ActivityContext>
                         EMPHASIZED_DECELERATE);
 
         onCreateOpenAnimation(mOpenCloseAnimator);
+        var depthController = mActivityContext.getDepthController();
+        if (depthController != null && depthController.getPopupDepth() != null) {
+            float targetDepth = app.mellune.util.MelluneUtilsKt.isPopupBlurEnabled(getContext())
+                    ? 0.45f : 0f;
+            if (targetDepth > 0f) {
+                ObjectAnimator blurAnim = ObjectAnimator.ofFloat(
+                        depthController.getPopupDepth(),
+                        com.android.launcher3.util.MultiPropertyFactory.MULTI_PROPERTY_VALUE,
+                        targetDepth);
+                blurAnim.setDuration(OPEN_DURATION_U);
+                blurAnim.setInterpolator(EMPHASIZED_DECELERATE);
+                mOpenCloseAnimator.play(blurAnim);
+            }
+        }
         mOpenCloseAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -623,6 +637,16 @@ public abstract class ArrowPopup<T extends Context & ActivityContext>
                         EMPHASIZED_ACCELERATE);
 
         onCreateCloseAnimation(mOpenCloseAnimator);
+        var depthController = mActivityContext.getDepthController();
+        if (depthController != null && depthController.getPopupDepth() != null) {
+            ObjectAnimator blurAnim = ObjectAnimator.ofFloat(
+                    depthController.getPopupDepth(),
+                    com.android.launcher3.util.MultiPropertyFactory.MULTI_PROPERTY_VALUE,
+                    0f);
+            blurAnim.setDuration(CLOSE_DURATION_U);
+            blurAnim.setInterpolator(EMPHASIZED_ACCELERATE);
+            mOpenCloseAnimator.play(blurAnim);
+        }
         mOpenCloseAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -722,6 +746,10 @@ public abstract class ArrowPopup<T extends Context & ActivityContext>
         }
         mIsOpen = false;
         mDeferContainerRemoval = false;
+        var depthController = mActivityContext.getDepthController();
+        if (depthController != null && depthController.getPopupDepth() != null) {
+            depthController.getPopupDepth().setValue(0f);
+        }
         getPopupContainer().removeView(this);
         getPopupContainer().removeView(mArrow);
         mOnCloseCallbacks.executeAllAndClear();
