@@ -144,7 +144,7 @@ fun PreferencesDashboard(
                 isSelected = currentRoute is HomeScreen,
             )
 
-            val isSmartspaceEnabled = prefs2.enableSmartspace.firstCached()
+            val isSmartspaceEnabled by prefs2.enableSmartspace.getAdapter().state
             PreferenceCategory(
                 label = stringResource(id = R.string.smartspace_widget),
                 description = stringResource(R.string.smartspace_widget_description),

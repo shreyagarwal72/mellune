@@ -68,9 +68,7 @@ class DeviceProfileOverrides @Inject constructor(
     )
 
     fun getTextFactors() = TextFactors(preferenceManager2)
-    override fun close() {
-        TODO("Not yet implemented")
-    }
+    override fun close() = Unit
 
     data class DBGridInfo(
         val numHotseatColumns: Int,

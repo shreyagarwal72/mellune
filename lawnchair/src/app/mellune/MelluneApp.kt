@@ -146,7 +146,11 @@ class MelluneApp : LauncherApplication() {
 
     private fun getSystemUiBoolean(resName: String, fallback: Boolean): Boolean {
         val systemUiPackage = "com.android.systemui"
-        val res = packageManager.getResourcesForApplication(systemUiPackage)
+        val res = try {
+            packageManager.getResourcesForApplication(systemUiPackage)
+        } catch (_: Exception) {
+            return fallback
+        }
 
         @SuppressLint("DiscouragedApi")
         val resId = res.getIdentifier(resName, "bool", systemUiPackage)

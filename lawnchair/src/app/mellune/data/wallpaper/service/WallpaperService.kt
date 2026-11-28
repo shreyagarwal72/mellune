@@ -132,9 +132,7 @@ class WallpaperService @Inject constructor(
         return imageFile.absolutePath
     }
 
-    override fun close() {
-        TODO("Not yet implemented")
-    }
+    override fun close() = Unit
     companion object {
         @JvmField
         val INSTANCE = DaggerSingletonObject(LauncherAppComponent::getWallpaperService)

@@ -7,8 +7,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.edit
 import androidx.datastore.preferences.core.Preferences
 import app.mellune.preferences.PreferenceManager
 import app.mellune.preferences.getAdapter
@@ -26,12 +28,15 @@ import app.mellune.ui.preferences.components.layout.PreferenceLayout
 import app.mellune.ui.preferences.data.liveinfo.liveInformationManager
 import app.mellune.ui.preferences.data.liveinfo.model.LiveInformation
 import app.mellune.ui.preferences.navigation.FeatureFlags
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.settings.SettingsActivity
 import com.android.launcher3.settings.SettingsActivity.DEVELOPER_OPTIONS_KEY
 import com.android.launcher3.settings.SettingsActivity.EXTRA_FRAGMENT_HIGHLIGHT_KEY
+import com.android.launcher3.util.OnboardingPrefs.HOME_BOUNCE_COUNT
+import com.android.launcher3.util.OnboardingPrefs.HOME_BOUNCE_SEEN
 import com.android.systemui.shared.system.BlurUtils
 import com.patrykmichalik.opto.domain.Preference
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 /**
  * A screen to house unfinished preferences and debug flags
@@ -41,6 +46,7 @@ fun DebugMenuPreferences(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val prefs = preferenceManager()
     val prefs2 = preferenceManager2()
     val liveInfoManager = liveInformationManager()
@@ -99,7 +105,7 @@ fun DebugMenuPreferences(
                 ClickablePreference(
                     label = "Reset live information",
                     onClick = {
-                        runBlocking {
+                        coroutineScope.launch {
                             liveInfoManager.liveInformation.set(LiveInformation())
                             liveInfoManager.dismissedAnnouncementIds.set(emptySet())
                         }
@@ -138,8 +144,14 @@ fun DebugMenuPreferences(
             PreferenceGroup(heading = "Smartspace Onboarding") {
                 ClickablePreference(
                     label = "Reset All Apps Bounce",
-                    subtitle = "Reset it in Feature Flags page",
-                ) { }
+                    subtitle = "Tap to reset onboarding bounce",
+                ) {
+                    LauncherPrefs.getPrefs(context).edit {
+                        remove(HOME_BOUNCE_SEEN.sharedPrefKey)
+                        remove(HOME_BOUNCE_COUNT.sharedPrefKey)
+                    }
+                    Toast.makeText(context, "Reset All Apps Bounce", Toast.LENGTH_SHORT).show()
+                }
                 ClickablePreference(
                     label = "Reset open lawn settings",
                     subtitle = hasOpenedSettings.state.value.toString(),

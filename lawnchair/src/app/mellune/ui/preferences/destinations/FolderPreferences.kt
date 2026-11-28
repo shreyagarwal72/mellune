@@ -16,6 +16,7 @@
 
 package app.mellune.ui.preferences.destinations
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -82,25 +83,27 @@ fun FolderPreferences(
                 val flagshipBlurEnabled = prefs2.flagshipBlur.getAdapter().state.value
                 val folderBlurAdapter = prefs2.folderBlur.getAdapter()
                 ExpandAndShrink(visible = flagshipBlurEnabled) {
-                    SwitchPreference(
-                        adapter = folderBlurAdapter,
-                        label = stringResource(id = R.string.folder_blur_label),
-                        description = stringResource(id = R.string.folder_blur_desc),
-                    )
-                    ExpandAndShrink(visible = folderBlurAdapter.state.value) {
-                        SliderPreference(
-                            label = stringResource(id = R.string.folder_blur_intensity_label),
-                            adapter = prefs2.folderBlurIntensity.getAdapter(),
-                            step = 0.05F,
-                            valueRange = 0F..1F,
-                            showAsPercentage = true,
+                    Column {
+                        SwitchPreference(
+                            adapter = folderBlurAdapter,
+                            label = stringResource(id = R.string.folder_blur_label),
+                            description = stringResource(id = R.string.folder_blur_desc),
+                        )
+                        ExpandAndShrink(visible = folderBlurAdapter.state.value) {
+                            SliderPreference(
+                                label = stringResource(id = R.string.folder_blur_intensity_label),
+                                adapter = prefs2.folderBlurIntensity.getAdapter(),
+                                step = 0.05F,
+                                valueRange = 0F..1F,
+                                showAsPercentage = true,
+                            )
+                        }
+                        SwitchPreference(
+                            adapter = prefs2.folderGlassEffect.getAdapter(),
+                            label = stringResource(id = R.string.folder_glass_effect_label),
+                            description = stringResource(id = R.string.folder_glass_effect_desc),
                         )
                     }
-                    SwitchPreference(
-                        adapter = prefs2.folderGlassEffect.getAdapter(),
-                        label = stringResource(id = R.string.folder_glass_effect_label),
-                        description = stringResource(id = R.string.folder_glass_effect_desc),
-                    )
                 }
             }
             val layoutEntries = listOf(

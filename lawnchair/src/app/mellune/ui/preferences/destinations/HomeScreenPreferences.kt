@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.widget.Toast
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -59,11 +60,6 @@ import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import com.android.launcher3.celllayout.CellPosMapper
 import kotlinx.coroutines.launch
-
-object HomeScreenRoutes {
-    const val GRID = "grid"
-    const val POPUP_EDITOR = "popup_editor"
-}
 
 @Composable
 fun HomeScreenPreferences(
@@ -199,23 +195,25 @@ fun HomeScreenPreferences(
                     description = stringResource(id = R.string.flagship_blur_desc),
                 )
                 ExpandAndShrink(visible = flagshipBlurAdapter.state.value) {
-                    SliderPreference(
-                        label = stringResource(id = R.string.flagship_blur_intensity_label),
-                        adapter = prefs2.flagshipBlurIntensity.getAdapter(),
-                        step = 0.05F,
-                        valueRange = 0.25F..1.5F,
-                        showAsPercentage = true,
-                    )
-                    SwitchPreference(
-                        adapter = prefs2.popupBlur.getAdapter(),
-                        label = stringResource(id = R.string.popup_blur_label),
-                        description = stringResource(id = R.string.popup_blur_desc),
-                    )
-                    SwitchPreference(
-                        adapter = prefs2.widgetPickerBlur.getAdapter(),
-                        label = stringResource(id = R.string.widget_picker_blur_label),
-                        description = stringResource(id = R.string.widget_picker_blur_desc),
-                    )
+                    Column {
+                        SliderPreference(
+                            label = stringResource(id = R.string.flagship_blur_intensity_label),
+                            adapter = prefs2.flagshipBlurIntensity.getAdapter(),
+                            step = 0.05F,
+                            valueRange = 0.25F..1.5F,
+                            showAsPercentage = true,
+                        )
+                        SwitchPreference(
+                            adapter = prefs2.popupBlur.getAdapter(),
+                            label = stringResource(id = R.string.popup_blur_label),
+                            description = stringResource(id = R.string.popup_blur_desc),
+                        )
+                        SwitchPreference(
+                            adapter = prefs2.widgetPickerBlur.getAdapter(),
+                            label = stringResource(id = R.string.widget_picker_blur_label),
+                            description = stringResource(id = R.string.widget_picker_blur_desc),
+                        )
+                    }
                 }
             }
         }
@@ -227,38 +225,40 @@ fun HomeScreenPreferences(
                 description = stringResource(id = R.string.home_return_animations_desc),
             )
             ExpandAndShrink(visible = homeReturnAdapter.state.value) {
-                val styleEntries = listOf(
-                    ListPreferenceEntry(
-                        value = "radial_ripple",
-                        label = { stringResource(id = R.string.home_return_style_radial_ripple) },
-                    ),
-                    ListPreferenceEntry(
-                        value = "parallax_lift",
-                        label = { stringResource(id = R.string.home_return_style_parallax_lift) },
-                    ),
-                    ListPreferenceEntry(
-                        value = "minimal_elastic",
-                        label = { stringResource(id = R.string.home_return_style_minimal_elastic) },
-                    ),
-                )
-                ListPreference(
-                    adapter = prefs2.homeReturnStyle.getAdapter(),
-                    entries = styleEntries,
-                    label = stringResource(id = R.string.home_return_style_label),
-                )
-                SliderPreference(
-                    label = stringResource(id = R.string.home_return_intensity_label),
-                    adapter = prefs2.homeReturnIntensity.getAdapter(),
-                    step = 0.05F,
-                    valueRange = 0.4F..1.5F,
-                    showAsPercentage = true,
-                )
-                if (Utilities.ATLEAST_T) {
-                    SwitchPreference(
-                        adapter = prefs2.homeReturnSheen.getAdapter(),
-                        label = stringResource(id = R.string.home_return_sheen_label),
-                        description = stringResource(id = R.string.home_return_sheen_desc),
+                Column {
+                    val styleEntries = listOf(
+                        ListPreferenceEntry(
+                            value = "radial_ripple",
+                            label = { stringResource(id = R.string.home_return_style_radial_ripple) },
+                        ),
+                        ListPreferenceEntry(
+                            value = "parallax_lift",
+                            label = { stringResource(id = R.string.home_return_style_parallax_lift) },
+                        ),
+                        ListPreferenceEntry(
+                            value = "minimal_elastic",
+                            label = { stringResource(id = R.string.home_return_style_minimal_elastic) },
+                        ),
                     )
+                    ListPreference(
+                        adapter = prefs2.homeReturnStyle.getAdapter(),
+                        entries = styleEntries,
+                        label = stringResource(id = R.string.home_return_style_label),
+                    )
+                    SliderPreference(
+                        label = stringResource(id = R.string.home_return_intensity_label),
+                        adapter = prefs2.homeReturnIntensity.getAdapter(),
+                        step = 0.05F,
+                        valueRange = 0.4F..1.5F,
+                        showAsPercentage = true,
+                    )
+                    if (Utilities.ATLEAST_T) {
+                        SwitchPreference(
+                            adapter = prefs2.homeReturnSheen.getAdapter(),
+                            label = stringResource(id = R.string.home_return_sheen_label),
+                            description = stringResource(id = R.string.home_return_sheen_desc),
+                        )
+                    }
                 }
             }
         }

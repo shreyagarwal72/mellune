@@ -230,7 +230,6 @@ class MelluneLauncher : QuickstepLauncher() {
     }
 
     private lateinit var colorScheme: ColorScheme
-    private var hasBackGesture = false
 
     val gestureController by unsafeLazy { GestureController(this) }
 
@@ -304,9 +303,6 @@ class MelluneLauncher : QuickstepLauncher() {
         val isWorkspaceDarkText = Themes.getAttrBoolean(this, R.attr.isWorkspaceDarkText)
         preferenceManager2.darkStatusBar.onEach(launchIn = lifecycleScope) { darkStatusBar ->
             systemUiController?.updateUiState(UI_STATE_BASE_WINDOW, isWorkspaceDarkText || darkStatusBar)
-        }
-        preferenceManager2.backPressGestureHandler.onEach(launchIn = lifecycleScope) { handler ->
-            hasBackGesture = handler !is GestureHandlerConfig.NoOp
         }
 
         LauncherOptionsPopup.restoreMissingPopupOptions(launcher)
@@ -554,9 +550,15 @@ class MelluneLauncher : QuickstepLauncher() {
     }
 
     private fun getActivityLaunchOptionsDefault(v: View?): ActivityOptionsWrapper {
+        if (v == null) {
+            return ActivityOptionsWrapper(
+                Utilities.allowBGLaunch(ActivityOptions.makeBasic()),
+                RunnableList(),
+            )
+        }
         var left = 0
         var top = 0
-        var width = v!!.measuredWidth
+        var width = v.measuredWidth
         var height = v.measuredHeight
         if (v is BubbleTextView) {
             // Launch from center of icon, not entire view
@@ -745,7 +747,9 @@ class MelluneLauncher : QuickstepLauncher() {
 
         // First transition since launch: the drawer search is still untransformed here, so its
         // resting spot is its current position minus the sheet's current translation.
-        val rest = searchRest ?: run {
+        val rest = searchRest
+            ?.takeIf { it[2] == drawerSearch.width.toFloat() && it[3] == drawerSearch.height.toFloat() }
+            ?: run {
             drawerSearch.getLocationInWindow(tmpSearchLoc)
             floatArrayOf(
                 tmpSearchLoc[0] + drawerSearch.width / 2f,

@@ -50,10 +50,9 @@ class FeedBridge(private val context: Context) {
     @JvmOverloads
     fun resolveBridge(customPackage: String = prefs.feedProvider.get()): BridgeInfo? {
         val customBridge = customBridgeOrNull(customPackage)
-        val feedProvider = customPackage.toBoolean()
         return when {
             customBridge != null -> customBridge
-            !shouldUseFeed && !feedProvider -> null
+            !shouldUseFeed && !BuildConfig.DEBUG -> null
             else -> bridgePackages.firstOrNull { it.isAvailable() }
         }
     }
@@ -108,21 +107,26 @@ class FeedBridge(private val context: Context) {
         }
 
         open fun isSigned(): Boolean {
-            when {
-                BuildConfig.DEBUG -> return true
+            return try {
+                when {
+                    BuildConfig.DEBUG -> true
 
-                Utilities.ATLEAST_P -> {
-                    val info =
-                        context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-                    val signingInfo = info.signingInfo
-                    if (signingInfo!!.hasMultipleSigners()) return false
-                    return signingInfo.signingCertificateHistory.any { it.hashCode() == signatureHash }
-                }
+                    Utilities.ATLEAST_P -> {
+                        val info =
+                            context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+                        val signingInfo = info.signingInfo ?: return false
+                        if (signingInfo.hasMultipleSigners()) return false
+                        signingInfo.signingCertificateHistory.any { it.hashCode() == signatureHash }
+                    }
 
-                else -> {
-                    val info = context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-                    return if (info.signatures!!.any { it.hashCode() != signatureHash }) false else info.signatures!!.isNotEmpty()
+                    else -> {
+                        val info = context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+                        val signatures = info.signatures ?: return false
+                        signatures.isNotEmpty() && signatures.all { it.hashCode() == signatureHash }
+                    }
                 }
+            } catch (_: PackageManager.NameNotFoundException) {
+                false
             }
         }
     }
@@ -132,13 +136,17 @@ class FeedBridge(private val context: Context) {
         val ignoreWhitelist = prefs.ignoreFeedWhitelist.get()
         override fun isSigned(): Boolean {
             if (signatureHash == -1 && Utilities.ATLEAST_P) {
-                val info = context.packageManager
-                    .getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-                val signingInfo = info.signingInfo
-                if (signingInfo!!.hasMultipleSigners()) return false
-                signingInfo.signingCertificateHistory.forEach {
-                    val hash = Integer.toHexString(it.hashCode())
-                    Log.d(TAG, "Feed provider $packageName(0x$hash) isn't whitelisted")
+                try {
+                    val info = context.packageManager
+                        .getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+                    val signingInfo = info.signingInfo ?: return false
+                    if (signingInfo.hasMultipleSigners()) return false
+                    signingInfo.signingCertificateHistory.forEach {
+                        val hash = Integer.toHexString(it.hashCode())
+                        Log.d(TAG, "Feed provider $packageName(0x$hash) isn't whitelisted")
+                    }
+                } catch (_: PackageManager.NameNotFoundException) {
+                    return false
                 }
             }
             return ignoreWhitelist || signatureHash != -1 && super.isSigned()

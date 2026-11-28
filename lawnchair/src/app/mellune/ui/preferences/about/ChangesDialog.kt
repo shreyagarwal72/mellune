@@ -173,7 +173,9 @@ private fun CommitItem(
 private fun openCommitInBrowser(context: Context, commitSha: String) {
     val commitUrl = "https://github.com/shreyagarwal72/mellune/commit/$commitSha"
     val intent = Intent(Intent.ACTION_VIEW, commitUrl.toUri())
-    context.startActivity(intent)
+    if (intent.resolveActivity(context.packageManager) != null) {
+        runCatching { context.startActivity(intent) }
+    }
 }
 
 private fun getTimeAgo(context: Context, dateString: String): String {

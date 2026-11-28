@@ -92,17 +92,21 @@ fun SearchPopupPreference(
     isErrorCheck: (String) -> Boolean = { it.isEmpty() || !it.contains("%s") },
 ) {
     var showPopup by remember { mutableStateOf(false) }
-    var value by remember { mutableStateOf(TextFieldValue(initialValue)) }
+    var value by remember(initialValue) { mutableStateOf(TextFieldValue(initialValue)) }
 
     if (showPopup) {
         AlertDialog(
-            onDismissRequest = { showPopup = false },
+            onDismissRequest = {
+                showPopup = false
+                value = TextFieldValue(initialValue)
+            },
             confirmButton = {
                 Button(
                     onClick = {
                         showPopup = false
                         onConfirm(value.text)
                     },
+                    enabled = !isErrorCheck(value.text),
                     shapes = ButtonDefaults.shapes(),
                 ) {
                     Text(text = stringResource(id = android.R.string.ok))
@@ -112,6 +116,7 @@ fun SearchPopupPreference(
                 app.mellune.ui.m3e.M3EOutlinedButton(
                     onClick = {
                         showPopup = false
+                        value = TextFieldValue(initialValue)
                     },
                 ) {
                     Text(text = stringResource(id = android.R.string.cancel))
@@ -144,12 +149,13 @@ fun SearchPopupPreference(
     PreferenceTemplate(
         modifier = modifier,
         onClick = {
+            value = TextFieldValue(initialValue)
             showPopup = true
         },
         contentModifier = Modifier
             .fillMaxHeight(),
         title = { Text(text = title) },
-        description = if (value.text.isNotEmpty()) {
+        description = if (initialValue.isNotEmpty()) {
             { Text(initialValue) }
         } else {
             null

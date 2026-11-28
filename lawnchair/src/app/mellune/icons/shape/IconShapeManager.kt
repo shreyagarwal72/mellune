@@ -45,9 +45,7 @@ class IconShapeManager @Inject constructor(
         return IconShape.SystemBased(iconMask, context)
     }
 
-    override fun close() {
-        TODO("Not yet implemented")
-    }
+    override fun close() = Unit
 
     companion object {
         @JvmField

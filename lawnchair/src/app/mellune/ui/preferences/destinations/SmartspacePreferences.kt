@@ -312,7 +312,9 @@ fun SmartspacerSettings(
                 val intent = context.packageManager.getLaunchIntentForPackage(
                     SmartspacerConstants.SMARTSPACER_PACKAGE_NAME,
                 )
-                context.startActivity(intent)
+                if (intent != null) {
+                    runCatching { context.startActivity(intent) }
+                }
             }
         }
     }

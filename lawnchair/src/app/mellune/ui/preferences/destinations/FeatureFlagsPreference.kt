@@ -73,7 +73,7 @@ fun FeatureFlagsPreference(modifier: Modifier = Modifier) {
                         .edit {
                             item.keys.forEach { key -> remove(key) }
                         }
-                    Toast.makeText(context, "Reset $item.title", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Reset ${item.title}", Toast.LENGTH_SHORT).show()
                 },
             )
         }
@@ -186,7 +186,7 @@ private fun IntentPreference(
         colors = ListItemDefaults.colors().copy(containerColor = Color.Transparent),
     ) {
         mMSDLPlayerWrapper.playToken(MSDLToken.TAP_MEDIUM_EMPHASIS)
-        context.startActivity(intent)
+        runCatching { context.startActivity(intent) }
     }
 }
 

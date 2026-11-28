@@ -75,6 +75,7 @@ fun SearchProviderPreferenceScreen(
         modifier = modifier,
     ) {
         when (provider) {
+            SearchProviderId.CALCULATOR -> CalculatorSearchProvider()
             SearchProviderId.CONTACTS -> ContactsSearchProvider()
             SearchProviderId.FILES -> FileSearchProvider()
             else -> GenericSearchProviderPreference(provider)
@@ -134,6 +135,18 @@ fun ContactsSearchProvider(
             onGoToSettings = { context.openAppPermissionSettings() },
         )
     }
+}
+
+@Composable
+fun CalculatorSearchProvider(
+    modifier: Modifier = Modifier,
+) {
+    val prefs = preferenceManager()
+    MainSwitchPreference(
+        adapter = prefs.searchResultCalculator.getAdapter(),
+        label = stringResource(getProviderName(SearchProviderId.CALCULATOR)),
+        modifier = modifier,
+    ) {}
 }
 
 @Composable

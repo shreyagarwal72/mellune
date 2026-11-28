@@ -70,19 +70,19 @@ class PreferenceManager @Inject constructor(
         Unit
     }
 
+    private val isPhone: Boolean get() = deviceType == InvariantDeviceProfile.TYPE_PHONE
+    private val isTablet: Boolean get() = deviceType == InvariantDeviceProfile.TYPE_TABLET
+    private val isFoldable: Boolean get() = deviceType == InvariantDeviceProfile.TYPE_MULTI_DISPLAY
+    private val isDesktop: Boolean get() = deviceType == InvariantDeviceProfile.TYPE_DESKTOP
+
     val iconPackPackage = StringPref("pref_iconPackPackage", "", reloadIcons)
     val themedIconPackPackage = StringPref("pref_themedIconPackPackage", "", reloadIcons)
-    val allowRotation = BoolPref("pref_allowRotation", false)
+    val allowRotation = BoolPref("pref_allowRotation", isTablet || isFoldable)
     val fixedLandscapeMode = BoolPref("pref_fixed_landscape_mode", false)
     val wrapAdaptiveIcons = BoolPref("prefs_wrapAdaptive", true)
     val transparentIconBackground = BoolPref("prefs_transparentIconBackground", false)
     val shadowBGIcons = BoolPref("pref_shadowBGIcons", true)
     val addIconToHome = BoolPref("pref_add_icon_to_home", true)
-
-    private val isPhone: Boolean get() = deviceType == InvariantDeviceProfile.TYPE_PHONE
-    private val isTablet: Boolean get() = deviceType == InvariantDeviceProfile.TYPE_TABLET
-    private val isFoldable: Boolean get() = deviceType == InvariantDeviceProfile.TYPE_MULTI_DISPLAY
-    private val isDesktop: Boolean get() = deviceType == InvariantDeviceProfile.TYPE_DESKTOP
 
     val calculatedGridSpec = when {
         // This grid configuration is perfect for Phone, tested against Pixel 7,
@@ -114,7 +114,7 @@ class PreferenceManager @Inject constructor(
     val workspaceIncreaseMaxGridSize = BoolPref("pref_workspace_increase_max_grid_size", false)
     val folderRows = IdpIntPref("pref_folderRows", { numFolderRows[INDEX_DEFAULT] }, reloadGrid)
 
-    val drawerOpacity = FloatPref("pref_drawerOpacity", .5f, recreate)
+    val drawerOpacity = FloatPref("pref_drawerOpacity", 1f, recreate)
     val coloredBackgroundLightness = FloatPref("pref_coloredBackgroundLightness", 1F)
     val feedProvider = StringPref("pref_feedProvider", "")
     val ignoreFeedWhitelist = BoolPref("pref_ignoreFeedWhitelist", false)
@@ -147,15 +147,13 @@ class PreferenceManager @Inject constructor(
     val fontBody = FontPref("pref_fontBody", fontCache.uiText, recreate)
     val fontBodyMedium = FontPref("pref_fontBodyMedium", fontCache.uiTextMedium, recreate)
 
-    // TODO REMOVE
-    val deviceSearch = BoolPref("device_search", false, recreate)
     val searchResultShortcuts = BoolPref("pref_searchResultShortcuts", false)
     val searchResultPeople = BoolPref("pref_searchResultPeople", false, recreate)
     val searchResultPixelTips = BoolPref("pref_searchResultPixelTips", false)
     val searchResultSettings = BoolPref("pref_searchResultSettings", false)
     val searchResultCalculator = BoolPref("pref_searchResultCalculator", false)
 
-    val searchResultApps = BoolPref("pref_searchResultApps", true, recreate)
+    val searchResultApps = BoolPref("pref_searchResultApps", true)
     val searchResultFilesToggle = BoolPref("pref_searchResultFiles", false, recreate)
     val searchResultAllFiles = BoolPref("pref_searchResultAllFiles", false, recreate)
     val searchResultAudio = BoolPref("pref_searchResultAudio", false, recreate)
@@ -194,7 +192,7 @@ class PreferenceManager @Inject constructor(
     val recentsTranslucentBackgroundAlpha = FloatPref("pref_recentTranslucentBackgroundAlpha", .8f, recreate)
 
     val hideVersionInfo = BoolPref("pref_hideVersionInfo", false)
-    val pseudonymVersion = StringPref("pref_pseudonymVersion", "Bubble Tea")
+    val pseudonymVersion = StringPref("pref_pseudonymVersion", "Mellune")
     val enableGnc = BoolPref("pref_enableGnc", isGestureNavContractCompatible, recreate)
     val hasOpenedSettings = BoolPref("pref_hasOpenedSettings", false)
 
@@ -206,7 +204,7 @@ class PreferenceManager @Inject constructor(
     val forceIconMonochrome = BoolPref("pref_forceIconMonochrome", false)
 
     override fun close() {
-        TODO("Not yet implemented")
+        sp.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     private fun normalizeVibrationFeedbackLevel() {

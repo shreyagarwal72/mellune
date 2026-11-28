@@ -41,8 +41,10 @@ object WebSuggestionProvider : SearchProvider {
             .catch {
                 if (it is TimeoutCancellationException) {
                     Log.w(TAG, "Web suggestion request timed out")
-                    emit(emptyList())
+                } else {
+                    Log.w(TAG, "Web suggestion request failed", it)
                 }
+                emit(emptyList())
             }
             .map { suggestions ->
                 suggestions

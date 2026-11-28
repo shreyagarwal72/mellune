@@ -55,10 +55,6 @@ import app.mellune.ui.preferences.navigation.Predictions
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.R
 
-object AppDrawerRoutes {
-    const val HIDDEN_APPS = "hiddenApps"
-}
-
 @Composable
 fun AppDrawerPreferences(
     modifier: Modifier = Modifier,
@@ -92,11 +88,6 @@ fun AppDrawerPreferences(
             NavigationActionPreference(
                 label = stringResource(R.string.suggestion_pref_screen_title),
                 destination = Predictions,
-            )
-            SwitchPreference(
-                adapter = prefs2.showDrawerQuickFilters.getAdapter(),
-                label = stringResource(id = R.string.drawer_quick_filters_label),
-                description = stringResource(id = R.string.drawer_quick_filters_desc),
             )
             AppDrawerHapticFeedbackPreference()
         }

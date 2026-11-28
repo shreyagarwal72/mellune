@@ -68,8 +68,17 @@ class MelluneLocalSearchAlgorithm(context: Context) : MelluneSearchAlgorithm(con
     override fun doSearch(query: String, callback: SearchCallback<BaseAllAppsAdapter.AdapterItem>) {
         modelRetryJob?.cancel()
         modelRetryJob = appState.model.runWhenModelLoaded(coroutineScope) { apps ->
-            val appResults = appSearchProvider.search(context, query, apps)
-            val shortcutResults = shortcutSearchProvider.search(context, appResults)
+            val searchAppsEnabled = PreferenceManager.getInstance(context).searchResultApps.get()
+            val appResults = if (searchAppsEnabled) {
+                appSearchProvider.search(context, query, apps)
+            } else {
+                emptyList()
+            }
+            val shortcutResults = if (searchAppsEnabled) {
+                shortcutSearchProvider.search(context, appResults)
+            } else {
+                emptyList()
+            }
 
             currentJob?.cancel()
             currentJob = coroutineScope.launch {

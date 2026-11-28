@@ -169,9 +169,8 @@ fun PreferenceNavigation(
             deepLinks = getDeepLink(AppDrawerHiddenApps),
         ) { HiddenAppsPreferences() }
         composable<AppDrawerAppListToFolder> { backStackEntry ->
-            val args = backStackEntry.arguments!!
-            val folderInfoId = args.getInt("id")
-            SelectAppsForDrawerFolder(folderInfoId)
+            val route: AppDrawerAppListToFolder = backStackEntry.toRoute()
+            SelectAppsForDrawerFolder(route.id)
         }
         composable<AppDrawerFolder>(
             deepLinks = getDeepLink(AppDrawerFolder),
@@ -219,7 +218,7 @@ fun PreferenceNavigation(
         composable<SelectIcon> { backStackEntry ->
             val args: SelectIcon = backStackEntry.toRoute()
             val componentKey = args.componentKey
-            val key = ComponentKey.fromString(componentKey)!!
+            val key = ComponentKey.fromString(componentKey) ?: return@composable
             SelectIconPreference(key)
         }
         composable<IconPicker> { backStackEntry ->

@@ -82,7 +82,8 @@ fun IconPickerPreference(
         val icon = it.data?.getParcelableExtra<Intent.ShortcutIconResource>(
             Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
         ) ?: return@rememberLauncherForActivityResult
-        val entry = (iconPack as CustomIconPack).createFromExternalPicker(icon) ?: return@rememberLauncherForActivityResult
+        val entry = (iconPack as? CustomIconPack)?.createFromExternalPicker(icon)
+            ?: return@rememberLauncherForActivityResult
         onClickItem(entry)
     }
 
@@ -103,7 +104,7 @@ fun IconPickerPreference(
                         val intent = Intent("com.novalauncher.THEME")
                             .addCategory("com.novalauncher.category.CUSTOM_ICON_PICKER")
                             .setComponent(pickerComponent)
-                        pickerLauncher.launch(intent)
+                        runCatching { pickerLauncher.launch(intent) }
                         hideMenu()
                     }, text = {
                         Text(text = stringResource(id = R.string.icon_pack_external_picker))

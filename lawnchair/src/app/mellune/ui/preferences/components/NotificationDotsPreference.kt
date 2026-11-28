@@ -95,7 +95,7 @@ fun NotificationDotsPreference(
                 val extras = bundleOf(EXTRA_FRAGMENT_HIGHLIGHT_KEY to "notification_badging")
                 val intent = Intent("android.settings.NOTIFICATION_SETTINGS")
                     .putExtra(EXTRA_FRAGMENT_ARGS, extras)
-                context.startActivity(intent)
+                runCatching { context.startActivity(intent) }
             }
         },
     )
@@ -136,7 +136,7 @@ fun NotificationAccessConfirmation(
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .putExtra(EXTRA_FRAGMENT_HIGHLIGHT_KEY, cn.flattenToString())
                 .putExtra(EXTRA_FRAGMENT_ARGS, showFragmentArgs)
-            context.startActivity(intent)
+            runCatching { context.startActivity(intent) }
         },
     )
 }

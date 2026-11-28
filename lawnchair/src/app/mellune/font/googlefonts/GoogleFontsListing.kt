@@ -74,9 +74,7 @@ class GoogleFontsListing @Inject constructor(
         return fonts.await()
     }
 
-    override fun close() {
-        TODO("Not yet implemented")
-    }
+    override fun close() = Unit
 
     sealed interface DataProvider {
 

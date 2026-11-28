@@ -109,10 +109,6 @@ private fun ASISearchSettings(prefs: PreferenceManager) {
         label = stringResource(id = R.string.search_pref_result_people_title),
     )
     SwitchPreference(
-        adapter = prefs.searchResultPixelTips.getAdapter(),
-        label = stringResource(id = R.string.search_pref_result_tips_title),
-    )
-    SwitchPreference(
         adapter = prefs.searchResultSettings.getAdapter(),
         label = stringResource(id = R.string.search_pref_result_settings_title),
     )
@@ -153,13 +149,13 @@ private fun LocalSearchSettings(
     context: Context,
 ) {
     val navController = LocalNavController.current
-    val webSuggestionProvider =
-        stringResource(prefs2.webSuggestionProvider.getAdapter().state.value.label)
+    val currentWebProvider = prefs2.webSuggestionProvider.getAdapter().state.value
+    val webSuggestionProvider = stringResource(currentWebProvider.label)
 
     TwoTargetSwitchPreference(
         adapter = prefs.searchResultStartPageSuggestion.getAdapter(),
         label = stringResource(id = R.string.search_pref_result_web_title),
-        description = if (webSuggestionProvider == stringResource(CustomWebSearchProvider.label)) {
+        description = if (currentWebProvider == CustomWebSearchProvider) {
             webSuggestionProvider
         } else {
             stringResource(

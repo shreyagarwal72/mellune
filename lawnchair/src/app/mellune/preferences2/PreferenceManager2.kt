@@ -831,7 +831,7 @@ class PreferenceManager2 @Inject constructor(
 
     val wallpaperDepthEffect = preference(
         key = booleanPreferencesKey(name = "enable_wallpaper_depth_effect"),
-        defaultValue = true,
+        defaultValue = false,
         onSet = { reloadHelper.recreate() },
     )
 
@@ -887,17 +887,19 @@ class PreferenceManager2 @Inject constructor(
 
     val homeReturnSheen = preference(
         key = booleanPreferencesKey(name = "enable_home_return_sheen"),
-        defaultValue = true,
+        defaultValue = false,
     )
 
     val notificationBadgeStyle = preference(
         key = stringPreferencesKey(name = "notification_badge_style"),
         defaultValue = "dots",
+        onSet = { reloadHelper.reloadGrid() },
     )
 
     val folderPreviewLayout = preference(
         key = stringPreferencesKey(name = "folder_preview_layout"),
         defaultValue = "grid",
+        onSet = { reloadHelper.reloadGrid() },
     )
 
     val folderPreviewShape = preference(
@@ -928,17 +930,13 @@ class PreferenceManager2 @Inject constructor(
     val dockDrawBehindNavbar = preference(
         key = booleanPreferencesKey(name = "dock_draw_behind_navbar"),
         defaultValue = false,
-    )
-
-    val showDrawerQuickFilters = preference(
-        key = booleanPreferencesKey(name = "show_drawer_quick_filters"),
-        defaultValue = true,
+        onSet = { reloadHelper.recreate() },
     )
 
     val deckLayout = preference(
         key = booleanPreferencesKey(name = "enable_lawn_deck"),
         defaultValue = false,
-        onSet = { reloadHelper.reloadIcons() },
+        onSet = { reloadHelper.restart() },
     )
 
     val showDeckLayout = preference(

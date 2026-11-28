@@ -181,9 +181,7 @@ class FontCache @Inject constructor(
         deferredFonts.remove(TTFFont(context, file))
     }
 
-    override fun close() {
-        TODO("Not yet implemented")
-    }
+    override fun close() = Unit
 
     class Family(val displayName: String, val variants: Map<String, Font>) {
 

@@ -58,9 +58,7 @@ class HeadlessWidgetsManager @Inject constructor(
         return widget.updates
     }
 
-    override fun close() {
-        TODO("Not yet implemented")
-    }
+    override fun close() = Unit
 
     private class HeadlessAppWidgetHost(context: Context) : AppWidgetHost(context, 1028) {
 

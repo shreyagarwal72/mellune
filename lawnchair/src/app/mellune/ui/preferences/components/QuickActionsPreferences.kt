@@ -19,7 +19,7 @@ data class RecentsQuickAction(
 )
 
 fun sortListByIdOrder(list: List<RecentsQuickAction>, order: String): List<RecentsQuickAction> {
-    val orderList = order.split(",").map { it.toInt() }
+    val orderList = order.split(",").mapNotNull { it.toIntOrNull() }
     return list.sortedBy { orderList.indexOf(it.id) }
 }
 

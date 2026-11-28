@@ -96,9 +96,7 @@ class IconOverrideRepository @Inject constructor(
         model.onPackageIconsUpdated(hashSetOf(target.componentName.packageName), target.user)
     }
 
-    override fun close() {
-        TODO("Not yet implemented")
-    }
+    override fun close() = Unit
 
     companion object {
         @JvmField

@@ -133,14 +133,14 @@ class MelluneASISearchAlgorithm(context: Context) :
                 val searchQuery = Query("dummy", System.currentTimeMillis())
                 val prefs = PreferenceManager.getInstance(context)
                 val checkDone = AtomicBoolean(false)
-                searchSession.query(searchQuery, Executors.MAIN_EXECUTOR) { targets ->
+                searchSession.query(searchQuery, Executors.MAIN_EXECUTOR) { _ ->
                     checkDone.set(true)
-                    finishCompatibilityCheck(prefs, searchSession, targets.isNotEmpty())
+                    finishCompatibilityCheck(searchSession)
                 }
                 Handler(Executors.UI_HELPER_EXECUTOR.looper).postDelayed(
                     {
                         if (!checkDone.get()) {
-                            finishCompatibilityCheck(prefs, searchSession, false)
+                            finishCompatibilityCheck(searchSession)
                         }
                     },
                     300,
@@ -149,11 +149,8 @@ class MelluneASISearchAlgorithm(context: Context) :
         }
 
         private fun finishCompatibilityCheck(
-            prefs: PreferenceManager,
             session: SearchSession,
-            isCompatible: Boolean,
         ) {
-            Executors.MAIN_EXECUTOR.execute { prefs.deviceSearch.set(isCompatible) }
             try {
                 session.destroy()
             } catch (_: Exception) {

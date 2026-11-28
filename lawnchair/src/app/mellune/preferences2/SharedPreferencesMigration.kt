@@ -33,18 +33,18 @@ class SharedPreferencesMigration(private val context: Context) {
 
     private val sharedPreferencesName = LauncherFiles.SHARED_PREFERENCES_KEY
     private val keys = mapOf(
-        "pref_darkStatusBar" to "dark_status_bar", "pref_dockSearchBar" to "dock_search_bar",
+        "pref_darkStatusBar" to "dark_status_bar",
         "pref_iconShape" to "icon_shape", "pref_themedHotseatQsb" to "themed_hotseat_qsb",
         "pref_accentColor2" to "accent_color", "hidden-app-set" to "hidden_apps",
         "pref_showStatusBar" to "show_status_bar", "pref_showSysUiScrim" to "show_top_shadow",
         "pref_hideAppSearchBar" to "hide_app_drawer_search_bar", "pref_enableFontSelection" to "enable_font_selection",
-        "pref_doubleTap2Sleep" to "dt2s", "pref_searchAutoShowKeyboard" to "auto_show_keyboard_in_drawer",
+        "pref_searchAutoShowKeyboard" to "auto_show_keyboard_in_drawer",
         "pref_iconSizeFactor" to "home_icon_size_factor", "pref_folderPreviewBgOpacity" to "folder_preview_background_opacity",
         "pref_showHomeLabels" to "show_icon_labels_on_home_screen", "pref_allAppsIconSizeFactor" to "drawer_icon_size_factor",
         "pref_allAppsIconLabels" to "show_icon_labels_in_drawer", "pref_textSizeFactor" to "home_icon_label_size_factor",
         "pref_allAppsTextSizeFactor" to "drawer_icon_label_size_factor", "pref_allAppsCellHeightMultiplier" to "drawer_cell_height_factor",
         "pref_useFuzzySearch" to "enable_fuzzy_search", "pref_smartSpaceEnable" to "enable_smartspace",
-        "pref_enableMinusOne" to "enable_feed", "pref_enableIconSelection" to "enable_icon_selection",
+        "pref_enableMinusOne" to "enable_feed",
         "pref_showComponentName" to "show_component_names", "pref_allAppsColumns" to "drawer_columns",
         "pref_folderColumns" to "folder_columns",
         "pref_maxSearchResultCount" to "max_search_result_count",
