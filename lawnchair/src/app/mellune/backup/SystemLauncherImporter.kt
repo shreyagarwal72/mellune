@@ -227,8 +227,8 @@ class SystemLauncherImporter(private val context: Context) {
     }
 
     private fun writeToStagedDatabase(items: List<ImportedItem>, stagedDbFile: File) {
-        val helper = DatabaseHelper(context, stagedDbFile.absolutePath, {}, {})
         val profileId = UserCache.INSTANCE.get(context).getSerialNumberForUser(android.os.Process.myUserHandle())
+        val helper = DatabaseHelper(context, stagedDbFile.absolutePath, { profileId }, {})
         val now = System.currentTimeMillis()
         helper.writableDatabase.use { db ->
             db.execSQL("DELETE FROM ${Favorites.TABLE_NAME}")
