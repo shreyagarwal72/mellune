@@ -246,7 +246,6 @@ fun HomeScreenGridPreferences(
                             Text(text = stringResource(id = R.string.action_apply))
                         }
                     }
-                    }
                     ExpressiveScrollBar(
                         scrollState = controlsScrollState,
                         modifier = Modifier

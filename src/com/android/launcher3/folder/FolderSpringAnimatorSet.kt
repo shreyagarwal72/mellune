@@ -244,13 +244,19 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
             context: Context,
             animatorSet: AnimatorSet,
             isOpening: Boolean,
-            folderDepth: MultiProperty,
+            folderDepth: MultiPropertyFactory<*>.MultiProperty,
         ) {
             val targetDepth = app.mellune.util.getFolderBlurTargetDepth(context)
             val start = if (isOpening) 0f else targetDepth
             val end = if (isOpening) targetDepth else 0f
-            val blurAnimator = ObjectAnimator.ofFloat(folderDepth, MULTI_PROPERTY_VALUE, start, end)
-            blurAnimator.duration = 250
+            val blurAnimator = ObjectAnimator.ofFloat(
+                folderDepth,
+                MULTI_PROPERTY_VALUE,
+                start,
+                end,
+            ).apply {
+                duration = 250L
+            }
             animatorSet.play(blurAnimator)
         }
 
