@@ -22,6 +22,7 @@ import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import app.mellune.preferences2.PreferenceManager2
 import app.mellune.preferences2.firstCached
+import app.mellune.wallpaper.parallax.ParallaxWallpaperController
 import com.android.launcher3.BubbleTextView
 import com.android.launcher3.CellLayout
 import com.android.launcher3.Hotseat
@@ -117,6 +118,7 @@ object MelluneSpringEngine {
             targetZoom = WALLPAPER_ZOOM_OPEN,
             durationMs = 220L,
             generation = gen,
+            focalView = launchedView,
         )
     }
 
@@ -1070,9 +1072,25 @@ object MelluneSpringEngine {
         targetZoom: Float,
         durationMs: Long,
         generation: Int,
+        focalView: View? = null,
     ) {
         wallpaperZoomAnimator?.cancel()
         wallpaperZoomAnimator = null
+
+        // Mellune's own parallax wallpaper animates itself from one command; the system zoom
+        // path below is only the fallback when it is not the active wallpaper.
+        if (ParallaxWallpaperController.sendZoom(
+                context = context,
+                windowToken = windowToken,
+                from = fromZoom,
+                target = targetZoom,
+                durationMs = durationMs,
+                focalView = focalView,
+            )
+        ) {
+            currentWallpaperZoom = targetZoom
+            return
+        }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || windowToken == null) {
             currentWallpaperZoom = targetZoom

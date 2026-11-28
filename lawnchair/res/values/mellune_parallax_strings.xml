@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mellune_parallax_wallpaper_label">Mellune 3D parallax</string>
+    <string name="mellune_parallax_wallpaper_description">Depth wallpaper that moves with the launcher</string>
+    <string name="mellune_parallax_intensity">Parallax intensity</string>
+    <string name="mellune_parallax_tilt">Tilt with device motion</string>
+    <string name="mellune_parallax_choose_image">Choose wallpaper image</string>
+    <string name="mellune_parallax_regenerate_depth">Regenerate depth map</string>
+    <string name="mellune_parallax_apply">Apply as wallpaper</string>
+    <string name="mellune_parallax_image_set">Wallpaper image updated</string>
+    <string name="mellune_parallax_image_failed">Couldn\'t load that image</string>
+</resources>

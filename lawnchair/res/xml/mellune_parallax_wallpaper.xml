@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/mellune_parallax_wallpaper_description"
+    android:settingsActivity="app.mellune.wallpaper.parallax.ParallaxWallpaperSettingsActivity"
+    android:supportsMultipleDisplays="false" />
