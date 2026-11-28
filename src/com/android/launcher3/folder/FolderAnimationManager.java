@@ -356,7 +356,8 @@ public class FolderAnimationManager implements FolderAnimationCreator {
                 // Background can have a scaled radius in drag and drop mode, so we need to add the
                 // difference to keep the preview items centered.
                 (int) (previewItemOffsetX / scaleRelativeToDragLayer) + radiusDiff, radiusDiff);
-        var depthController = mLauncher.getDepthController();
+        var depthController = com.android.launcher3.views.ActivityContext
+                .lookupContext(mContext).getDepthController();
         if (depthController != null && depthController.getFolderDepth() != null) {
             float targetDepth = MelluneUtilsKt.getFolderBlurTargetDepth(mContext);
             float start = mIsOpening ? 0f : targetDepth;
