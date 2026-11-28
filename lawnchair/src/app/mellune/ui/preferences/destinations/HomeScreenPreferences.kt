@@ -262,6 +262,50 @@ fun HomeScreenPreferences(
                 }
             }
         }
+        PreferenceGroup(heading = stringResource(id = R.string.notification_badges_category)) {
+            val badgeEntries = listOf(
+                ListPreferenceEntry(
+                    value = "dots",
+                    label = { stringResource(id = R.string.notification_badge_style_dots) },
+                ),
+                ListPreferenceEntry(
+                    value = "numeric",
+                    label = { stringResource(id = R.string.notification_badge_style_numeric) },
+                ),
+                ListPreferenceEntry(
+                    value = "dynamic",
+                    label = { stringResource(id = R.string.notification_badge_style_dynamic) },
+                ),
+            )
+            ListPreference(
+                adapter = prefs2.notificationBadgeStyle.getAdapter(),
+                entries = badgeEntries,
+                label = stringResource(id = R.string.notification_badge_style_label),
+            )
+            val scrollEffectEntries = listOf(
+                ListPreferenceEntry(
+                    value = "default",
+                    label = { stringResource(id = R.string.workspace_scroll_effect_default) },
+                ),
+                ListPreferenceEntry(
+                    value = "card_stack",
+                    label = { stringResource(id = R.string.workspace_scroll_effect_card_stack) },
+                ),
+                ListPreferenceEntry(
+                    value = "tablet",
+                    label = { stringResource(id = R.string.workspace_scroll_effect_tablet) },
+                ),
+                ListPreferenceEntry(
+                    value = "depth_cube",
+                    label = { stringResource(id = R.string.workspace_scroll_effect_depth_cube) },
+                ),
+            )
+            ListPreference(
+                adapter = prefs2.workspaceScrollEffect.getAdapter(),
+                entries = scrollEffectEntries,
+                label = stringResource(id = R.string.workspace_scroll_effect_label),
+            )
+        }
         val columns by prefs.workspaceColumns.getAdapter()
         val rows by prefs.workspaceRows.getAdapter()
         PreferenceGroup(heading = stringResource(id = R.string.layout)) {

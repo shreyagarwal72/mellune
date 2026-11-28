@@ -1197,4 +1197,43 @@
     <string name="home_return_intensity_label">Motion intensity</string>
     <string name="home_return_sheen_label">Return glow sheen</string>
     <string name="home_return_sheen_desc">Subtle Material You light sweep when settling back to home (Android 13+)</string>
+
+    <!-- Nova-inspired Customization Suite -->
+    <string name="notification_badges_category">Notification badges</string>
+    <string name="notification_badge_style_label">Badge style</string>
+    <string name="notification_badge_style_dots">Dots</string>
+    <string name="notification_badge_style_numeric">Numeric dots</string>
+    <string name="notification_badge_style_dynamic">Dynamic badges</string>
+
+    <string name="folder_preview_layout_label">Folder preview layout</string>
+    <string name="folder_preview_layout_grid">Grid</string>
+    <string name="folder_preview_layout_stack">Stack</string>
+    <string name="folder_preview_layout_fan">Fan</string>
+    <string name="folder_preview_layout_line">Line</string>
+
+    <string name="folder_preview_shape_label">Folder icon background</string>
+    <string name="folder_preview_shape_default">Theme default</string>
+    <string name="folder_preview_shape_circle">Circle</string>
+    <string name="folder_preview_shape_square">Square</string>
+    <string name="folder_preview_shape_platform">Platform</string>
+
+    <string name="folder_swipe_action_label">Swipe up on folder</string>
+    <string name="folder_swipe_action_none">Do nothing</string>
+    <string name="folder_swipe_action_open_folder">Open folder</string>
+    <string name="folder_swipe_action_launch_first">Launch first item</string>
+
+    <string name="gesture_pinch_in">Pinch in</string>
+    <string name="gesture_pinch_out">Pinch out</string>
+
+    <string name="workspace_scroll_effect_label">Page scroll effect</string>
+    <string name="workspace_scroll_effect_default">Default</string>
+    <string name="workspace_scroll_effect_card_stack">Card stack</string>
+    <string name="workspace_scroll_effect_tablet">Tablet</string>
+    <string name="workspace_scroll_effect_depth_cube">Depth cube</string>
+
+    <string name="dock_draw_behind_navbar_label">Draw behind navigation bar</string>
+    <string name="dock_draw_behind_navbar_desc">Extend the dock background seamlessly behind the system navigation bar</string>
+
+    <string name="drawer_quick_filters_label">Smart category chips</string>
+    <string name="drawer_quick_filters_desc">Show quick filter chips (All, Frequent, Recent) in the app drawer</string>
 </resources>

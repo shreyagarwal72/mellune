@@ -42,6 +42,7 @@ import app.mellune.compat.MelluneQuickstepCompat
 import app.mellune.data.AppDatabase
 import app.mellune.data.wallpaper.service.WallpaperService
 import app.mellune.gestures.GestureController
+import app.mellune.gestures.PinchGestureTouchController
 import app.mellune.gestures.VerticalSwipeTouchController
 import app.mellune.gestures.config.GestureHandlerConfig
 import app.mellune.gestures.ui.MelluneShortcutActivity
@@ -394,7 +395,9 @@ class MelluneLauncher : QuickstepLauncher() {
 
     override fun createTouchControllers(): Array<TouchController> {
         val verticalSwipeController = VerticalSwipeTouchController(this, gestureController)
-        return arrayOf<TouchController>(verticalSwipeController) + super.createTouchControllers()
+        val pinchGestureController = PinchGestureTouchController(this, gestureController)
+        return arrayOf<TouchController>(verticalSwipeController, pinchGestureController) +
+            super.createTouchControllers()
     }
 
     override fun handleHomeTap() {

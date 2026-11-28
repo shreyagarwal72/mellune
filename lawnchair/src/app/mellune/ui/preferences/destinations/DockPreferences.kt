@@ -78,6 +78,11 @@ fun DockPreferences(modifier: Modifier = Modifier) {
                 ) {
                     HotseatBackgroundSettings(prefs, prefs2)
                 }
+                SwitchPreference(
+                    adapter = prefs2.dockDrawBehindNavbar.getAdapter(),
+                    label = stringResource(id = R.string.dock_draw_behind_navbar_label),
+                    description = stringResource(id = R.string.dock_draw_behind_navbar_desc),
+                )
             }
             SearchBarPreference(SearchRoute.DOCK_SEARCH)
             GridSettings(prefs, prefs2)

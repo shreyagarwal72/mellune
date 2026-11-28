@@ -132,6 +132,10 @@ public class PreviewItemManager {
 
             mIcon.mBackground.setup(mIcon.getContext(), mIcon.mActivity, mIcon, mTotalWidth,
                     mIcon.getPaddingTop());
+            mIcon.mPreviewLayoutRule.setPreviewLayout(
+                    app.mellune.preferences2.PreferenceCacheExtensionsKt.firstCached(
+                            app.mellune.preferences2.PreferenceManager2.getInstance(
+                                    mIcon.getContext()).getFolderPreviewLayout()));
             mIcon.mPreviewLayoutRule.init(
                     mIcon.mBackground.previewSize, mIntrinsicIconSize,
                     Utilities.isRtl(mIcon.getResources()),

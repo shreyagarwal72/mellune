@@ -890,6 +890,51 @@ class PreferenceManager2 @Inject constructor(
         defaultValue = true,
     )
 
+    val notificationBadgeStyle = preference(
+        key = stringPreferencesKey(name = "notification_badge_style"),
+        defaultValue = "dots",
+    )
+
+    val folderPreviewLayout = preference(
+        key = stringPreferencesKey(name = "folder_preview_layout"),
+        defaultValue = "grid",
+    )
+
+    val folderPreviewShape = preference(
+        key = stringPreferencesKey(name = "folder_preview_shape"),
+        defaultValue = "default",
+    )
+
+    val folderSwipeAction = preference(
+        key = stringPreferencesKey(name = "folder_swipe_action"),
+        defaultValue = "none",
+    )
+
+    val pinchInGestureHandler = serializablePreference<GestureHandlerConfig>(
+        key = stringPreferencesKey(name = "pinch_in_gesture_handler"),
+        defaultValue = GestureHandlerConfig.NoOp,
+    )
+
+    val pinchOutGestureHandler = serializablePreference<GestureHandlerConfig>(
+        key = stringPreferencesKey(name = "pinch_out_gesture_handler"),
+        defaultValue = GestureHandlerConfig.NoOp,
+    )
+
+    val workspaceScrollEffect = preference(
+        key = stringPreferencesKey(name = "workspace_scroll_effect"),
+        defaultValue = "default",
+    )
+
+    val dockDrawBehindNavbar = preference(
+        key = booleanPreferencesKey(name = "dock_draw_behind_navbar"),
+        defaultValue = false,
+    )
+
+    val showDrawerQuickFilters = preference(
+        key = booleanPreferencesKey(name = "show_drawer_quick_filters"),
+        defaultValue = true,
+    )
+
     val deckLayout = preference(
         key = booleanPreferencesKey(name = "enable_lawn_deck"),
         defaultValue = false,

@@ -26,6 +26,8 @@ import app.mellune.preferences2.preferenceManager2
 import app.mellune.ui.preferences.LocalIsExpandedScreen
 import app.mellune.ui.preferences.components.NavigationActionPreference
 import app.mellune.ui.preferences.components.colorpreference.ColorPreference
+import app.mellune.ui.preferences.components.controls.ListPreference
+import app.mellune.ui.preferences.components.controls.ListPreferenceEntry
 import app.mellune.ui.preferences.components.controls.SliderPreference
 import app.mellune.ui.preferences.components.controls.SwitchPreference
 import app.mellune.ui.preferences.components.layout.ExpandAndShrink
@@ -101,6 +103,71 @@ fun FolderPreferences(
                     )
                 }
             }
+            val layoutEntries = listOf(
+                ListPreferenceEntry(
+                    value = "grid",
+                    label = { stringResource(id = R.string.folder_preview_layout_grid) },
+                ),
+                ListPreferenceEntry(
+                    value = "stack",
+                    label = { stringResource(id = R.string.folder_preview_layout_stack) },
+                ),
+                ListPreferenceEntry(
+                    value = "fan",
+                    label = { stringResource(id = R.string.folder_preview_layout_fan) },
+                ),
+                ListPreferenceEntry(
+                    value = "line",
+                    label = { stringResource(id = R.string.folder_preview_layout_line) },
+                ),
+            )
+            ListPreference(
+                adapter = prefs2.folderPreviewLayout.getAdapter(),
+                entries = layoutEntries,
+                label = stringResource(id = R.string.folder_preview_layout_label),
+            )
+            val shapeEntries = listOf(
+                ListPreferenceEntry(
+                    value = "default",
+                    label = { stringResource(id = R.string.folder_preview_shape_default) },
+                ),
+                ListPreferenceEntry(
+                    value = "circle",
+                    label = { stringResource(id = R.string.folder_preview_shape_circle) },
+                ),
+                ListPreferenceEntry(
+                    value = "square",
+                    label = { stringResource(id = R.string.folder_preview_shape_square) },
+                ),
+                ListPreferenceEntry(
+                    value = "platform",
+                    label = { stringResource(id = R.string.folder_preview_shape_platform) },
+                ),
+            )
+            ListPreference(
+                adapter = prefs2.folderPreviewShape.getAdapter(),
+                entries = shapeEntries,
+                label = stringResource(id = R.string.folder_preview_shape_label),
+            )
+            val swipeEntries = listOf(
+                ListPreferenceEntry(
+                    value = "none",
+                    label = { stringResource(id = R.string.folder_swipe_action_none) },
+                ),
+                ListPreferenceEntry(
+                    value = "open_folder",
+                    label = { stringResource(id = R.string.folder_swipe_action_open_folder) },
+                ),
+                ListPreferenceEntry(
+                    value = "launch_first",
+                    label = { stringResource(id = R.string.folder_swipe_action_launch_first) },
+                ),
+            )
+            ListPreference(
+                adapter = prefs2.folderSwipeAction.getAdapter(),
+                entries = swipeEntries,
+                label = stringResource(id = R.string.folder_swipe_action_label),
+            )
         }
         PreferenceGroup(heading = stringResource(id = R.string.grid)) {
             SliderPreference(

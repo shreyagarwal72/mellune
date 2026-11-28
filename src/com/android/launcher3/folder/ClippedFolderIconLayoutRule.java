@@ -27,6 +27,11 @@ public class ClippedFolderIconLayoutRule {
     private boolean mIsRtl;
     private float mBaselineIconScale;
     private int mNumFolderColumns;
+    private String mPreviewLayout = "grid";
+
+    public void setPreviewLayout(String layout) {
+        mPreviewLayout = layout != null ? layout : "grid";
+    }
 
     /**
      * initialize the layout rule
@@ -137,6 +142,39 @@ public class ClippedFolderIconLayoutRule {
     }
 
     private void getPosition(int index, int curNumItems, float[] result) {
+        if ("stack".equals(mPreviewLayout)) {
+            float halfIconSize = (mIconSize * scaleForItem(curNumItems, 0)) / 2;
+            float center = mAvailableSpace / 2f - halfIconSize;
+            float step = mAvailableSpace * 0.08f;
+            float offset = (index - (Math.min(curNumItems, MAX_NUM_ITEMS_IN_PREVIEW) - 1) / 2f)
+                    * step;
+            result[0] = center + (mIsRtl ? -offset : offset);
+            result[1] = center - offset * 0.65f;
+            return;
+        }
+        if ("fan".equals(mPreviewLayout)) {
+            int count = Math.max(curNumItems, 2);
+            float halfIconSize = (mIconSize * scaleForItem(curNumItems, 0)) / 2;
+            float spread = Math.min(count - 1, 3);
+            float t = count <= 1 ? 0f : (index / spread) - 0.5f;
+            double angle = Math.PI / 2.0 - t * (Math.PI * 0.55) * (mIsRtl ? -1 : 1);
+            float r = mAvailableSpace * 0.30f;
+            result[0] = mAvailableSpace / 2f + (float) (r * Math.cos(angle)) - halfIconSize;
+            result[1] = mAvailableSpace * 0.60f - (float) (r * Math.sin(angle)) - halfIconSize;
+            return;
+        }
+        if ("line".equals(mPreviewLayout)) {
+            int count = Math.min(Math.max(curNumItems, 1), MAX_NUM_ITEMS_IN_PREVIEW);
+            float halfIconSize = (mIconSize * scaleForItem(curNumItems, 0)) / 2;
+            float span = mAvailableSpace * 0.54f;
+            float step = count <= 1 ? 0f : span / (count - 1);
+            float startX = (mAvailableSpace - span) / 2f - halfIconSize;
+            int idx = mIsRtl ? (count - 1 - index) : index;
+            result[0] = count <= 1 ? (mAvailableSpace / 2f - halfIconSize) : (startX + idx * step);
+            result[1] = mAvailableSpace / 2f - halfIconSize;
+            return;
+        }
+
         // The case of two items is homomorphic to the case of one.
         curNumItems = Math.max(curNumItems, 2);
 

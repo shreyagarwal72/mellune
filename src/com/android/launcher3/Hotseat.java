@@ -404,6 +404,8 @@ public class Hotseat extends FrameLayout implements Insettable {
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
         DeviceProfile grid = mActivity.getDeviceProfile();
 
+        boolean drawBehindNav = PreferenceCacheExtensionsKt.firstCached(
+                preferenceManager2.getDockDrawBehindNavbar());
         if (grid.isVerticalBarLayout()) {
             mQsb.setVisibility(View.GONE);
             mPageIndicator.setVisibility(GONE);
@@ -419,11 +421,12 @@ public class Hotseat extends FrameLayout implements Insettable {
             mQsb.setVisibility(View.VISIBLE);
             lp.gravity = Gravity.BOTTOM;
             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            lp.height = grid.hotseatBarSizePx;
+            lp.height = grid.hotseatBarSizePx + (drawBehindNav ? insets.bottom : 0);
         }
 
         Rect padding = grid.getHotseatLayoutPadding(getContext());
-        setPadding(padding.left, padding.top, padding.right, padding.bottom);
+        setPadding(padding.left, padding.top, padding.right,
+                padding.bottom + (drawBehindNav && !grid.isVerticalBarLayout() ? insets.bottom : 0));
         setLayoutParams(lp);
         InsettableFrameLayout.dispatchInsets(this, insets);
     }

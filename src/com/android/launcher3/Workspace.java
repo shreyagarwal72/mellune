@@ -1654,15 +1654,83 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         }
     }
 
+    private boolean mHasCustomScrollEffect = false;
+
     private void updatePageScrollValues() {
         int screenCenter = getScrollX() + getMeasuredWidth() / 2;
+        String scrollEffect = PreferenceCacheExtensionsKt.firstCached(
+                mPreferenceManager2.getWorkspaceScrollEffect());
+        boolean isCustom = scrollEffect != null && !"default".equals(scrollEffect);
         for (int i = 0; i < getChildCount(); i++) {
             CellLayout child = (CellLayout) getChildAt(i);
             if (child != null) {
                 float scrollProgress = getScrollProgress(screenCenter, child, i);
                 child.setScrollProgress(scrollProgress);
+                if (isCustom) {
+                    applyCustomPageScrollEffect(child, scrollProgress, scrollEffect);
+                    mHasCustomScrollEffect = true;
+                } else if (mHasCustomScrollEffect) {
+                    resetCustomPageScrollEffect(child);
+                }
             }
         }
+        if (!isCustom) {
+            mHasCustomScrollEffect = false;
+        }
+    }
+
+    private void applyCustomPageScrollEffect(CellLayout child, float progress, String effect) {
+        float clamped = Utilities.boundToRange(progress, -1f, 1f);
+        float absProgress = Math.abs(clamped);
+        switch (effect) {
+            case "card_stack":
+                if (clamped > 0f) {
+                    float scale = 1f - 0.14f * clamped;
+                    child.setScaleX(scale);
+                    child.setScaleY(scale);
+                    child.setAlpha(1f - 0.35f * clamped);
+                    child.setTranslationX(-child.getWidth() * 0.25f * clamped);
+                } else {
+                    child.setScaleX(1f);
+                    child.setScaleY(1f);
+                    child.setAlpha(1f);
+                    child.setTranslationX(0f);
+                }
+                child.setRotationY(0f);
+                break;
+            case "tablet":
+                child.setCameraDistance(Math.max(1f, child.getWidth()) * 8f);
+                child.setPivotX(clamped < 0f ? child.getWidth() : 0f);
+                child.setPivotY(child.getHeight() / 2f);
+                child.setRotationY(-28f * clamped);
+                child.setScaleX(1f);
+                child.setScaleY(1f);
+                child.setTranslationX(0f);
+                child.setAlpha(1f);
+                break;
+            case "depth_cube":
+                child.setCameraDistance(Math.max(1f, child.getWidth()) * 10f);
+                child.setPivotX(clamped < 0f ? child.getWidth() : 0f);
+                child.setPivotY(child.getHeight() / 2f);
+                child.setRotationY(-45f * clamped);
+                float cubeScale = 1f - 0.08f * absProgress;
+                child.setScaleX(cubeScale);
+                child.setScaleY(cubeScale);
+                child.setTranslationX(0f);
+                child.setAlpha(1f - 0.15f * absProgress);
+                break;
+            default:
+                resetCustomPageScrollEffect(child);
+                break;
+        }
+    }
+
+    private static void resetCustomPageScrollEffect(CellLayout child) {
+        child.setRotationY(0f);
+        child.setScaleX(1f);
+        child.setScaleY(1f);
+        child.setTranslationX(0f);
+        child.setAlpha(1f);
     }
 
     protected void onAttachedToWindow() {

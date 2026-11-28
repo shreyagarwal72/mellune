@@ -287,7 +287,27 @@ public class PreviewBackground extends DelegatedCellDrawing {
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(getBgColor());
 
-        getShape().drawShape(canvas, getOffsetX(), getOffsetY(), getScaledRadius(), mPaint);
+        String previewShape = app.mellune.preferences2.PreferenceCacheExtensionsKt.firstCached(
+                app.mellune.preferences2.PreferenceManager2.getInstance(mContext)
+                        .getFolderPreviewShape());
+        if ("circle".equals(previewShape)) {
+            float r = getScaledRadius();
+            canvas.drawCircle(getOffsetX() + r, getOffsetY() + r, r, mPaint);
+        } else if ("square".equals(previewShape)) {
+            float r = getScaledRadius();
+            float left = getOffsetX();
+            float top = getOffsetY();
+            canvas.drawRoundRect(left, top, left + r * 2f, top + r * 2f,
+                    r * 0.28f, r * 0.28f, mPaint);
+        } else if ("platform".equals(previewShape)) {
+            float r = getScaledRadius();
+            float left = getOffsetX();
+            float bottom = getOffsetY() + r * 2f;
+            canvas.drawRoundRect(left, bottom - r * 0.72f, left + r * 2f, bottom,
+                    r * 0.36f, r * 0.36f, mPaint);
+        } else {
+            getShape().drawShape(canvas, getOffsetX(), getOffsetY(), getScaledRadius(), mPaint);
+        }
         drawShadow(canvas);
     }
 

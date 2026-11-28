@@ -93,6 +93,11 @@ fun AppDrawerPreferences(
                 label = stringResource(R.string.suggestion_pref_screen_title),
                 destination = Predictions,
             )
+            SwitchPreference(
+                adapter = prefs2.showDrawerQuickFilters.getAdapter(),
+                label = stringResource(id = R.string.drawer_quick_filters_label),
+                description = stringResource(id = R.string.drawer_quick_filters_desc),
+            )
             AppDrawerHapticFeedbackPreference()
         }
         PreferenceGroup(heading = stringResource(R.string.style)) {

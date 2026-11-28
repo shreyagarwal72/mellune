@@ -131,6 +131,7 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
     private boolean mForceHideDot;
     @ViewDebug.ExportedProperty(category = "launcher", deepExport = true)
     private final FolderDotInfo mDotInfo = new FolderDotInfo();
+    private float mSwipeDownY;
     private DotRenderer mDotRenderer;
     @ViewDebug.ExportedProperty(category = "launcher", deepExport = true)
     private DotRenderer.DrawParams mDotParams;
@@ -631,7 +632,10 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
             // If we are animating to the accepting state, animate the dot out.
             mDotParams.scale = Math.max(0, mDotScale - mBackground.getAcceptScaleProgress());
             mDotParams.dotColor = mBackground.getDotColor();
-            mDotRenderer.draw(canvas, mDotParams);
+            if (!app.mellune.util.MelluneBadgeRenderer.INSTANCE.drawCustomBadge(
+                    canvas, getContext(), mDotParams, mDotInfo.getNotificationCount())) {
+                mDotRenderer.draw(canvas, mDotParams);
+            }
         }
     }
 
@@ -703,9 +707,32 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN
-                && shouldIgnoreTouchDown(event.getX(), event.getY())) {
-            return false;
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (shouldIgnoreTouchDown(event.getX(), event.getY())) {
+                return false;
+            }
+            mSwipeDownY = event.getY();
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            float dy = mSwipeDownY - event.getY();
+            float threshold = android.view.ViewConfiguration.get(getContext())
+                    .getScaledTouchSlop() * 2.5f;
+            if (dy > threshold) {
+                String action = app.mellune.preferences2.PreferenceCacheExtensionsKt.firstCached(
+                        app.mellune.preferences2.PreferenceManager2.getInstance(getContext())
+                                .getFolderSwipeAction());
+                if ("open_folder".equals(action)) {
+                    cancelLongPress();
+                    mFolder.animateOpen();
+                    return true;
+                } else if ("launch_first".equals(action)) {
+                    var items = mFolder.getIconsInReadingOrder();
+                    if (!items.isEmpty()) {
+                        cancelLongPress();
+                        mActivity.getItemOnClickListener().onClick(items.get(0));
+                        return true;
+                    }
+                }
+            }
         }
 
         // Call the superclass onTouchEvent first, because sometimes it changes the state to
