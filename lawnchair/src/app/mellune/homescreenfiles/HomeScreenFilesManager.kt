@@ -75,7 +75,7 @@ object HomeScreenFilesManager {
             }
 
             val existingUris = folder.getContents()
-                .mapNotNull { it.getIntent().data?.toString() }
+                .mapNotNull { it.getIntent()?.data?.toString() }
                 .toHashSet()
             val accent = Themes.getColorAccent(context)
             val shortcutBitmap = BitmapInfo.of(

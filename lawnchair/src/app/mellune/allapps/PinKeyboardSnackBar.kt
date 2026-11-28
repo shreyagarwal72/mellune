@@ -103,6 +103,8 @@ class PinKeyboardSnackBar(
 
     override fun isOfType(@FloatingViewType type: Int): Boolean = (type and TYPE_PIN_IME_POPUP) != 0
 
+    override fun onControllerInterceptTouchEvent(ev: MotionEvent): Boolean = onControllerTouchEvent(ev)
+
     override fun onControllerTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
             val child = composeView

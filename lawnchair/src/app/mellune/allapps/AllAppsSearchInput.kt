@@ -16,7 +16,6 @@ import android.text.Spanned.SPAN_POINT_MARK
 import android.text.method.TextKeyListener
 import android.text.style.ForegroundColorSpan
 import android.text.style.ReplacementSpan
-import kotlin.math.roundToInt
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -79,6 +78,7 @@ import com.android.launcher3.util.Themes
 import com.android.systemui.shared.system.BlurUtils
 import java.util.Locale
 import kotlin.math.max
+import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 
 class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :

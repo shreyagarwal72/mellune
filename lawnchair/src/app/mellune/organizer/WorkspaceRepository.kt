@@ -3,9 +3,9 @@ package app.mellune.organizer
 import android.content.Context
 import android.content.pm.LauncherApps
 import android.os.Process
+import app.mellune.predictions.UsageStatsRanker
 import app.mellune.preferences2.PreferenceManager2
 import app.mellune.preferences2.firstCached
-import app.mellune.predictions.UsageStatsRanker
 import app.mellune.util.categorizeAppsWithSystemAndGoogle
 import com.android.launcher3.AppFilter
 import com.android.launcher3.InvariantDeviceProfile
@@ -37,7 +37,7 @@ data class WorkspacePageSummary(
 
 data class CategorizedSpaceData(
     val allApps: List<AppInfo>,
-    val categories: LinkedHashMap<String, List<AppInfo>>,
+    val categories: Map<String, List<AppInfo>>,
     val mostUsedApps: List<AppInfo>,
 )
 
@@ -271,6 +271,5 @@ object WorkspaceRepository {
         return newScreenId
     }
 
-    fun getSavedScreenOrder(context: Context): String =
-        LauncherPrefs.get(context).get(LauncherPrefs.WORKSPACE_SCREEN_ORDER)
+    fun getSavedScreenOrder(context: Context): String = LauncherPrefs.get(context).get(LauncherPrefs.WORKSPACE_SCREEN_ORDER)
 }
