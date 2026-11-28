@@ -177,7 +177,7 @@ public class RecyclerViewFastScroller extends View {
         super(context, attrs, defStyleAttr);
 
         mFastScrollerLocation = FastScrollerLocation.UNKNOWN_SCROLLER;
-        mTrackPaint = new Paint();
+        mTrackPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTrackPaint.setColor(ColorTokens.TextColorPrimary.resolveColor(getContext()));
         mTrackPaint.setAlpha(MAX_TRACK_ALPHA);
 
@@ -413,8 +413,11 @@ public class RecyclerViewFastScroller extends View {
             }
             canvas.translate(translateX, mThumbOffsetY);
         } else {
-            canvas.drawRoundRect(-halfW, 0, halfW, mRv.getScrollbarTrackHeight(),
-                    mWidth, mWidth, mTrackPaint);
+            boolean isAllApps = getScrollerLocation() == FastScrollerLocation.ALL_APPS_SCROLLER;
+            float trackHalfW = isAllApps ? Math.max(halfW, mWidth * 0.72f) : halfW;
+            float trackRadius = trackHalfW * 2f;
+            canvas.drawRoundRect(-trackHalfW, 0, trackHalfW, mRv.getScrollbarTrackHeight(),
+                    trackRadius, trackRadius, mTrackPaint);
             canvas.translate(0, mThumbOffsetY);
         }
         mThumbDrawOffset.y += mThumbOffsetY;
@@ -427,9 +430,14 @@ public class RecyclerViewFastScroller extends View {
             mThumbBounds.set(0, 0, 0, mThumbHeight);
             canvas.drawCircle(-halfW, halfW, r * 2, mThumbPaint);
         } else {
-            mThumbPaint.setColor(mThumbColor);
-            mThumbBounds.set(-halfW, 0, halfW, mThumbHeight);
-            canvas.drawRoundRect(mThumbBounds, r, r, mThumbPaint);
+            boolean isAllApps = getScrollerLocation() == FastScrollerLocation.ALL_APPS_SCROLLER;
+            float thumbHalfW = isAllApps ? (mIsDragging ? halfW * 1.35f : halfW * 1.15f) : halfW;
+            float thumbRadius = isAllApps ? thumbHalfW : r;
+            mThumbPaint.setColor(isAllApps && !mIsDragging
+                    ? androidx.core.graphics.ColorUtils.setAlphaComponent(mThumbColor, 220)
+                    : mThumbColor);
+            mThumbBounds.set(-thumbHalfW, 0, thumbHalfW, mThumbHeight);
+            canvas.drawRoundRect(mThumbBounds, thumbRadius, thumbRadius, mThumbPaint);
         }
         mThumbBounds.roundOut(SYSTEM_GESTURE_EXCLUSION_RECT.get(0));
         // swiping very close to the thumb area (not just within it's bound)

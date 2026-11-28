@@ -54,7 +54,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import app.mellune.ui.components.expressive.ExpressiveScrollBar
 import app.mellune.ui.theme.EdgeToEdge
 import app.mellune.ui.theme.MelluneTheme
 import com.android.launcher3.R
@@ -222,12 +221,6 @@ private fun WorkspaceOrganizerScreen(
                         )
                     }
                 }
-                ExpressiveScrollBar(
-                    listState = listState,
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(top = 8.dp, bottom = 96.dp),
-                )
             }
         }
     }

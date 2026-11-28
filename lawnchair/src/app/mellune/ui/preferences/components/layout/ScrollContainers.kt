@@ -17,10 +17,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import app.mellune.ui.components.expressive.ExpressiveScrollBar
 import app.mellune.ui.util.addIf
 import kotlinx.coroutines.awaitCancellation
 
@@ -48,17 +46,6 @@ fun PreferenceColumn(
                     .padding(contentPadding)
                     .padding(top = 8.dp, bottom = 16.dp),
                 content = content,
-            )
-        }
-        if (showScrollBar && scrollState != null) {
-            ExpressiveScrollBar(
-                scrollState = scrollState,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(
-                        top = contentPadding.calculateTopPadding() + 8.dp,
-                        bottom = contentPadding.calculateBottomPadding() + 8.dp,
-                    ),
             )
         }
     }
@@ -92,18 +79,6 @@ fun PreferenceLazyColumn(
                 contentPadding = contentPadding,
                 state = state,
                 content = content,
-            )
-        }
-        if (showScrollBar) {
-            ExpressiveScrollBar(
-                listState = state,
-                dragLabelProvider = dragLabelProvider,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(
-                        top = contentPadding.calculateTopPadding() + 8.dp,
-                        bottom = contentPadding.calculateBottomPadding() + 8.dp,
-                    ),
             )
         }
     }
