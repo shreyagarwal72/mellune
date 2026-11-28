@@ -17,39 +17,125 @@
 package app.mellune.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontSynthesis
+import androidx.compose.ui.text.font.FontVariation
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.android.launcher3.R
 
-private val base = Typography()
+private const val FLEX_FEATURES = "kern, liga, calt, ccmp"
+
+private data class PetalFontAxes(
+    val weight: Int,
+    val width: Float,
+    val opsz: Float,
+    val grade: Int,
+    val slant: Float,
+    val roundness: Float,
+)
+
+@OptIn(ExperimentalTextApi::class)
+private fun flexFamily(axes: PetalFontAxes): FontFamily = try {
+    FontFamily(
+        (100..1000 step 50).map { w ->
+            Font(
+                resId = R.font.googlesansflex_variable,
+                weight = FontWeight(w),
+                style = FontStyle.Normal,
+                variationSettings = FontVariation.Settings(
+                    FontVariation.weight(w),
+                    FontVariation.width(axes.width),
+                    FontVariation.Setting("opsz", axes.opsz.coerceIn(6f, 72f)),
+                    FontVariation.grade(axes.grade),
+                    FontVariation.slant(axes.slant),
+                    FontVariation.Setting("ROND", axes.roundness.coerceIn(0f, 100f)),
+                ),
+            )
+        },
+    )
+} catch (_: Throwable) {
+    FontFamily.Default
+}
+
+private val displayAxes = PetalFontAxes(
+    weight = 950,
+    width = 85f,
+    opsz = 30f,
+    grade = 0,
+    slant = 0f,
+    roundness = 100f,
+)
+private val headlineAxes = PetalFontAxes(
+    weight = 700,
+    width = 115f,
+    opsz = 32f,
+    grade = 0,
+    slant = 0f,
+    roundness = 60f,
+)
+private val bodyAxes = PetalFontAxes(
+    weight = 450,
+    width = 100f,
+    opsz = 16f,
+    grade = 20,
+    slant = 0f,
+    roundness = 0f,
+)
+
+private val displayFamily = flexFamily(displayAxes)
+private val headlineFamily = flexFamily(headlineAxes)
+private val bodyFamily = flexFamily(bodyAxes)
+
+private fun petalStyle(
+    family: FontFamily,
+    weight: Int,
+    sizeSp: Int,
+    lineSp: Int,
+    letterSp: Float,
+) = TextStyle(
+    fontFamily = family,
+    fontWeight = FontWeight(weight.coerceIn(100, 1000)),
+    fontSynthesis = FontSynthesis.None,
+    fontFeatureSettings = FLEX_FEATURES,
+    fontSize = sizeSp.sp,
+    lineHeight = lineSp.sp,
+    letterSpacing = letterSp.sp,
+)
 
 val Typography = Typography(
-    displayLarge = base.displayLarge.copy(fontFamily = GoogleSansFlex.Display.Emphasized.Large),
-    displayMedium = base.displayMedium.copy(fontFamily = GoogleSansFlex.Display.Emphasized.Medium),
-    displaySmall = base.displaySmall.copy(fontFamily = GoogleSansFlex.Display.Emphasized.Large),
-    headlineLarge = base.headlineLarge.copy(fontFamily = GoogleSansFlex.Headline.Emphasized.Large),
-    headlineMedium = base.headlineMedium.copy(fontFamily = GoogleSansFlex.Headline.Emphasized.Medium),
-    headlineSmall = base.headlineSmall.copy(fontFamily = GoogleSansFlex.Headline.Emphasized.Large),
-    titleLarge = base.titleLarge.copy(fontFamily = GoogleSansFlex.Title.Emphasized.Large),
-    titleMedium = base.titleMedium.copy(fontFamily = GoogleSansFlex.Title.Emphasized.Medium),
-    titleSmall = base.titleSmall.copy(fontFamily = GoogleSansFlex.Title.Emphasized.Small),
-    bodyLarge = base.bodyLarge.copy(fontFamily = GoogleSansFlex.Body.Normal.Large, letterSpacing = 0.sp),
-    bodyMedium = base.bodyMedium.copy(fontFamily = GoogleSansFlex.Body.Normal.Medium, letterSpacing = 0.1.sp),
-    bodySmall = base.bodySmall.copy(fontFamily = GoogleSansFlex.Body.Normal.Small),
-    labelLarge = base.labelLarge.copy(fontFamily = GoogleSansFlex.Label.Normal.Large),
-    labelMedium = base.labelMedium.copy(fontFamily = GoogleSansFlex.Label.Normal.Medium),
-    labelSmall = base.labelSmall.copy(fontFamily = GoogleSansFlex.Label.Normal.Small),
-    displayLargeEmphasized = base.displayLargeEmphasized.copy(fontFamily = GoogleSansFlex.Display.Emphasized.Large),
-    displayMediumEmphasized = base.displayMediumEmphasized.copy(fontFamily = GoogleSansFlex.Display.Emphasized.Medium),
-    displaySmallEmphasized = base.displaySmallEmphasized.copy(fontFamily = GoogleSansFlex.Display.Emphasized.Large),
-    headlineLargeEmphasized = base.headlineLargeEmphasized.copy(fontFamily = GoogleSansFlex.Headline.Emphasized.Large),
-    headlineMediumEmphasized = base.headlineMediumEmphasized.copy(fontFamily = GoogleSansFlex.Headline.Emphasized.Medium),
-    headlineSmallEmphasized = base.headlineSmallEmphasized.copy(fontFamily = GoogleSansFlex.Headline.Emphasized.Large),
-    titleLargeEmphasized = base.titleLargeEmphasized.copy(fontFamily = GoogleSansFlex.Title.Emphasized.Large),
-    titleMediumEmphasized = base.titleMediumEmphasized.copy(fontFamily = GoogleSansFlex.Title.Emphasized.Medium),
-    titleSmallEmphasized = base.titleSmallEmphasized.copy(fontFamily = GoogleSansFlex.Title.Emphasized.Small),
-    bodyLargeEmphasized = base.bodyLargeEmphasized.copy(fontFamily = GoogleSansFlex.Body.Emphasized.Large),
-    bodyMediumEmphasized = base.bodyMediumEmphasized.copy(fontFamily = GoogleSansFlex.Body.Emphasized.Medium),
-    bodySmallEmphasized = base.bodySmallEmphasized.copy(fontFamily = GoogleSansFlex.Body.Emphasized.Small),
-    labelLargeEmphasized = base.labelLargeEmphasized.copy(fontFamily = GoogleSansFlex.Label.Emphasized.Large),
-    labelMediumEmphasized = base.labelMediumEmphasized.copy(fontFamily = GoogleSansFlex.Label.Emphasized.Medium),
-    labelSmallEmphasized = base.labelSmallEmphasized.copy(fontFamily = GoogleSansFlex.Label.Emphasized.Small),
+    displayLarge = petalStyle(displayFamily, displayAxes.weight, 57, 64, -0.25f),
+    displayMedium = petalStyle(displayFamily, displayAxes.weight, 45, 52, 0f),
+    displaySmall = petalStyle(displayFamily, displayAxes.weight, 36, 44, 0f),
+    headlineLarge = petalStyle(headlineFamily, headlineAxes.weight, 32, 40, 0f),
+    headlineMedium = petalStyle(headlineFamily, headlineAxes.weight, 28, 36, 0f),
+    headlineSmall = petalStyle(headlineFamily, headlineAxes.weight, 24, 32, 0f),
+    titleLarge = petalStyle(headlineFamily, headlineAxes.weight, 22, 28, 0f),
+    titleMedium = petalStyle(headlineFamily, headlineAxes.weight, 16, 24, 0.15f),
+    titleSmall = petalStyle(headlineFamily, headlineAxes.weight, 14, 20, 0.1f),
+    bodyLarge = petalStyle(bodyFamily, bodyAxes.weight, 16, 24, 0.5f),
+    bodyMedium = petalStyle(bodyFamily, bodyAxes.weight, 14, 20, 0.25f),
+    bodySmall = petalStyle(bodyFamily, bodyAxes.weight, 12, 16, 0.4f),
+    labelLarge = petalStyle(bodyFamily, bodyAxes.weight + 150, 14, 20, 0.1f),
+    labelMedium = petalStyle(bodyFamily, bodyAxes.weight + 150, 12, 16, 0.5f),
+    labelSmall = petalStyle(bodyFamily, bodyAxes.weight + 150, 11, 16, 0.5f),
+    displayLargeEmphasized = petalStyle(displayFamily, displayAxes.weight, 57, 64, -0.25f),
+    displayMediumEmphasized = petalStyle(displayFamily, displayAxes.weight, 45, 52, 0f),
+    displaySmallEmphasized = petalStyle(displayFamily, displayAxes.weight, 36, 44, 0f),
+    headlineLargeEmphasized = petalStyle(headlineFamily, headlineAxes.weight, 32, 40, 0f),
+    headlineMediumEmphasized = petalStyle(headlineFamily, headlineAxes.weight, 28, 36, 0f),
+    headlineSmallEmphasized = petalStyle(headlineFamily, headlineAxes.weight, 24, 32, 0f),
+    titleLargeEmphasized = petalStyle(headlineFamily, headlineAxes.weight, 22, 28, 0f),
+    titleMediumEmphasized = petalStyle(headlineFamily, headlineAxes.weight, 16, 24, 0.15f),
+    titleSmallEmphasized = petalStyle(headlineFamily, headlineAxes.weight, 14, 20, 0.1f),
+    bodyLargeEmphasized = petalStyle(bodyFamily, bodyAxes.weight + 100, 16, 24, 0.5f),
+    bodyMediumEmphasized = petalStyle(bodyFamily, bodyAxes.weight + 100, 14, 20, 0.25f),
+    bodySmallEmphasized = petalStyle(bodyFamily, bodyAxes.weight + 100, 12, 16, 0.4f),
+    labelLargeEmphasized = petalStyle(bodyFamily, bodyAxes.weight + 200, 14, 20, 0.1f),
+    labelMediumEmphasized = petalStyle(bodyFamily, bodyAxes.weight + 200, 12, 16, 0.5f),
+    labelSmallEmphasized = petalStyle(bodyFamily, bodyAxes.weight + 200, 11, 16, 0.5f),
 )
